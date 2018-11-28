@@ -43,7 +43,8 @@ var QueryPinYin=function(end){
 				name=name.replace(/市$/ig,"");
 			};
 		}else{
-			if(name.length>2 && name!="市辖区"
+			if(name.length>2
+				&& !/^(?:市辖区|(?:临夏|和田|伊宁)[市县])$/.test(name)
 				&& !/(自治.|地区|矿区|开发区)$/.test(name)){//直接排除会有同名的
 				name=name.replace(/(市|区|县|镇|管委会|街道办事处)$/ig,"");
 			};
@@ -109,7 +110,7 @@ var QueryPinYin=function(end){
 		o.txt=o.txt+(o.txt?"\n":"")+keys[i];
 		o.refs.push(keyMp[keys[i]]);
 	};
-	console.log("需要查询"+(ids.length+1)+"段数据",ids);
+	console.log("需要查询"+(ids.length)+"段数据",ids);
 	
 	
 	

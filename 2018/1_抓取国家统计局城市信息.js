@@ -154,12 +154,16 @@ function load_si(True,False){
 				var match2;
 				if(match2=reg2.exec(match[0])){
 					var url=match2[1]||"";
-					if(url.indexOf("//")==-1 && url.indexOf("/")!=0){
+					if(url && url.indexOf("//")==-1 && url.indexOf("/")!=0){
 						url=city.url.substring(0,city.url.lastIndexOf("/"))+"/"+url;
 					}
 					var code=match2[2]||match2[4];
 					var name=match2[3]||match2[5];
-					city.child.push(new cityClass(name,url,code));
+					if(!url&&name=="市辖区"){
+						//NOOP
+					}else{
+						city.child.push(new cityClass(name,url,code));
+					};
 				}else{
 					msg("未知城市模式:");
 					msg(city.url);

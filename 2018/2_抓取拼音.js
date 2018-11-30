@@ -45,7 +45,7 @@ var QueryPinYin=function(end){
 		}else{
 			if(name.length>2
 				&& !/^(?:市辖区|(?:临夏|和田|伊宁)[市县])$/.test(name)
-				&& !/(自治.|地区|矿区|开发区)$/.test(name)){//直接排除会有同名的
+				&& !/(自治.|地区|矿区|新区|开发区|管理区|示范区|名胜区)$/.test(name)){//直接排除会有同名的
 				name=name.replace(/(市|区|县|镇|管委会|街道办事处)$/ig,"");
 			};
 		};

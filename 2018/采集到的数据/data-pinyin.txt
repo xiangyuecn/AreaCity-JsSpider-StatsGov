@@ -288,13 +288,13 @@
 		"P": "bao di"
 	},
 	{
-		"name": "滨海新",
+		"name": "滨海新区",
 		"ext_name": "滨海新区",
 		"id": 120116,
 		"ext_id": 120116000000,
 		"pid": 1201,
 		"deep": 2,
-		"P": "bin hai xin"
+		"P": "bin hai xin qu"
 	},
 	{
 		"name": "宁河",
@@ -684,13 +684,13 @@
 		"P": "tang shan shi lu tai jing ji ji shu kai fa qu"
 	},
 	{
-		"name": "唐山市汉沽管理",
+		"name": "唐山市汉沽管理区",
 		"ext_name": "唐山市汉沽管理区",
 		"id": 130272,
 		"ext_id": 130272000000,
 		"pid": 1302,
 		"deep": 2,
-		"P": "tang shan shi han gu guan li"
+		"P": "tang shan shi han gu guan li qu"
 	},
 	{
 		"name": "唐山高新技术产业开发区",
@@ -810,13 +810,13 @@
 		"P": "qin huang dao shi jing ji ji shu kai fa qu"
 	},
 	{
-		"name": "北戴河新",
+		"name": "北戴河新区",
 		"ext_name": "北戴河新区",
 		"id": 130372,
 		"ext_id": 130372000000,
 		"pid": 1303,
 		"deep": 2,
-		"P": "bei dai he xin"
+		"P": "bei dai he xin qu"
 	},
 	{
 		"name": "邯郸",
@@ -990,13 +990,13 @@
 		"P": "han dan jing ji ji shu kai fa qu"
 	},
 	{
-		"name": "邯郸冀南新",
+		"name": "邯郸冀南新区",
 		"ext_name": "邯郸冀南新区",
 		"id": 130473,
 		"ext_id": 130473000000,
 		"pid": 1304,
 		"deep": 2,
-		"P": "han dan ji nan xin"
+		"P": "han dan ji nan xin qu"
 	},
 	{
 		"name": "武安",
@@ -1602,22 +1602,22 @@
 		"P": "zhang jia kou shi gao xin ji shu chan ye kai fa qu"
 	},
 	{
-		"name": "张家口市察北管理",
+		"name": "张家口市察北管理区",
 		"ext_name": "张家口市察北管理区",
 		"id": 130772,
 		"ext_id": 130772000000,
 		"pid": 1307,
 		"deep": 2,
-		"P": "zhang jia kou shi cha bei guan li"
+		"P": "zhang jia kou shi cha bei guan li qu"
 	},
 	{
-		"name": "张家口市塞北管理",
+		"name": "张家口市塞北管理区",
 		"ext_name": "张家口市塞北管理区",
 		"id": 130773,
 		"ext_id": 130773000000,
 		"pid": 1307,
 		"deep": 2,
-		"P": "zhang jia kou shi sai bei guan li"
+		"P": "zhang jia kou shi sai bei guan li qu"
 	},
 	{
 		"name": "承德",
@@ -1872,13 +1872,13 @@
 		"P": "cang zhou gao xin ji shu chan ye kai fa qu"
 	},
 	{
-		"name": "沧州渤海新",
+		"name": "沧州渤海新区",
 		"ext_name": "沧州渤海新区",
 		"id": 130973,
 		"ext_id": 130973000000,
 		"pid": 1309,
 		"deep": 2,
-		"P": "cang zhou bo hai xin"
+		"P": "cang zhou bo hai xin qu"
 	},
 	{
 		"name": "泊头",
@@ -2133,13 +2133,13 @@
 		"P": "he bei heng shui jing ji kai fa qu"
 	},
 	{
-		"name": "衡水滨湖新",
+		"name": "衡水滨湖新区",
 		"ext_name": "衡水滨湖新区",
 		"id": 131172,
 		"ext_id": 131172000000,
 		"pid": 1311,
 		"deep": 2,
-		"P": "heng shui bin hu xin"
+		"P": "heng shui bin hu xin qu"
 	},
 	{
 		"name": "深州",
@@ -2250,13 +2250,13 @@
 		"P": "lou fan"
 	},
 	{
-		"name": "山西转型综合改革示范",
+		"name": "山西转型综合改革示范区",
 		"ext_name": "山西转型综合改革示范区",
 		"id": 140171,
 		"ext_id": 140171000000,
 		"pid": 1401,
 		"deep": 2,
-		"P": "shan xi zhuan xing zong he gai ge shi fan"
+		"P": "shan xi zhuan xing zong he gai ge shi fan qu"
 	},
 	{
 		"name": "古交",
@@ -3078,13 +3078,13 @@
 		"P": "pian guan"
 	},
 	{
-		"name": "五台山风景名胜",
+		"name": "五台山风景名胜区",
 		"ext_name": "五台山风景名胜区",
 		"id": 140971,
 		"ext_id": 140971000000,
 		"pid": 1409,
 		"deep": 2,
-		"P": "wu tai shan feng jing ming sheng"
+		"P": "wu tai shan feng jing ming sheng qu"
 	},
 	{
 		"name": "原平",
@@ -4563,13 +4563,13 @@
 		"P": "hun nan"
 	},
 	{
-		"name": "沈北新",
+		"name": "沈北新区",
 		"ext_name": "沈北新区",
 		"id": 210113,
 		"ext_id": 210113000000,
 		"pid": 2101,
 		"deep": 2,
-		"P": "shen bei xin"
+		"P": "shen bei xin qu"
 	},
 	{
 		"name": "于洪",
@@ -7668,13 +7668,13 @@
 		"P": "jia ding"
 	},
 	{
-		"name": "浦东新",
+		"name": "浦东新区",
 		"ext_name": "浦东新区",
 		"id": 310115,
 		"ext_id": 310115000000,
 		"pid": 3101,
 		"deep": 2,
-		"P": "pu dong xin"
+		"P": "pu dong xin qu"
 	},
 	{
 		"name": "金山",
@@ -8640,13 +8640,13 @@
 		"P": "dan tu"
 	},
 	{
-		"name": "镇江新",
+		"name": "镇江新区",
 		"ext_name": "镇江新区",
 		"id": 321171,
 		"ext_id": 321171000000,
 		"pid": 3211,
 		"deep": 2,
-		"P": "zhen jiang xin"
+		"P": "zhen jiang xin qu"
 	},
 	{
 		"name": "丹阳",
@@ -15192,13 +15192,13 @@
 		"P": "xin xiang jing ji ji shu kai fa qu"
 	},
 	{
-		"name": "新乡市平原城乡一体化示范",
+		"name": "新乡市平原城乡一体化示范区",
 		"ext_name": "新乡市平原城乡一体化示范区",
 		"id": 410773,
 		"ext_id": 410773000000,
 		"pid": 4107,
 		"deep": 2,
-		"P": "xin xiang shi ping yuan cheng xiang yi ti hua shi fan"
+		"P": "xin xiang shi ping yuan cheng xiang yi ti hua shi fan qu"
 	},
 	{
 		"name": "卫辉",
@@ -15300,13 +15300,13 @@
 		"P": "wen xian"
 	},
 	{
-		"name": "焦作城乡一体化示范",
+		"name": "焦作城乡一体化示范区",
 		"ext_name": "焦作城乡一体化示范区",
 		"id": 410871,
 		"ext_id": 410871000000,
 		"pid": 4108,
 		"deep": 2,
-		"P": "jiao zuo cheng xiang yi ti hua shi fan"
+		"P": "jiao zuo cheng xiang yi ti hua shi fan qu"
 	},
 	{
 		"name": "沁阳",
@@ -15741,13 +15741,13 @@
 		"P": "nan yang gao xin ji shu chan ye kai fa qu"
 	},
 	{
-		"name": "南阳市城乡一体化示范",
+		"name": "南阳市城乡一体化示范区",
 		"ext_name": "南阳市城乡一体化示范区",
 		"id": 411372,
 		"ext_id": 411372000000,
 		"pid": 4113,
 		"deep": 2,
-		"P": "nan yang shi cheng xiang yi ti hua shi fan"
+		"P": "nan yang shi cheng xiang yi ti hua shi fan qu"
 	},
 	{
 		"name": "邓州",
@@ -17037,13 +17037,13 @@
 		"P": "huang mei"
 	},
 	{
-		"name": "龙感湖管理",
+		"name": "龙感湖管理区",
 		"ext_name": "龙感湖管理区",
 		"id": 421171,
 		"ext_id": 421171000000,
 		"pid": 4211,
 		"deep": 2,
-		"P": "long gan hu guan li"
+		"P": "long gan hu guan li qu"
 	},
 	{
 		"name": "麻城",
@@ -17469,13 +17469,13 @@
 		"P": "yan ling"
 	},
 	{
-		"name": "云龙示范",
+		"name": "云龙示范区",
 		"ext_name": "云龙示范区",
 		"id": 430271,
 		"ext_id": 430271000000,
 		"pid": 4302,
 		"deep": 2,
-		"P": "yun long shi fan"
+		"P": "yun long shi fan qu"
 	},
 	{
 		"name": "醴陵",
@@ -17532,22 +17532,22 @@
 		"P": "hu nan xiang tan gao xin ji shu chan ye yuan"
 	},
 	{
-		"name": "湘潭昭山示范",
+		"name": "湘潭昭山示范区",
 		"ext_name": "湘潭昭山示范区",
 		"id": 430372,
 		"ext_id": 430372000000,
 		"pid": 4303,
 		"deep": 2,
-		"P": "xiang tan zhao shan shi fan"
+		"P": "xiang tan zhao shan shi fan qu"
 	},
 	{
-		"name": "湘潭九华示范",
+		"name": "湘潭九华示范区",
 		"ext_name": "湘潭九华示范区",
 		"id": 430373,
 		"ext_id": 430373000000,
 		"pid": 4303,
 		"deep": 2,
-		"P": "xiang tan jiu hua shi fan"
+		"P": "xiang tan jiu hua shi fan qu"
 	},
 	{
 		"name": "湘乡",
@@ -17901,13 +17901,13 @@
 		"P": "ping jiang"
 	},
 	{
-		"name": "岳阳市屈原管理",
+		"name": "岳阳市屈原管理区",
 		"ext_name": "岳阳市屈原管理区",
 		"id": 430671,
 		"ext_id": 430671000000,
 		"pid": 4306,
 		"deep": 2,
-		"P": "yue yang shi qu yuan guan li"
+		"P": "yue yang shi qu yuan guan li qu"
 	},
 	{
 		"name": "汨罗",
@@ -18009,13 +18009,13 @@
 		"P": "shi men"
 	},
 	{
-		"name": "常德市西洞庭管理",
+		"name": "常德市西洞庭管理区",
 		"ext_name": "常德市西洞庭管理区",
 		"id": 430771,
 		"ext_id": 430771000000,
 		"pid": 4307,
 		"deep": 2,
-		"P": "chang de shi xi dong ting guan li"
+		"P": "chang de shi xi dong ting guan li qu"
 	},
 	{
 		"name": "津市",
@@ -18126,13 +18126,13 @@
 		"P": "an hua"
 	},
 	{
-		"name": "益阳市大通湖管理",
+		"name": "益阳市大通湖管理区",
 		"ext_name": "益阳市大通湖管理区",
 		"id": 430971,
 		"ext_id": 430971000000,
 		"pid": 4309,
 		"deep": 2,
-		"P": "yi yang shi da tong hu guan li"
+		"P": "yi yang shi da tong hu guan li qu"
 	},
 	{
 		"name": "湖南益阳高新技术产业园",
@@ -18378,22 +18378,22 @@
 		"P": "yong zhou jing ji ji shu kai fa qu"
 	},
 	{
-		"name": "永州市金洞管理",
+		"name": "永州市金洞管理区",
 		"ext_name": "永州市金洞管理区",
 		"id": 431172,
 		"ext_id": 431172000000,
 		"pid": 4311,
 		"deep": 2,
-		"P": "yong zhou shi jin dong guan li"
+		"P": "yong zhou shi jin dong guan li qu"
 	},
 	{
-		"name": "永州市回龙圩管理",
+		"name": "永州市回龙圩管理区",
 		"ext_name": "永州市回龙圩管理区",
 		"id": 431173,
 		"ext_id": 431173000000,
 		"pid": 4311,
 		"deep": 2,
-		"P": "yong zhou shi hui long xu guan li"
+		"P": "yong zhou shi hui long xu guan li qu"
 	},
 	{
 		"name": "怀化",
@@ -18504,13 +18504,13 @@
 		"P": "tong dao dong zu zi zhi xian"
 	},
 	{
-		"name": "怀化市洪江管理",
+		"name": "怀化市洪江管理区",
 		"ext_name": "怀化市洪江管理区",
 		"id": 431271,
 		"ext_id": 431271000000,
 		"pid": 4312,
 		"deep": 2,
-		"P": "huai hua shi hong jiang guan li"
+		"P": "huai hua shi hong jiang guan li qu"
 	},
 	{
 		"name": "洪江",
@@ -19737,13 +19737,13 @@
 		"P": "qing cheng"
 	},
 	{
-		"name": "清新",
+		"name": "清新区",
 		"ext_name": "清新区",
 		"id": 441803,
 		"ext_id": 441803000000,
 		"pid": 4418,
 		"deep": 2,
-		"P": "qing xin"
+		"P": "qing xin qu"
 	},
 	{
 		"name": "佛冈",
@@ -28440,13 +28440,13 @@
 		"P": "yu zhong"
 	},
 	{
-		"name": "兰州新",
+		"name": "兰州新区",
 		"ext_name": "兰州新区",
 		"id": 620171,
 		"ext_id": 620171000000,
 		"pid": 6201,
 		"deep": 2,
-		"P": "lan zhou xin"
+		"P": "lan zhou xin qu"
 	},
 	{
 		"name": "嘉峪关",

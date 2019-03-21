@@ -12,6 +12,23 @@
 
 本方法只在window 7 环境下运行过，其他环境自测。
 
+``` bat
+:: 安装一个有效的版本
+> conda create -n python364 python=3.6.4
+:: 切换版本
+> activate python364
+:: 安装jpype1
+> conda install -c conda-forge jpype1
+:: 安装pyhanlp
+> pip install pyhanlp
+:: 执行一遍，会提示要下载哪些东西
+> hanlp
+
+:: 环境都搞定后就可以运行服务了
+> python server.py
+```
+
+
 
 ## 【1】安装Miniconda
 conda版本随意
@@ -36,7 +53,7 @@ jar直接下载最新releases
 
 另外需要修改hanlp.properties，给root赋值为当前目录完整路径。
 
-svn: https://github.com/hankcs/HanLP/trunk/data
+svn: `https://github.com/hankcs/HanLP/trunk/data`
 
 
 ## 【4】运行

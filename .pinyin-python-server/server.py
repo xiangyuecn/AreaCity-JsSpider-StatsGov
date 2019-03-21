@@ -26,7 +26,7 @@ python server.py
 
 【5】浏览器访问
 http://127.0.0.1:9527/pinyin?txt=要拼的文字
-返回结果{c:0,m:"",v:["pin","yin"]}，c=0时代表正常，其他代表出错，m为错误原因
+"拼音。m" 返回结果 {c:0,m:"",v:["pin","yin","F。","Fm"]}，c=0时代表正常，其他代表出错，m为错误原因，拼音如果是字母符号会用F打头
 
 """
 import sys
@@ -71,7 +71,7 @@ class HttpHandler(BaseHTTPRequestHandler):
                 for i in range(pinyin_list.size()):
                     pinyin=pinyin_list[i]
                     if pinyin==Pinyin.none5:
-                        list.append(txt[i])
+                        list.append('F'+txt[i])
                     else:
                         list.append(pinyin.getPinyinWithoutTone())
                         
@@ -86,15 +86,13 @@ class HttpHandler(BaseHTTPRequestHandler):
                 rtv["c"]=404
                 rtv["m"]="路径"+path+"不存在"
         except Exception as e:
-            code=500
-            rtv["c"]=500
+            rtv["c"]=1
             rtv["m"]='服务器错误：'+str(e)+"\n"+traceback.format_exc()
             
         try:
             rtv=json.dumps(rtv,ensure_ascii=False)
         except Exception as e:
-            code=500
-            rtv={'c':500,'m':'服务器返回数据错误：'+str(e)+"\n"+traceback.format_exc(),'v':''}
+            rtv={'c':2,'m':'服务器返回数据错误：'+str(e)+"\n"+traceback.format_exc(),'v':''}
             rtv=json.dumps(rtv,ensure_ascii=False)
         
         self.send_response(code)

@@ -2,7 +2,7 @@
 
 当前最新版为`2019文件夹`内的`2018版数据`，此数据发布于`2019-01-31`。
 
-可直接打开`采集到的数据`文件夹内的`ok_data.csv`来使用。不需要的数据可以简单的用Excel筛选后直接删除。此格式非常方便解析或导入数据库。
+可直接打开`采集到的数据`文件夹内的`ok_data_level4.csv`来使用，level4是省市区镇4级数据，level3是省市区3级数据。另外不需要的数据可以简单的用Excel筛选后直接删除。csv格式非常方便解析或导入数据库。
 
 
 ## 采集环境
@@ -17,7 +17,7 @@ chrome 控制台，`41.0.2272.118`这版本蛮好，新版本乱码、SwitchyOme
 
 ## 采集深度
 
-- 2019文件夹采集了4城，省、市、区、镇，[2018版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2018/index.html)。
+- 2019文件夹采集了4层，省、市、区、镇，[2018版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2018/index.html)。
 - 2018文件夹采集了3层，省、市、区，[2017版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2017/index.html)。
 - 2017文件夹采集了3层，省、市、区，[2016版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2016/index.html)。
 - 2013文件夹采集了4层，省、市、区、镇，[2013版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2013/index.html)。

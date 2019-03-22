@@ -90,7 +90,7 @@ for(var i=0;i<pinyinList.length;i++){
 	childsMP[o.pid]=p;
 	p.push(o);
 	
-	o.ext_name=o.ext_name||o.name;
+	o.ext_name=o.isExt?"":(o.ext_name||o.name);
 	o.name2=o.name;
 	if(o.deep==0){
 		o.ext_id=o.id;

@@ -7,7 +7,7 @@
 
 ## 采集环境
 
-chrome `41.0.2272.118`（[简单制作chrome便携版实现多版本共存](https://github.com/xiangyuecn/Docs/blob/master/Other/%E8%87%AA%E5%B7%B1%E5%88%B6%E4%BD%9Cchrome%E4%BE%BF%E6%90%BA%E7%89%88%E5%AE%9E%E7%8E%B0%E5%A4%9A%E7%89%88%E6%9C%AC%E5%85%B1%E5%AD%98.md)） 控制台。
+chrome 控制台，`41.0.2272.118`这版本蛮好，新版本乱码、SwitchyOmega代理没有效果、各种问题（[简单制作chrome便携版实现多版本共存](https://github.com/xiangyuecn/Docs/blob/master/Other/%E8%87%AA%E5%B7%B1%E5%88%B6%E4%BD%9Cchrome%E4%BE%BF%E6%90%BA%E7%89%88%E5%AE%9E%E7%8E%B0%E5%A4%9A%E7%89%88%E6%9C%AC%E5%85%B1%E5%AD%98.md)）
 
 
 ## 数据源
@@ -49,10 +49,12 @@ chrome `41.0.2272.118`（[简单制作chrome便携版实现多版本共存](http
 
 在低版本chrome控制台内运行1、2、3打头的文件即可完成采集，前提是指定网页打开的控制台。这三个文件按顺序执行。
 
+最新采集代码内对拼音转换的接口变化蛮大，由于优秀的那个公网接口采取了IP限制措施，就算使用了全自动的切换代理，全量转换还是极为缓慢，因此采用了本地转换接口和公网转换接口结合的办法，省市区三级采用公网接口，其他的采用本地接口。公网接口转换的正确度极高，本地的略差那么一点。
+
 ### 步骤1
 
-1. 打开国家统计局任意页面，如：http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/。
-2. 执行`1_抓取国家统计局城市信息.js`内代码。
+1. 打开国家统计局任页面 http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/。
+2. 控制台内粘贴`1_抓取国家统计局城市信息.js`代码执行。
 3. 采集完成自动弹出下载，保存得到文件`data.txt`。
 
 ### 步骤2

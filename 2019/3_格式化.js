@@ -211,6 +211,6 @@ var url=URL.createObjectURL(
 var downA=document.createElement("A");
 downA.innerHTML="下载查询好城市的文件";
 downA.href=url;
-downA.download="ok_data.csv";
+downA.download="ok_data_level"+(Max_Deep+1)+".csv";
 document.body.appendChild(downA);
 downA.click();

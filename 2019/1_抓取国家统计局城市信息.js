@@ -1,8 +1,8 @@
 /*
 获取所有城市名称原始数据
 
-在以下页面执行
-http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2018/index.html
+在以下页面执行，可能需要低版本chrome，不然他们网页gbk格式的请求会乱码，chrome 41.0.2272.118没有乱码
+http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/
 */
 (function(){
 var Year=2018;
@@ -26,7 +26,9 @@ var Load_Full_End=92;//此城市包括下级全部抓取完毕
 if(!window.URL){
 	throw new Error("浏览器版本太低");
 };
+var loadReqCount=0;
 function ajax(url,True,False){
+	loadReqCount++;
 	var ajax=new XMLHttpRequest();
 	ajax.timeout=1000;
 	ajax.open("GET",url);
@@ -89,7 +91,7 @@ function load_shen_all(True){
 
 
 
-var logX=$('<div class="LogX" style="position: fixed;bottom: 80px;right: 100px;padding: 50px;background: #0ca;color: #fff;font-size: 16px;width: 600px;"></div>');
+var logX=$('<div class="LogX" style="position: fixed;bottom: 80px;right: 100px;padding: 50px;background: #0ca;color: #fff;font-size: 16px;width: 600px;z-index:9999999"></div>');
 $("body").append(logX);
 var logXn=0;
 function LogX(txt){
@@ -108,31 +110,54 @@ function load_x_childs(itm, next){
 		return;
 	};
 	
-	LogX("读取"+levelObj.n+"["+city.name+"]"+getJD());
+	LogX("读取"+loadReqCount+"次"+getJD()+" ["+city.name+"]"+levelObj.n);
 	
 	ajax(city.url,function(text){
-		var reg=/class='(?:citytr|countytr|towntr|villagetr)'.+?<\/tr>/ig;
+		var reg=/class='(citytr|countytr|towntr|villagetr)'.+?<\/tr>/ig;
 		var match;
+		var mode="";
+		var isFirst=true;
 		while(match=reg.exec(text)){
-			var reg2=/class='(?:citytr|countytr|towntr|villagetr)'.+?(?:<td><a href='(.+?)'>(.+?)<.+?'>(.+?)<|<td>(.+?)<.+?<td>(.+?)<)/ig;
+			var err=function(){
+				console.error(":",city,match[0]);
+				city.load=Load_Max_Try;
+				
+				next();
+			};
+			!mode&&(mode=match[1]);
+			if(mode!=match[1]){
+				err("前后类型不匹配");
+				return;
+			};
+			
+			var reg2=/class='(citytr|countytr|towntr|villagetr)'.+?(?:<td><a href='(.+?)'>(.+?)<.+?'>(.+?)<|<td>(.+?)<.+?<td>(.+?)<)/ig;
 			var match2;
 			if(match2=reg2.exec(match[0])){
-				var url=match2[1]||"";
+				var url=match2[2]||"";
 				if(url && url.indexOf("//")==-1 && url.indexOf("/")!=0){
 					url=city.url.substring(0,city.url.lastIndexOf("/"))+"/"+url;
 				}
-				var code=match2[2]||match2[4];
-				var name=match2[3]||match2[5];
+				var code=match2[3]||match2[5];
+				var name=match2[4]||match2[6];
+				
+				//如果是villagetr，最后一级，不应该出现的。为了至少存在一个镇，直接取第一个的ID来做一个
+				if(match2[1]=="villagetr"){
+					if(isFirst){
+						console.log("自动添加最后一级替换街道列表："+city.name,city);
+						city.child.push(new cityClass(city.name+"（上级为乡镇）",city.url,code));
+					};
+					isFirst=false;
+					//需要后续的状态检测
+					continue;
+				};
+				
 				if(!url&&name=="市辖区"){
 					//NOOP
 				}else{
 					city.child.push(new cityClass(name,url,code));
 				};
 			}else{
-				console.error("未知模式:",city,match[0]);
-				city.load=Load_Max_Try;
-				
-				next();
+				err("未知模式");
 				return;
 			};
 		};
@@ -166,7 +191,9 @@ var load_end=function(isErr){
 		return;
 	}
 	
-	console.log("完成："+(Date.now()-RunLoad.T1)/1000+"秒", getJD());
+	var logTxt="完成："+(Date.now()-RunLoad.T1)/1000+"秒"+getJD();
+	console.log(logTxt);
+	LogX(logTxt);
 	
 	var data=[];
 	window.CITY_LIST=data;
@@ -186,7 +213,7 @@ var load_end=function(isErr){
 	downA.innerHTML="下载查询好城市的文件";
 	downA.href=url;
 	downA.download="data.txt";
-	document.body.appendChild(downA);
+	logX.append(downA);
 	downA.click();
 	
 	console.log("--完成--");

@@ -2,16 +2,15 @@
 拼音翻译
 http://www.qqxiuzi.cn/zh/pinyin/
 
-http://www.qqxiuzi.cn/zh/pinyin/show.php
-POST
-t=汉字&d=1&s=null&k=1&b=null&h=null&u=null&v=1&y=null&z=null&token=页面token请求一次获取
+拼音接口可能会屏蔽ip，通过切换代理解决，底部有方法，先准备好代理和采集好ip
+
+
+打开上面这个页面
 
 加载数据
 	先直接运行本代码，根据提示输入data-pinyin-local.txt到文本框 (内容太大，控制台吃不消，文本框快很多)
 
 然后再次运行本代码
-	
-拼音接口可能会屏蔽ip，通过切换代理解决，底部有方法
 */
 
 if(!$(".DataTxt").length){

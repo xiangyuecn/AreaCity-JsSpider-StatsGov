@@ -29,7 +29,7 @@ select * from [ok_data - 副本] where not exists(select * from area_city where 
 select * from area_city where not exists(select * from [ok_data - 副本] where id=area_city.id) order by id
 	
 */
-var Max_Deep=3 //0省 1市 2区 3镇
+var Max_Level=4 //1省 2市 3区 4镇
 
 if(!$(".DataTxt").length){
 	$("body").append('<div style="position: fixed;bottom: 80px;left: 100px;padding: 20px;background: #0ca;z-index:9999999">输入data-pinyin.txt<textarea class="DataTxt"></textarea></div>');
@@ -50,9 +50,9 @@ CITY_LIST_PINYIN=null;
 function add(txt){
 	var val=txt.split("|");
 	pinyinList.push({
-		"id": val[0],
-		"pid": val[1],
-		"deep": val[2],
+		"id": +val[0],
+		"pid": +val[1],
+		"deep": +val[2],
 		"name": val[3],
 		"P2":  val[4],
 		
@@ -88,7 +88,7 @@ var childsMP={};
 var newList=[];
 for(var i=0;i<pinyinList.length;i++){
 	var o=pinyinList[i];
-	if(o.deep>Max_Deep){
+	if(o.deep+1>Max_Level){
 		continue;
 	};
 	newList.push(o);
@@ -132,8 +132,24 @@ for(var i=0;i<pinyinList.length;i++){
 				};
 			};
 		}else if(name.length>2
-			&& !/自治.|乡镇$/.test(name)){//直接排除会有同名的
-			name=name.replace(/(..)(市|县|镇|乡|管委会|社区服务中心|管理办公室|街道办事处|街道办|街道|办事处)$/ig,"$1");
+			&& !/自治.|直属乡镇$/.test(name)){//保留XX自治X，和特例
+			name=name.replace(/(..)(市|县|镇|乡|街道|街道办事处|地区办事处|社区服务中心)$/ig,"$1");
+			/*
+			后缀主要集中在 镇、乡、办事处、街道
+select k,COUNT(*) as c from (select SUBSTRING(ext_name, len(ext_name), 1) as k from data2019) as t1 group by k order by c desc
+
+declare @t varchar(max)='处'
+select k,COUNT(*) as c from (select SUBSTRING(ext_name, len(ext_name)-LEN(@t), LEN(@t)+1) as k from data2019 where ext_name like '%'+@t) as t1 group by k order by c desc
+镇	21210
+乡	10198
+处	5241
+道	3258
+区	1999
+县	1453
+场	1361
+市	669
+会	213
+			*/
 		};
 	};
 	
@@ -211,6 +227,6 @@ var url=URL.createObjectURL(
 var downA=document.createElement("A");
 downA.innerHTML="下载查询好城市的文件";
 downA.href=url;
-downA.download="ok_data_level"+(Max_Deep+1)+".csv";
+downA.download="ok_data_level"+Max_Level+".csv";
 document.body.appendChild(downA);
 downA.click();

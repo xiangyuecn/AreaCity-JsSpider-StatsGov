@@ -1,10 +1,13 @@
 /*
-拼音翻译
+拼音先进行本地翻译一遍，准确度不高
 
-先加载数据
-	先直接运行本代码，根据提示输入data.txt到文本框 (内容太大，控制台吃不消，文本框快很多)
 
 代码运行先前启动拼音服务.pinyin-python-server
+
+加载数据
+	先直接运行本代码，根据提示输入data.txt到文本框 (内容太大，控制台吃不消，文本框快很多)
+
+然后再次运行本代码
 */
 var PinyinStop=false;
 
@@ -21,10 +24,6 @@ if(!$(".DataTxt").length){
 	$("body").append('<div style="position: fixed;bottom: 80px;left: 100px;padding: 20px;background: #0ca;z-index:9999999">输入data.txt<textarea class="DataTxt"></textarea></div>');
 };
 
-var FixTrim=function(name){
-	return name.replace(/^\s+|\s+$/g,"");
-};
-var CITY_LIST2;
 var QueryPinYin=function(end){
 	var fixCode=function(o){
 		if(o.deep==0){
@@ -41,37 +40,25 @@ var QueryPinYin=function(end){
 	};
 	var fix=function(o,p){
 		var name=o.name;
-		if(o.deep==0){
-			name=name.replace(/(市|省|(维吾尔|壮族|回族)?自治区)$/ig,"");
-		}else if(o.deep==1){
-			if(name=="市辖区"){
-				name=p.o2.name;
-			}else if(/行政区划$/ig.test(name)){
-				name="直辖市";
-			}else if(name.length>2){
-				name=name.replace(/市$/ig,"");
-			};
-		}else{
-			if(name.length>2
-				&& !/^(?:市辖区|(?:临夏|和田|伊宁)[市县])$/.test(name)
-				&& !/(自治.|地区|矿区|新区|开发区|管理区|示范区|名胜区)$|^街道办事处$/.test(name)){//直接排除会有同名的
-				name=name.replace(/(市|区|县|镇|管委会|街道办事处)$/ig,"");
-			};
-		};
 		var o2={
 			name:name
-			,ext_name:o.name
 			,id:+o.code||0
 			,ext_id:+o.orgCode
 			,pid:p&&+p.code||0
 			,deep:o.deep
 		};
-		o.o2=o2;
+		
+		if(o.deep==1){
+			if(name=="市辖区"){
+				o2.name=p.name;
+				o2.ext_name=name;
+			};
+		};
 		return o2;
 	};
 	var datas=[];
-	if(CITY_LIST2){
-		datas=CITY_LIST2;
+	if(window.CITY_LIST_Locals){
+		datas=CITY_LIST_Locals;
 	}else{
 		for(var i=0;i<CITY_LIST.length;i++){
 			var shen=CITY_LIST[i];
@@ -99,7 +86,8 @@ var QueryPinYin=function(end){
 				};
 			};
 		};
-		CITY_LIST2=datas;
+		CITY_LIST=null;
+		window.CITY_LIST_Locals=datas;
 	}
 	//console.log(JSON.stringify(datas,null,"\t"))
 	//return;
@@ -156,17 +144,8 @@ var QueryPinYin=function(end){
 						return;
 					};
 					
-					var txt=[];
-					for(var i=0;i<data.v.length;i++){
-						var u=data.v[i];
-						if(u[0]!="F"){
-							txt.push(u);
-						};
-					};
-					txt=txt.join(" ");
-					
-					id.P=txt;
-					LogX("--"+idx_+"-QueryPinYin "+name+":"+txt+" --");
+					id.P=data.v.join("||");
+					LogX("--"+idx_+"-QueryPinYin "+name+":"+id.P+" --");
 					run();
 				}
 			});
@@ -184,20 +163,20 @@ var QueryPinYin=function(end){
 
 var ViewDown=function(){
 	console.log("完成："+(Date.now()-RunPinYin.T1)/1000+"秒");
-	window.CITY_LIST_PINYIN=CITY_LIST2;
+	window.CITY_LIST_PINYIN_Local=CITY_LIST_Locals;
 	var url=URL.createObjectURL(
 		new Blob([
 			new Uint8Array([0xEF,0xBB,0xBF])
-			,"var CITY_LIST_PINYIN="
-			,JSON.stringify(CITY_LIST2,null,"\t")
+			,"var CITY_LIST_PINYIN_Local="
+			,JSON.stringify(CITY_LIST_Locals,null,"\t")
 		]
 		,{"type":"text/plain"})
 	);
 	var downA=document.createElement("A");
 	downA.innerHTML="下载查询好城市的文件";
 	downA.href=url;
-	downA.download="data-pinyin.txt";
-	document.body.appendChild(downA);
+	downA.download="data-pinyin-local.txt";
+	logX.append(downA);
 	downA.click();
 };
 

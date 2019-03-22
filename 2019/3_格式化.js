@@ -29,6 +29,8 @@ select * from [ok_data - 副本] where not exists(select * from area_city where 
 select * from area_city where not exists(select * from [ok_data - 副本] where id=area_city.id) order by id
 	
 */
+var Max_Deep=3 //0省 1市 2区 3镇
+
 if(!$(".DataTxt").length){
 	$("body").append('<div style="position: fixed;bottom: 80px;left: 100px;padding: 20px;background: #0ca;z-index:9999999">输入data-pinyin.txt<textarea class="DataTxt"></textarea></div>');
 };
@@ -83,8 +85,13 @@ add("91010101|910101|3|海外|hai wai");
 
 //处理数据
 var childsMP={};
+var newList=[];
 for(var i=0;i<pinyinList.length;i++){
 	var o=pinyinList[i];
+	if(o.deep>Max_Deep){
+		continue;
+	};
+	newList.push(o);
 	
 	var p=childsMP[o.pid]||[];
 	childsMP[o.pid]=p;
@@ -99,12 +106,14 @@ for(var i=0;i<pinyinList.length;i++){
 		throw new Error("ext_id=0",o);
 	};
 };
+pinyinList=newList;
+
 for(var i=0;i<pinyinList.length;i++){
 	var o=pinyinList[i];
 	
 	
 	var name=o.name.replace(/（上级为乡镇）$/ig,"");
-	name=name.replace(/(..)(?:(?:汉|满|回|藏|苗|彝|壮|侗|瑶|白|傣|黎|佤|畲|水|土|羌|怒|京)族|(蒙古|维吾尔|布依|土家|哈尼|哈萨克|傈僳|高山|拉祜|东乡|纳西|景颇|柯尔克孜|达斡尔|仫佬|布朗|撒拉|毛南|仡佬|锡伯|阿昌|普米|朝鲜|塔吉克|乌孜别克|俄罗斯|鄂温克|德昂|保安|裕固|塔塔尔|独龙|鄂伦春|赫哲|门巴|珞巴|基诺)族?)+(自治[区州县旗]|乡)$/g,"$1");
+	name=name.replace(/(..)(?:(?:各|汉|满|回|藏|苗|彝|壮|侗|瑶|白|傣|黎|佤|畲|水|土|羌|怒|京)族|(蒙古|维吾尔|布依|土家|哈尼|哈萨克|傈僳|高山|拉祜|东乡|纳西|景颇|柯尔克孜|达斡尔|仫佬|布朗|撒拉|毛南|仡佬|锡伯|阿昌|普米|朝鲜|塔吉克|乌孜别克|俄罗斯|鄂温克|德昂|保安|裕固|塔塔尔|独龙|鄂伦春|赫哲|门巴|珞巴|基诺)族?)+(自治[区州县旗]|(?:民族)?[乡镇])$/g,"$1");
 	
 	if(o.deep==0){
 		name=name.replace(/(省|市|自治区)$/ig,"");
@@ -116,9 +125,15 @@ for(var i=0;i<pinyinList.length;i++){
 			name=name.replace(/(市|地区)$/ig,"");
 		};
 	}else{
-		if(name.length>2
-			&& !/^市辖区$|(自治.|地区|矿区|新区|开发区|管理区|示范区|名胜区)$/.test(name)){//直接排除会有同名的
-			name=name.replace(/(..)(市|区|县|镇|乡|管委会|社区服务中心|管理办公室|街道办事处|街道办|街道|办事处|管理区)$/ig,"$1");
+		if(/区$/.test(name)){//区结尾的太复杂单独处理
+			if(o.deep==2 && (name.length==3||name.length==4)){//只处理区的	只处理34个字的			
+				if(!/^市辖区$|(矿区|新区)$/.test(name)){
+					name=name.replace(/区$/ig,"");
+				};
+			};
+		}else if(name.length>2
+			&& !/自治.|乡镇$/.test(name)){//直接排除会有同名的
+			name=name.replace(/(..)(市|县|镇|乡|管委会|社区服务中心|管理办公室|街道办事处|街道办|街道|办事处)$/ig,"$1");
 		};
 	};
 	

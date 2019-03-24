@@ -4,6 +4,8 @@
 
 依赖[HanLP](https://github.com/hankcs/HanLP)语言处理库。
 
+我提供了一个[临时测试服务器](http://pinyin-test.haozgz.com/pinyin?txt=%E9%87%8D%E5%BA%86%E7%9D%80%E9%99%86OK%EF%BC%8C%E9%87%8D%E5%8A%9B%E7%9C%8B%E7%9D%80%E6%B2%A1%E6%9C%89%E5%BC%82%E5%B8%B8)，国内的但域名备案掉了走的海外线路，仅供测试，随时可能关闭。
+
 
 
 
@@ -36,6 +38,8 @@ conda版本随意，https://conda.io/miniconda.html
 
 ## 【2】安装pyhanlp
 参考：https://github.com/hankcs/pyhanlp/wiki/Windows
+
+这个库是java库，需要有java环境，如果没有装过，需要先安装java：[下载JDK](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
 
 测试发现python3.7.1 windows下ssl有问题无法安装，conda切换成python 3.6.4测试安装正常
 

@@ -38,6 +38,7 @@ if sys.version_info.major < 3:
 from pyhanlp import *
 
 import traceback
+import time
 import json
 import urllib
 from http.server import HTTPServer, BaseHTTPRequestHandler
@@ -45,6 +46,7 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 
 class HttpHandler(BaseHTTPRequestHandler):
     def _response(self, path, args):
+        startTime=time.time()
         code=200
         rtv={'c':0,'m':'','v':''}
         
@@ -88,7 +90,9 @@ class HttpHandler(BaseHTTPRequestHandler):
         except Exception as e:
             rtv["c"]=1
             rtv["m"]='服务器错误：'+str(e)+"\n"+traceback.format_exc()
-            
+        
+        rtv["T"]=int(startTime*1000)
+        rtv["D"]=int((time.time()-startTime)*1000)
         try:
             rtv=json.dumps(rtv,ensure_ascii=False)
         except Exception as e:

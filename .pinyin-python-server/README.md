@@ -45,6 +45,8 @@ conda版本随意，https://conda.io/miniconda.html
 
 安装好后运行一下hanlp命令，会提示下载，看第3步
 
+如果出现`XXX.dll`什么的问题，可能是C++运行库缺失，安装`微软常用运行库合集`应该能够解决，我在`Windows Server 2012`上使用时出现此问题，装上就OJBK了。
+
 
 ## 【3】下载字典和jar
 参考半自动配置： https://github.com/hankcs/pyhanlp/wiki/%E6%89%8B%E5%8A%A8%E9%85%8D%E7%BD%AE

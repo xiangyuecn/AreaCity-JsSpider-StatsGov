@@ -96,7 +96,7 @@ var QueryPinYin=function(end){
 					for(var i=0;i<arr.length;i++){
 						var mps=refs[i];
 						var txt=FixTrim(arr[i].replace(/<([^">]+(".*?")?)+>/g,"").replace(/\s+/g," "));
-						adds[name]=txt;
+						adds[mps[0].name]=txt;
 						for(var j=0;j<mps.length;j++){
 							mps[j].P2=txt;
 							count++;

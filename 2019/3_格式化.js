@@ -83,8 +83,14 @@ add("91010101|910101|3|海外|hai wai");
 
 
 
-//处理数据
-var childsMP={};
+//准备数据
+var idMP={};
+for(var i=0;i<pinyinList.length;i++){
+	var o=pinyinList[i];
+	o.child=[];
+	idMP[o.id]=o;
+};
+
 var newList=[];
 for(var i=0;i<pinyinList.length;i++){
 	var o=pinyinList[i];
@@ -93,9 +99,9 @@ for(var i=0;i<pinyinList.length;i++){
 	};
 	newList.push(o);
 	
-	var p=childsMP[o.pid]||[];
-	childsMP[o.pid]=p;
-	p.push(o);
+	if(o.pid){
+		idMP[o.pid].child.push(o);
+	};
 	
 	o.ext_name=o.isExt?"":(o.ext_name||o.name);
 	o.name2=o.name;
@@ -108,6 +114,21 @@ for(var i=0;i<pinyinList.length;i++){
 };
 pinyinList=newList;
 
+//人工fix数据
+for(var i=0;i<pinyinList.length;i++){
+	var o=pinyinList[i];
+	
+	//fix issues#2
+	if((o.id+"").indexOf("130225")+1 && /乐[亭安]/.test(o.name)){
+		o.P&&(o.P=o.P.replace(/le([\s\|]+(?:ting|an))/g,"lao$1"));
+		o.P2&&(o.P2=o.P2.replace(/le([\s\|]+(?:ting|an))/g,"lao$1"));
+		
+		console.log("人工fix数据", "乐亭", o.name, o);
+	};
+};
+
+
+//清理后缀
 for(var i=0;i<pinyinList.length;i++){
 	var o=pinyinList[i];
 	
@@ -153,16 +174,29 @@ select k,COUNT(*) as c from (select SUBSTRING(ext_name, len(ext_name)-LEN(@t), L
 		};
 	};
 	
+	
+	o.minName=name;
+	var pobj=idMP[o.pid];
 	//简化后是否和兄弟重名
-	var pcs=childsMP[o.pid];
+	var pcs=o.pid?pobj.child:[];
 	for(var i2=0;i2<pcs.length;i2++){
 		var o2=pcs[i2];
-		if(o2!=o && o2.name==name){
+		if(o2!=o && (o2.name==name||o2.minName==name)){
 			console.log("重名",name,o.name2,o2.name2,o,o2);
 			
 			//两个都恢复原名，本身这种就没有多少，如果保留一个短的会有歧义
 			name=o.name2;
 			o2.name=o2.name2;
+		};
+	};
+	//简化后是否和【直接】上级重名
+	if(pobj){
+		//上下级是按顺序的，因为拼音前就是按顺序来push的
+		if(pobj.name==name||pobj.minName==name){
+			console.log("和上级重名",name,o.name2,pobj.name2,o,pobj);
+			
+			//恢复原名，这种和上级重名的蛮多，如：市下面的同名区、县。另外带来了一个惊喜，北京 下一级 北京市，感觉没毛病。
+			name=o.name2;
 		};
 	};
 	

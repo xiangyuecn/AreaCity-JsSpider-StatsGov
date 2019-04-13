@@ -9,8 +9,13 @@
 
 
 导入SQL Server数据库：
-	文件打开剪切转换成UCS-2 Lettle Endian粘贴保存
-	导入文件Unicode格式，文字字段数字的设置成4位整数，文本设为Unicode文本
+	导入平面文件源
+		utf-8格式
+		文本限定符"
+		第一行为列名
+		文字字段数字的设置成4/8字节有符号整数
+		文本设为DT_TEXT
+		表结构映射中把text类型改成ntext类型（如果文件格式是UCS-2 Lettle Endian会轻松很多）
 
 ----【检查数据源】----
 --【检查id重复项，手动修正id】
@@ -105,11 +110,13 @@ for(var i=0;i<pinyinList.length;i++){
 	
 	o.ext_name=o.isExt?"":(o.ext_name||o.name);
 	o.name2=o.name;
-	if(o.deep==0){
-		o.ext_id=o.id;
-	};
-	if(o.ext_id==0&&!o.isExt){
-		throw new Error("ext_id=0",o);
+	if(!o.isExt){
+		if(o.deep==0){
+			o.ext_id=o.id;
+		};
+		if(o.ext_id==0){
+			throw new Error("ext_id=0",o);
+		};
 	};
 };
 pinyinList=newList;

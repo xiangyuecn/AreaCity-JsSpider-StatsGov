@@ -1,20 +1,26 @@
 /*
-采集省市区（不含扩展区域）三级坐标和行政区域边界，此数据的id为ok_data的id
+采集高德省市区（不含扩展区域）三级坐标和行政区域边界，此数据的id为ok_data的id
 
 关于未获取到坐标或边界的城市，本方案采取不处理策略，空着就空着，覆盖主要城市和主要人群，未覆盖区域实际使用过程中应该进行降级等处理。
 
 用途示例：【尽最大可能】的根据用户坐标来确定用户所在城市，因为存在没有边界信息的区域，未匹配到的应使用ip等城市识别方法。
 
 
-在百度地图测试页面，选到iframe上下文中执行
-http://lbsyun.baidu.com/jsdemo.htm#c1_10
+注：本来想采百度的，但经过使用发现百度数据有严重问题，参考 肃宁县、路南区 边界，百度数据大量线段交叉的无效polygon，没有人工无法修正；并且高德对镂空性质的地块处理比百度强，参考天津市对唐山大块飞地的处理。所以放弃使用百度地图数据。
+
+
+在高德地图测试页面，选到iframe上下文中执行
+https://lbs.amap.com/api/javascript-api/example/district-search/draw-district-boundaries
 
 加载数据
 	先直接运行本代码，根据提示输入data-pinyin.txt到文本框 (内容太大，控制台吃不消，文本框快很多)
-
+	或者使用本地网址更快：
+	var s=document.createElement("script");s.src="https://地址/data-pinyin.txt";document.body.appendChild(s)
+	
 然后再次运行本代码，如果中途因错误停止，根据提示重复运行
 */
-BMap.Point;
+AMap.LngLat;
+console=top.console;
 
 var GeoStop=false;
 
@@ -57,51 +63,39 @@ if(!window.CITY_LIST_PINYIN){
 var pinyinList=CITY_LIST_PINYIN;
 
 
-//人工fix数据，这些id的按这个字符串直接查找
-var fixNames={
-	4190:"" //河南省 省直辖县级行政区划
-	,4290:"" //湖北省 省直辖县级行政区划
-	,4690:"" //海南省 省直辖县级行政区划
-	,5002:"" //重庆市 县
-	,6590:"" //新疆维吾尔自治区 自治区直辖县级行政区划
-	
-	,3712:"莱芜市" //山东省 莱芜市
-	,5406:"那曲" //西藏自治区 那曲市
-	,540622:"西藏 比如县" //那曲 比如县
-	,450381:"荔浦市" //广西壮族自治区 桂林市 荔浦市
-	,370215:"即墨区" //山东省 青岛市 即墨区
-	,140213:"平城区" //山西省 大同市 平城区
-	,350112:"长乐区" //福建省 福州市 长乐区
-};
-//注册人工验证过fix过后也没有边界的城市，不然会有错误警告
-var allowEmpty=function(itm,paths){
-	var tag=itm.id+":"+itm.paths.join(" ")+"：";
+//人工fix数据
+var fixNames=function(itm){
+	var tag=itm.id+":"+itm.fullPath.join(" ")+"：";
 	
 	if(/(新区|新城|新城区|实验区|保税区|开发区|管理区|食品区|园区|产业园|名胜区|示范区|镇|管委会|街道办事处)$/.test(itm.name)){
 		console.warn(tag+"为空，正则匹配接受");
-		return true;
+		return 0;
 	};
 	
-	if((
-{
-	"232761": "黑龙江省 大兴安岭地区 加格达奇区",
-	"232762": "黑龙江省 大兴安岭地区 松岭区",
-	"232763": "黑龙江省 大兴安岭地区 新林区",
-	"232764": "黑龙江省 大兴安岭地区 呼中区",
-	"330112": "浙江省 杭州市 临安区",
-	"371202": "莱芜市 莱城区",
-	"411471": "河南省 商丘市 豫东综合物流产业聚集区",
-	"460323": "海南省 三沙市 中沙群岛的岛礁及其海域",
-	"620201": "甘肃省 嘉峪关市 市辖区",
-	"632857": "青海省 海西蒙古族藏族自治州 大柴旦行政委员会",
-	"652702": "新疆维吾尔自治区 博尔塔拉蒙古自治州 阿拉山口市",
-	"441900402": "广东省 东莞市 东莞港",
-	"441900403": "广东省 东莞市 东莞生态园",
-	"460400500": "海南省 儋州市 华南热作学院"
-}
-	)[itm.id]){
-		console.warn(tag+"为空，字典匹配接受");
-		return true;
+var arr={
+	"3712": 0 //"山东省 莱芜市",
+	,"371202": {name:"莱芜",code:"370116"} //"山东省 莱芜市 莱城区",
+	,"371203": {name:"钢城",code:"370117"} //"山东省 莱芜市 钢城区",
+	
+	,"4190": 0 //"河南省 省直辖县级行政区划",
+	,"4290": 0 //"湖北省 省直辖县级行政区划",
+	,"4690": 0 //"海南省 省直辖县级行政区划",
+	,"5002": 0 //"重庆市 县",
+	,"6590": 0 //"新疆维吾尔自治区 自治区直辖县级行政区划",
+	,"232762": 0 //"黑龙江省 大兴安岭地区 松岭区",
+	,"232763": 0 //"黑龙江省 大兴安岭地区 新林区",
+	,"232764": 0 //"黑龙江省 大兴安岭地区 呼中区",
+	,"411471": 0 //"河南省 商丘市 豫东综合物流产业聚集区",
+	,"620201": 0 //"甘肃省 嘉峪关市 市辖区",
+	,"632857": 0 //"青海省 海西蒙古族藏族自治州 大柴旦行政委员会"
+};
+	var find=arr[itm.id];
+	if(find!=null){
+		if(find==0){
+			console.warn(tag+"为空，字典匹配接受");
+		};
+		
+		return find;
 	};
 };
 var needReg={};
@@ -129,26 +123,13 @@ for(var i=0;i<pinyinList.length;i++){
 		*/
 	};
 	
-	var paths=[];
+	var fullPath=[];
 	var p=o;
 	while(p){
-		var path=fixNames[p.id];
-		if(path==null){
-			path=p.name;
-		}else{
-			paths.push(path);
-			break;
-		};
-		
-		if(path){
-			paths.push(path);
-		}else if(p==o){
-			paths=[];
-			break;
-		};
+		fullPath.push(p.name);
 		p=idMP[p.pid];
 	};
-	o.paths=paths.reverse();
+	o.fullPath=fullPath.reverse();
 };
 pinyinList=newList;
 
@@ -159,15 +140,20 @@ function load(itm, next, _try){
 		return;
 	};
 	
-	var keys=Object.keys(BMap._rd);
 	var geo="EMPTY";
 	var polygon="EMPTY";
-	var paths=itm.paths.join(" ");
+	var fullPath=itm.fullPath.join(" ");
+	var paths=(itm.id+"0000").substr(0,6);
 	_try=_try||0;
+	_tryfixNameCode="";
 	if(_try==1){
-		paths=itm.paths[0]+" "+itm.paths[2]; //去除市级进行操作
+		paths=itm.name;
 	}else if(_try==2){
-		paths=itm.paths[1]+" "+itm.paths[2]; //去除省级进行操作
+		paths=fixNames(itm); //使用fix的名称进行查询
+		if(paths){
+			_tryfixNameCode=paths.code;
+			paths=paths.name;
+		};
 	};
 	
 	var end=function(){
@@ -175,50 +161,82 @@ function load(itm, next, _try){
 		itm.polygon=polygon;
 		next();
 	};
+	var addNeed=function(isNameNotMatch,isEmptyPaths){
+		needReg[itm.id]=fullPath;
+		console.error(itm.id+":"+fullPath
+			+(isNameNotMatch?
+				"：结果名称不匹配"
+				:((isEmptyPaths?"：路径为空":"：结果为空")
+					+"，且未在empty中注册")
+			));
+		
+		geo="";
+		polygon="";
+	};
 	if(!paths){
+		if(paths!==0){
+			addNeed(0,1);
+		};
 		end();
 		return;
 	};
 	
-	LogX(loadIdx+"/"+pinyinList.length+paths);
-	var hook_cname="";
-	new BMap.Boundary().get(paths,function(rs){
-		var isMatch=!!rs.boundaries.length;
+	LogX(loadIdx+"/"+pinyinList.length+fullPath);
+	new AMap.DistrictSearch({
+		level:itm.deep==0?"province":itm.deep==1?"city":"district"
+		,extensions:"all"
+		,subdistrict:0
+	}).search(paths,function(status,result){
+		var match=null;
 		var isNameNotMatch=false;
-		if(isMatch && hook_cname!=itm.name){
-			//对名称进行匹配
-			if(hook_cname.indexOf(itm.name.substr(0,itm.name.length==3?2:3))!=0){
+		
+		if(status=="error"){
+			geo="";
+			polygon="";
+			console.error(itm.id+":"+fullPath+"：出错",result);
+			end();
+			return;
+		}else if(status=="no_data"){
+			//NOOP
+		}else{
+			var findList=result.districtList;
+			for(var fi=0;fi<findList.length;fi++){
+				var find=findList[fi];
+				
+				//对id,名称进行匹配验证
+				var testName=_try?paths:itm.name;
+				var testCode=itm.deep*2;
+				if(find.name.indexOf(testName.substr(0,testName.length==3?2:3))==0
+					&& find.adcode.substr(0,testCode)==(_tryfixNameCode||itm.id+"").substr(0,testCode)
+				){
+					if(match!=null){
+						match=0;//重复符合条件项 就是没有匹配项
+					}else{
+						match=find;
+					};
+				};
+			};
+			
+			if(!match){
 				isNameNotMatch=true;
-				isMatch=false;
 			};
 		};
 		
-		if(!isMatch){
-			if(_try<2&&_try<itm.paths.length){
+		if(!match){
+			if(_try<2){
 				load(itm, next, _try+1);
 				return;
 			};
-			
-			geo="EMPTY";//已获取到的geo不可靠
-			
-			if(!allowEmpty(itm,paths)){
-				needReg[itm.id]=itm.paths.join(" ");
-				console.error(itm.id+":"+itm.paths.join(" ")
-					+(isNameNotMatch?
-						"：结果名称不匹配"
-						:"：为空，且未在empty中注册"));
-				
-				geo="";
-				polygon="";
-			};
 		}else{
+			geo=match.center.lng+" "+match.center.lat;
+			
 			polygon=[];
-			for(var v in rs.boundaries){
+			for(var v in match.boundaries){
 				var arr=[];
-				var list=rs.boundaries[v].split(";");
+				var list=match.boundaries[v];
 				for(var i = 0; i < list.length; i++){
-					var point=list[i].split(",");
-					arr.push(point[0].trim()+" "+point[1].trim());
+					var point=list[i];
+					arr.push(point.lng+" "+point.lat);
 				};
 				polygon.push(arr.join(","));
 			};
@@ -227,29 +245,6 @@ function load(itm, next, _try){
 		
 		end();
 	});
-	
-	//注入 获取中心坐标
-	var keys2=Object.keys(BMap._rd);
-	for(var i=0;i<keys2.length;i++){
-		var key=keys2[i];
-		if(keys.indexOf(key)==-1){
-			var _fn=BMap._rd[key];
-			BMap._rd[key]=function(data){
-				var o=data.content||{};
-				hook_cname=o.cname||"";
-				if(o.geo){
-					//var coord=o.ext.detail_info.point;
-					//var xp=BMap.MercatorProjection.Ab(new BMap.Point(coord.x,coord.y));
-					var xp=C0.vb(o.geo,true).point;
-					
-					geo=xp.lng+" "+xp.lat;
-				};
-				
-				_fn(data);
-			};
-			break;
-		};
-	};
 };
 
 var threadCount=0;
@@ -302,19 +297,44 @@ var startTime=Date.now();
 
 
 function endload(){
-	var list=[];
+	var list=[],lens=[],points=[],blocks=[],blockLens=[];
 	for(var i=0;i<pinyinList.length;i++){
 		var o=pinyinList[i];
 		
 		list.push({
 			id:o.id
 			,pid:o.pid
+			,deep:o.deep
 			,name:o.name
 			,geo:o.geo
 			,polygon:o.polygon
 		});
+		
+		
+		var s=(o.polygon||"");
+		var blockLen=s.split(";").length;
+		var so={len:s.length
+			,block:blockLen
+			,point:blockLen-1+s.split(" ").length
+			,id:o.id
+			,path:o.fullPath.join(" ")
+		};
+		lens.push(so);
+		points.push(so);
+		blocks.push(so);
+		if(blockLen>1)blockLens.push(so);
 	};
 	window.DATA_GEO=list;
+	
+	lens.sort(function(a,b){return b.len-a.len});
+	points.sort(function(a,b){return b.point-a.point});
+	blocks.sort(function(a,b){return b.block-a.block});
+	blockLens.sort(function(a,b){return b.len-a.len});
+	console.log("polygon长度排名",lens);
+	console.log("坐标数排名",points);
+	console.log("地块数排名",blocks);
+	console.log("多地块polygon长度排名",blockLens);
+	
 
 	var url=URL.createObjectURL(
 		new Blob([

@@ -1,4 +1,6 @@
 /*
+已废弃，采用高德地图数据
+
 导出省市区（不含扩展区域）三级坐标和行政区域边界为csv格式
 
 
@@ -20,9 +22,7 @@ http://lbsyun.baidu.com/jsdemo.htm#c1_10
 加载数据
 	在上一步页面基础上运行，或者
 	先直接运行本代码，根据提示输入data-geo.txt到文本框 (内容太大，控制台吃不消，文本框快很多)
-	或者使用本地网址更快：
-	var s=document.createElement("script");s.src="https://地址/data-geo.txt";document.body.appendChild(s)
-	
+
 然后再次运行本代码，如果中途因错误停止，根据提示重复运行
 
 

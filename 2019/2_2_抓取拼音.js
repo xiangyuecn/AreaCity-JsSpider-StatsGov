@@ -9,6 +9,8 @@ http://www.qqxiuzi.cn/zh/pinyin/
 
 加载数据
 	先直接运行本代码，根据提示输入data-pinyin-local.txt到文本框 (内容太大，控制台吃不消，文本框快很多)
+	或者使用本地网址更快：
+	var s=document.createElement("script");s.src="https://地址/data-pinyin-local.txt";document.body.appendChild(s)
 
 然后再次运行本代码
 */
@@ -22,7 +24,7 @@ var FixTrim=function(name){
 	return name.replace(/^\s+|\s+$/g,"");
 };
 var QueryPinYin=function(end){
-	var datas=CITY_LIST2;
+	var datas=CITY_LIST_PINYIN_Local;
 	
 	//一次性多查，一个个查被封的快又慢
 	var keyMp={};
@@ -120,12 +122,12 @@ var QueryPinyinErrs=0;
 
 var ViewDown=function(){
 	console.log("完成："+(Date.now()-RunPinYin.T1)/1000+"秒");
-	window.CITY_LIST_PINYIN=CITY_LIST2;
+	window.CITY_LIST_PINYIN=CITY_LIST_PINYIN_Local;
 	var url=URL.createObjectURL(
 		new Blob([
 			new Uint8Array([0xEF,0xBB,0xBF])
 			,"var CITY_LIST_PINYIN="
-			,JSON.stringify(CITY_LIST2,null,"\t")
+			,JSON.stringify(CITY_LIST_PINYIN_Local,null,"\t")
 		]
 		,{"type":"text/plain"})
 	);
@@ -145,13 +147,13 @@ function saveCache(add){
 
 var proxyID=+localStorage["proxyID"]||0;
 var RunPinYin=function(){
-	if(!window.CITY_LIST2){
+	if(!window.CITY_LIST_PINYIN_Local){
 		var val=$(".DataTxt").val();
 		if(!val){
 			console.error("需要输入data-pinyin-local.txt");
 			return;
 		}else{
-			window.CITY_LIST2=eval(val+";CITY_LIST_PINYIN_Local");
+			window.CITY_LIST_PINYIN_Local=eval(val+";CITY_LIST_PINYIN_Local");
 		};
 	};
 	

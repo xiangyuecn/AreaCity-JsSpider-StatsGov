@@ -4,6 +4,8 @@
 先加载数据
 	拼音页面如果没有关闭，直接运行本代码，或者：
 	先直接运行本代码，根据提示输入data-pinyin.txt到文本框 (内容太大，控制台吃不消，文本框快很多)
+	或者使用本地网址更快：
+	var s=document.createElement("script");s.src="https://地址/data-pinyin.txt";document.body.appendChild(s)
 	
 然后再次运行本代码
 
@@ -140,7 +142,7 @@ for(var i=0;i<pinyinList.length;i++){
 	var o=pinyinList[i];
 	
 	
-	var name=o.name.replace(/（上级为乡镇）$/ig,"");
+	var name=o.name;
 	name=name.replace(/(..)(?:(?:各|汉|满|回|藏|苗|彝|壮|侗|瑶|白|傣|黎|佤|畲|水|土|羌|怒|京)族|(蒙古|维吾尔|布依|土家|哈尼|哈萨克|傈僳|高山|拉祜|东乡|纳西|景颇|柯尔克孜|达斡尔|仫佬|布朗|撒拉|毛南|仡佬|锡伯|阿昌|普米|朝鲜|塔吉克|乌孜别克|俄罗斯|鄂温克|德昂|保安|裕固|塔塔尔|独龙|鄂伦春|赫哲|门巴|珞巴|基诺)族?)+(自治[区州县旗]|(?:民族)?[乡镇])$/g,"$1");
 	
 	if(o.deep==0){
@@ -189,7 +191,7 @@ select k,COUNT(*) as c from (select SUBSTRING(ext_name, len(ext_name)-LEN(@t), L
 	for(var i2=0;i2<pcs.length;i2++){
 		var o2=pcs[i2];
 		if(o2!=o && (o2.name==name||o2.minName==name)){
-			console.log("重名",name,o.name2,o2.name2,o,o2);
+			console.warn("重名",name,o.name2,o2.name2,o,o2);
 			
 			//两个都恢复原名，本身这种就没有多少，如果保留一个短的会有歧义
 			name=o.name2;
@@ -199,10 +201,10 @@ select k,COUNT(*) as c from (select SUBSTRING(ext_name, len(ext_name)-LEN(@t), L
 	//简化后是否和【直接】上级重名
 	if(pobj){
 		//上下级是按顺序的，因为拼音前就是按顺序来push的
-		if(pobj.name==name||pobj.minName==name){
-			console.log("和上级重名",name,o.name2,pobj.name2,o,pobj);
+		if(pobj.child.length>1 && (pobj.name==name||pobj.minName==name)){
+			console.warn("和上级重名",name,o.name2,pobj.name2,o,pobj);
 			
-			//恢复原名，这种和上级重名的蛮多，如：市下面的同名区、县。另外带来了一个惊喜，北京 下一级 北京市，感觉没毛病。
+			//恢复原名，这种和上级重名的蛮多，如：市下面的同名区、县
 			name=o.name2;
 		};
 	};

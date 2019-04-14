@@ -116,7 +116,7 @@ function load_x_childs(itm, next){
 		var reg=/class='(citytr|countytr|towntr|villagetr)'.+?<\/tr>/ig;
 		var match;
 		var mode="";
-		var isFirst=true;
+		var swapItem=null;
 		while(match=reg.exec(text)){
 			var err=function(){
 				console.error(":",city,match[0]);
@@ -130,7 +130,8 @@ function load_x_childs(itm, next){
 				return;
 			};
 			
-			var reg2=/class='(citytr|countytr|towntr|villagetr)'.+?(?:<td><a href='(.+?)'>(.+?)<.+?'>(.+?)<|<td>(.+?)<.+?<td>(.+?)<)/ig;
+			//villagetr直接非法
+			var reg2=/class='(citytr|countytr|towntr)'.+?<td>(?:<a href='(.+?)'>)?(.+?)<.+?>([^<>]+)(?:<\/a>)?<\/td><\/tr>/ig;
 			var match2;
 			if(match2=reg2.exec(match[0])){
 				var url=match2[2]||"";
@@ -140,21 +141,21 @@ function load_x_childs(itm, next){
 				var code=match2[3]||match2[5];
 				var name=match2[4]||match2[6];
 				
-				//如果是villagetr，最后一级，不应该出现的。为了至少存在一个镇，直接取第一个的ID来做一个
-				if(match2[1]=="villagetr"){
-					if(isFirst){
-						console.log("自动添加最后一级替换街道列表："+city.name,city);
-						city.child.push(new cityClass(city.name+"（上级为乡镇）",city.url,code));
+				//如果是镇，上级为市，越过了区，追加一个区，code为上级code+00，保持兼容，如：东莞
+				if(itm.level==2 && match2[1]=="towntr"){
+					if(!swapItem){
+						console.log("没有区级，追加一个同名的："+city.name,city);
+						var o=new cityClass(city.name,city.url,city.code);
+						o.load=Load_Wait_Child;
+						city.child.push(o);
+						swapItem=o;
 					};
-					isFirst=false;
-					//需要后续的状态检测
-					continue;
 				};
 				
 				if(!url&&name=="市辖区"){
-					//NOOP
+					//NOOP 没有链接的市辖区直接去除
 				}else{
-					city.child.push(new cityClass(name,url,code));
+					(swapItem||city).child.push(new cityClass(name,url,code));
 				};
 			}else{
 				err("未知模式");

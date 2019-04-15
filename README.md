@@ -4,6 +4,7 @@
 
 可直接打开`采集到的数据`文件夹内的`ok_data_level4.csv`来使用，level4是省市区镇4级数据，level3是省市区3级数据。另外不需要的数据可以简单的用Excel筛选后直接删除。csv格式非常方便解析或导入数据库。
 
+坐标和行政区域边界范围数据可到[releases](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases)中下载，实际数据存储在[AreaCity-JsSpider-StatsGov-GEO](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov-GEO)分库中。
 
 ## 采集环境
 

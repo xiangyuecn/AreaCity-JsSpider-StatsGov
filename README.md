@@ -4,8 +4,21 @@
 
 可直接打开`采集到的数据`文件夹内的`ok_data_level4.csv`来使用，level4是省市区镇4级数据，level3是省市区3级数据。另外不需要的数据可以简单的用Excel筛选后直接删除。csv格式非常方便解析或导入数据库。
 
-坐标和行政区域边界范围数据可到[releases](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases)中下载，实际数据存储在[AreaCity-JsSpider-StatsGov-GEO](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov-GEO)分库中。
+`ok_geo.csv.7z`为省市区3级的坐标和行政区域边界范围数据，解压后130M+。
 
+
+## 测试和WEB数据格式转换工具
+
+在线测试工具地址：[https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/)
+
+或者直接使用`测试和WEB数据格式转换工具.js`，在任意网页控制台中使用。
+
+### 工具支持：
+1. 数据预览。
+2. 将csv数据导出成压缩后的紧凑版js格式文件。
+3. 将csv数据导出成JSON对象、JSON数组。
+4. 网页版省市区镇多级联动测试。
+5. 网页版省市区多级联动代码生成。
 
 ## 数据源
 
@@ -46,9 +59,9 @@ ext_name|原始名称，为未精简的名称。
 
 字段|描述
 :--:|--
-id|和`ok_data`表中的`ID`相同，通过这个`ID`关联到省市区具体数据。
+id|和`ok_data`表中的`ID`相同，通过这个`ID`关联到省市区具体数据，`map_geo_格式化.js`中有数据合并SQL语句。
 geo|城市中心坐标，高德地图`GCJ-02`火星坐标系
-polygon|行政区域边界，高德地图GCJ-02火星坐标系。存在多个地块时用`;`分隔，每个地块的坐标点用` `空格分隔，特别要注意：多个地块组合在一起可能是`MULTIPOLYGON`或者`POLYGON`，需用工具进行计算和对数据进行验证。js没找到求`polygon`并集的方法。
+polygon|行政区域边界，高德地图`GCJ-02`火星坐标系。存在多个地块时用`;`分隔，每个地块的坐标点用` `空格分隔，特别要注意：多个地块组合在一起可能是`MULTIPOLYGON`或者`POLYGON`，需用工具进行计算和对数据进行验证。js没找到求`polygon`并集的方法。
 
 
 
@@ -57,7 +70,7 @@ polygon|行政区域边界，高德地图GCJ-02火星坐标系。存在多个地
 ## 拼音源
 省市区这三级采用在线拼音工具转换，据说依据《新华字典》、《现代汉语词典》等规范性辞书校对，多音字地名大部分能正确拼音，`重庆`->`chong qing`，`朝阳`->`chao yang`，`郫都`->`pi du`，`闵行`->`min hang`，`康巴什`->`kang ba shi`。
 
-镇级以下地名采用本地拼音库转换，准确度没有省市区的高。
+镇级以下地名采用本地拼音库（`.pinyin-python-server`）转换，准确度没有省市区的高。
 
 ## 拼音前缀
 从完整拼音中提取的拼音前缀，取的是第一个字前两个字母和后两个字首字母，意图是让第一个字相同名称的尽量能排序在一起。排序1：`黑龙江helj、湖北hub、湖南hun`；排序2：`湖北hb、黑龙江hlj、湖南hn`，排序一胜出。
@@ -79,9 +92,7 @@ polygon|行政区域边界，高德地图GCJ-02火星坐标系。存在多个地
 
 `坐标和边界数据` 和 `省市区` 数据是分开存储的，通过`ID`来进行关联。
 
-数据存储在[AreaCity-JsSpider-StatsGov-GEO](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov-GEO)分库中，也可自行到[releases](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases)中下载。分开的原因是冗余数据总有那么一天会忘记更新，这个库人工操作的多，尽量减少这种重复数据避免产生问题。
-
-可以导入到数据库内使用，由于`POLYGON`需要解析，蛮复杂的，可以参考[2019/map_geo_格式化.js](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/2019/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)内的SQL Server导入用的SQL语句的例子。
+可以把`ok_geo.csv`导入到数据库内使用，由于`POLYGON`需要解析，蛮复杂的，可以参考[2019/map_geo_格式化.js](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/2019/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)内的SQL Server导入用的SQL语句的例子。
 
 如果需要特定的`POLYGON`格式，可以根据上面介绍的字段格式，自行进行解析和验证。
 
@@ -104,9 +115,7 @@ polygon|行政区域边界，高德地图GCJ-02火星坐标系。存在多个地
 
 5. 参考链接：[统计用区划代码和城乡划分代码编制规则](http://www.stats.gov.cn/tjsj/tjbz/200911/t20091125_8667.html)，[民政部发布的行政区划代码](http://www.mca.gov.cn/article/sj/xzqh/)。
 
-6. 2019版开始从高德采集了省市区三级坐标和行政区域边界范围数据，由于边界原始数据文件太大（100M+），RAR4高压后相对来说还是太大（20M+），分开来独立存储到了[AreaCity-JsSpider-StatsGov-GEO](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov-GEO)分存储库中，采集的中间数据请到这个库进行查阅。
-
-7. 坐标和行政区域边界范围数据只含省市区三级，省市区总计3300+条数据，未采集到边界的有160条以内。关于未获取到坐标或边界的城市，本采集方案采取不处理策略，空着就空着，覆盖主要城市和主要人群，未覆盖区域实际使用过程中应该进行降级等处理。比如：尽最大可能的根据用户坐标来确定用户所在城市，因为存在没有边界信息的区域，未匹配到的应使用ip等城市识别方法。
+6. 2019版开始从高德采集了省市区三级坐标和行政区域边界范围数据，省市区总计3300+条数据，未采集到边界的有160条以内。关于未获取到坐标或边界的城市，本采集方案采取不处理策略，空着就空着，覆盖主要城市和主要人群，未覆盖区域实际使用过程中应该进行降级等处理。比如：尽最大可能的根据用户坐标来确定用户所在城市，因为存在没有边界信息的区域，未匹配到的应使用ip等城市识别方法。
 
 
 ## 2019修正数据
@@ -129,19 +138,14 @@ polygon|行政区域边界，高德地图GCJ-02火星坐标系。存在多个地
 
 ## 步骤2
 
-1. 打开拼音接口页面，具体看`2_抓取拼音.js`开头注释。
-2. 复制`data.txt`内容到控制台执行，数据完成导入。
-3. 执行`2_抓取拼音.js`内代码。
-4. 拼音采集完成自动弹出下载，保存得到文件`data-pinyin.txt`。
-
-注：如果是`2_x_抓取拼音.js`，依次同样的运行。
+1. [可选]启动`.pinyin-python-server`中的本地拼音服务，根据`2_1_抓取拼音.js`中的提示对4级进行本地拼音转换。
+2. 根据`2_2_抓取拼音.js`开头注释打开拼音接口页面，然后导入数据，进行省市区3级进行高准确度拼音转换。
+3. 拼音采集完成自动弹出下载，保存得到文件`data-pinyin.txt`。
 
 ## 步骤3
 
-1. 任意页面，最好是第二步这个页面。
-2. 复制`data-pinyin.txt`内容到控制台执行，数据完成导入。
-3. 执行`3_格式化.js`内代码。
-4. 格式化完成自动弹出下载，保存得到最终文件`ok_data.csv`。
+1. 任意页面，最好是第二步这个页面，根据`3_格式化.js`中的提示导入`data-pinyin.txt`，并执行代码。
+2. 格式化完成自动弹出下载，保存得到最终文件`ok_data.csv`。
 
 
 ## 坐标和行政区域边界采集

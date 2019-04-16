@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>测试和WEB数据格式转换工具</title>
+</head>
+
+<body>
+
+<script src="测试和WEB数据格式转换工具.js"></script>
+
+
+<style>
+body{
+	word-wrap: break-word;
+}
+pre{
+	white-space:pre-wrap;
+}
+</style>
+
+<script src="https://xiangyuecn.github.io/BuildHTML/buildhtml.js"></script>
+<script>
+function el(cls){
+	return document.querySelector(cls);
+};
+
+if(/^file:/.test(location.href)){
+	FormatLog("浏览器直接打开的html文件，不加载演示数据，请手动操作",1);
+}else{
+	el(".AreaFormatFrom").innerHTML=BuildHTML(`
+<select class="AreaFormatFromSelect" onchange="swapFrom()">
+{{::
+	;BuildHTMLArray('<option value="{fn:BuildHTMLArray.index+1}">{fn::o}</option>',AllowAccessFiles)
+}}
+<\/select>`);
+	var swapFrom=function(){
+		var from=+el(".AreaFormatFromSelect").value-1;
+		var path=AllowAccessFolder+"/"+AllowAccessFiles[from];
+		FormatLog("【"+path+"】数据加载中...请稍后");
+		var ajax=new XMLHttpRequest();
+		ajax.open("GET",path.replace(/\(.+\)/,""));
+		ajax.onreadystatechange=function(){
+			if(ajax.readyState==4){
+				if(ajax.status==200){
+					var input=el(".AreaFormatInput");
+					input.value=ajax.responseText;
+					
+					FormatLog("成功加载【"+path+"】数据。 <div>&nbsp</div> <div>输入框中本来的提示信息：</div><pre>"+input.placeholder+"</pre>");
+				}else{
+					FormatLog("【"+path+"】数据加载失败");
+				}
+			}
+		}
+		ajax.send();
+	};
+	swapFrom();
+};
+</script>
+
+	
+</body>
+</html>

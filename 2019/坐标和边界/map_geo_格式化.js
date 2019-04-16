@@ -1,11 +1,15 @@
 /*
-导出省市区（不含扩展区域）三级坐标和行政区域边界为csv格式
+导出省市区三级坐标和行政区域边界为csv格式。
 
+此数据的id为ok_data的id，本表只提供geo、polygon，其他数据需要通过id关联到ok_data，导入数据时应该完成这步操作（为什么不把pid、name等数据也包含进来？如果冗余一份，会增加更新数据的负担，ok_data更新还要保持这里更新，漏了呢？不靠谱！）。
 
-对于geo和polygon输出格式，在此可以进行转换成需要的格式，默认采用MSSQL的空间格式的结构：
-geo="lng lat" 如"133.333333 37.123333"，百度地图bd09坐标，POINT格式
-polygon="POLYGON((lng lat,...),...)" POLYGON格式，只有一个地块，可能存在多个镂空性质的区域，每个区域首尾坐标相同
-polygon="MULTIPOLYGON(((lng lat,...),...),...)" MULTIPOLYGON格式，包含多个POLYGON地块，比如廊坊
+关于数据文件超大（100M+）的问题，以前是会对polygon进行抽样到200个坐标，变成一个大概的范围轮廓，数据量不超过20M，但精简坐标后对MULTIPOLYGON几乎全毁了，比如：相连的地块可能变得不相连，所以放弃了抽样，保留原始数据。
+
+对于geo和polygon输出格式：
+geo="lng lat"
+	如"133.333333 37.123333"，高德地图GCJ-02火星坐标系，POINT格式
+polygon="lng lat,...;lng lat,..."
+	行政区域边界，可能有多个地块用`;`分隔，每个地块的坐标点用` `空格分隔，多个地块可能是MULTIPOLYGON或者POLYGON，需用工具进行计算和对数据进行验证，js没找到求polygon并集的方法。
 
 如果是EMPTY代表没有对应的信息：
 geo="EMPTY"
@@ -13,9 +17,8 @@ polygon="EMPTY"
 
 
 
-在百度地图测试页面，选到iframe上下文中执行
-http://lbsyun.baidu.com/jsdemo.htm#c1_10
-	导入：http://api.map.baidu.com/library/GeoUtils/1.2/src/GeoUtils_min.js
+在高德地图测试页面，选到iframe上下文中执行
+https://lbs.amap.com/api/javascript-api/example/district-search/draw-district-boundaries
 
 加载数据
 	在上一步页面基础上运行，或者
@@ -34,10 +37,102 @@ http://lbsyun.baidu.com/jsdemo.htm#c1_10
 		文字字段数字的设置成4/8字节有符号整数
 		文本设为DT_TEXT
 		表结构映射中把text类型改成ntext类型（如果文件格式是UCS-2 Lettle Endian会轻松很多）
-*/
+		
+通过下列语句生成geometry对象，polygon有可能是POLYGON，也有可能是MULTIPOLYGON，只能通过运算才能知道正确结果
+全局表##tb_polygon中包含所有的数据，通过id来关联到ok_data数据所在的表（比如把数据update过去）
+```SQL
+--drop table ##tb_polygon
+create table ##tb_polygon(
+	id int
+	,name ntext
+	,geo geometry
+	,polygon geometry
+)
+set nocount on;
 
-var PolygonMaxPoint=200;//行政区域边界最大坐标点数，如果构成polygon的point数量超过这个值，就进行抽样，相当于把过于曲折的边界稍微拉直点降低点点精度，点数过多的意义也不大
-var PolygonPointFixed=6;//构成行政区域边界的坐标小数位数，5位可达到1米精度，6位是bmap的坐标转换精度
+print '开始分解polygon...'
+declare @startTime datetime=getdate()
+
+declare rs cursor
+for
+select polygon,geo,id,ext_path from ok_geo order by id;
+
+declare @polygon varchar(max),@geo varchar(max),@id varchar(50),@name varchar(max)
+declare @row int=0
+open rs
+	fetch next from rs into @polygon,@geo,@id,@name
+	while @@FETCH_STATUS=0 begin
+		set @row=@row+1
+		if @row%100=0 begin
+			print cast(@row as varchar(10))+' '+@id
+		end
+		
+		declare @polygonObj geometry=geometry::STGeomFromText('POLYGON EMPTY',0)
+		declare @geoObj geometry=geometry::STGeomFromText('POINT EMPTY',0)
+		
+		if @geo<>'EMPTY' begin
+			set @geoObj=geometry::STGeomFromText('POINT('+@geo+')',0)
+		end
+		
+		if @polygon<>'EMPTY' begin
+			declare @blockIdx int=1;
+			declare @find int=1
+			
+			declare @loop int=1;
+			while @loop<>0 begin
+				--找到一个block块
+				set @find=CHARINDEX(';', @polygon, @blockIdx)
+				declare @block varchar(max)
+				if @find=0 begin
+						set @loop=0
+						set @block=SUBSTRING(@polygon,@blockIdx,LEN(@polygon)+1-@blockIdx)
+				end else begin
+					set @block=SUBSTRING(@polygon,@blockIdx,@find-@blockIdx)
+				end
+				
+				set @blockIdx=@find+1
+				
+				--闭环
+				set @block=@block+','+SUBSTRING(@block,0,CHARINDEX(',',@block))
+				
+				--构造出子polygon
+				declare @polygonChild geometry=geometry::STGeomFromText('POLYGON(('+@block+'))',0)
+				
+				--合并
+				set @polygonObj=@polygonObj.STUnion(@polygonChild)
+			end
+		end
+		
+		if @polygonObj.STIsValid()=0 begin
+			print @name+' '+@id+' polygon无效'
+		end else begin
+			if @geoObj.STIsValid()=0 begin
+				print @name+' '+@id+' geo无效'
+			end else begin
+				insert ##tb_polygon(id,name,geo,polygon) values(@id,@name,@geoObj,@polygonObj)
+			end
+		end
+		
+		fetch next from rs into @polygon,@geo,@id,@name
+	end
+close rs
+deallocate rs
+print '分解polygon完成，耗时'+cast(datediff(ms,@startTime,getdate()) as varchar(max))+'ms'
+
+select id,name,geo.STAsText(),polygon from ##tb_polygon where name not like '% %' or name like '%港澳台%'
+
+--select id,name,geo.STAsText(),polygon from ##tb_polygon where name like '%广东省%'
+--select id,name,polygon from ##tb_polygon where polygon.STIntersects(geometry::STGeomFromText('POINT(114.044346 22.691963)',0))=1
+
+--合并数据到ok_data_level4
+--update t1 set geo=t2.geo,polygon=t2.polygon from ok_data_level4 as t1,##tb_polygon as t2 where t1.id=t2.id
+```
+*/
+"use strict";
+AMap.LngLat;
+console=top.console;
+
+var Validate=false;//是否开启验证区域有效性，验证算法写的非常缓慢，经过一轮测试发现高德数据没有错误的，一般情况下没必要开启。
 
 if(!top.document.querySelector(".DataTxt")){
 	var div=top.document.createElement("div");
@@ -61,9 +156,10 @@ function CSVName(name){
 	return '"'+FixTrim(name).replace(/"/g,'""')+'"';
 };
 
-var csv=["id,name,geo,polygon"];
+var csv=["id,ext_path,geo,polygon"];
 for(var k=0;k<DATA_GEO.length;k++){
 	var o=DATA_GEO[k];
+	console.log(k,o.ext_path);
 	
 	/**此处对polygon格式进行解析、有效性验证**/
 	var polygon=o.polygon;
@@ -73,25 +169,28 @@ for(var k=0;k<DATA_GEO.length;k++){
 		for(var j=0;j<polygon.length;j++){
 			var arr=[];
 			var list=polygon[j].split(",");
-			var count = list.length;
-			var c=Math.floor(count/PolygonMaxPoint)||1;//采样
-			for(var i = 0; i < count; i++){
+			for(var i = 0; i < list.length; i++){
 				var point=list[i].split(" ");
-				if(count<PolygonMaxPoint || i%c==0){
-					arr.push(new BMap.Point(+point[0],+point[1]));
-				}
+				arr.push([
+					+(+point[0]).toFixed(6)
+					,+(+point[1]).toFixed(6)
+				]);
 			};
-			while(arr[0].equals(arr[arr.length-1])){
+			if(arr.length<3){
+				console.error(o);
+				throw new Error("polygon无效");
+			};
+			while(arr[0].join(" ")==arr[arr.length-1].join(" ")){
 				arr.pop();
 			};
-			polygon[j]=new BMap.Polygon(arr);
+			polygon[j]=arr;
 		};
 		
 		polygon=checkAndBuildPolygon(polygon,o);
 		break;
 	};
 	
-	csv.push(o.id+","+CSVName(o.name)
+	csv.push(o.id+","+CSVName(o.ext_path)
 		+","+CSVName(o.geo)+","+CSVName(polygon));
 };
 csv.push("");
@@ -120,14 +219,14 @@ downA.click();
 
 
 function checkAndBuildPolygon(polygon,itm){
-	var tag=itm.id+":"+itm.name+" "+itm.polygon+"\n   "
+	var tag=itm.id+":"+itm.ext_path+" "+itm.polygon+"\n   "
 	var polygonList=[];
 	var maxSize=0,failTotalSize=0;
 	for(var i=0;i<polygon.length;i++){
-		var size=BMapLib.GeoUtils.getPolygonArea(polygon[i])||0;
+		var size=Validate?AMap.GeometryUtil.ringArea(polygon[i]):0;
 		maxSize=Math.max(maxSize,size);
 		
-		if(!validateLines(polygon[i])){
+		if(Validate&&!validateLines(polygon[i])){
 			failTotalSize+=size;
 			console.warn(tag+"第"+(i+1)+"块无效，已移除");
 		}else{
@@ -139,78 +238,37 @@ function checkAndBuildPolygon(polygon,itm){
 		polygonList=[];
 	};
 	
-	var polygonGroups=[];
-	loop:
-	for(var i=0;i<polygonList.length;i++){
-		var itm=polygonList[i];
-		for(var j=0;j<polygonGroups.length;j++){
-			var arr=polygonGroups[j];
-			var pos=polygonPostion(arr[0],itm);
-			if(pos==1){//包含
-				arr.push(itm);
-				continue loop;
-			}else if(pos==-1){
-				console.error(tag+"存在交叉或反向包含，已清除所有边界");
-				polygonGroups=[];
-				break loop;
-			};
-		};
-		polygonGroups.push([itm]);
-	};
-	
-	//导出sql格式
+	//导出
 	var res=[];
-	if(polygonGroups.length==0){
+	if(polygonList.length==0){
 		return "EMPTY";
-	}if(polygonGroups.length>1){
-		res.push("MULTIPOLYGON(");
-	}else{
-		res.push("POLYGON");
 	};
-	for(var i=0;i<polygonGroups.length;i++){
-		var arr=polygonGroups[i];
-		if(i!=0){
-			res.push(",");
+	for(var i=0;i<polygonList.length;i++){
+		var pos=polygonList[i];
+		var arr=[];
+		for(var j=0;j<pos.length;j++){
+			var point=pos[j];
+			arr.push(point[0]+" "+point[1]);
 		};
-		res.push("(");
-		for(var j=0;j<arr.length;j++){
-			var pos=arr[j].getPath();
-			pos.push(pos[pos.length-1]);//闭环
-			
-			if(j!=0){
-				res.push(",");
-			};
-			res.push("(");
-			for(var n=0;n<pos.length;n++){
-				var point=pos[n];
-				res.push(
-					(+(+point.lng).toFixed(PolygonPointFixed))
-					+" "+
-					(+(+point.lat).toFixed(PolygonPointFixed))
-				);
-			};
-			res.push(")");
-		};
-		res.push(")");
+		res.push(arr.join(","));
 	};
-	if(polygonGroups.length>1){
-		res.push(")");
-	};
-	return res.join("");
+	return res.join(";");
+};
+function equals(a,b){
+	return a&&b&&a[0]==b[0]&&a[1]==b[1];
 };
 //检测构成区域的所有线条是否合法，没有相交的
-function validateLines(polygon){
-	var pos=polygon.getPath();
+function validateLines(pos){
 	if(pos.length<3){
 		return false;
 	};
-	if(pos[0].equals(pos[pos.length-1])){
+	if(equals(pos[0],pos[pos.length-1])){
 		return false;
 	};
 	for(var i=1;i<pos.length;i++){
 		var a=pos[i-1];
 		var b=pos[i];
-		if(a.equals(b)||pos[i+1]&&a.equals(pos[i+1])){
+		if(equals(a,b)||equals(a,pos[i+1])){
 			return false;
 		};
 		for(var j=i+1;j<pos.length;j++){
@@ -224,20 +282,24 @@ function validateLines(polygon){
 			};
 			var d=pos[j];
 			
+			var a_lng=a[0],a_lat=a[1];
+			var b_lng=b[0],b_lat=b[1];
+			var c_lng=c[0],c_lat=c[1];
+			var d_lng=d[0],d_lat=d[1];
 			//https://blog.csdn.net/qq826309057/article/details/70942061
 			//快速排斥实验
-			if ((a.lng > b.lng ? a.lng : b.lng) < (c.lng < d.lng ? c.lng : d.lng) ||
-				(a.lat > b.lat ? a.lat : b.lat) < (c.lat < d.lat ? c.lat : d.lat) ||
-				(c.lng > d.lng ? c.lng : d.lng) < (a.lng < b.lng ? a.lng : b.lng) ||
-				(c.lat > d.lat ? c.lat : d.lat) < (a.lat < b.lat ? a.lat : b.lat))
+			if ((a_lng > b_lng ? a_lng : b_lng) < (c_lng < d_lng ? c_lng : d_lng) ||
+				(a_lat > b_lat ? a_lat : b_lat) < (c_lat < d_lat ? c_lat : d_lat) ||
+				(c_lng > d_lng ? c_lng : d_lng) < (a_lng < b_lng ? a_lng : b_lng) ||
+				(c_lat > d_lat ? c_lat : d_lat) < (a_lat < b_lat ? a_lat : b_lat))
 			{
 				continue;
 			}
 			//跨立实验
-			if((((a.lng - c.lng)*(d.lat - c.lat) - (a.lat - c.lat)*(d.lng - c.lng))*
-				((b.lng - c.lng)*(d.lat - c.lat) - (b.lat - c.lat)*(d.lng - c.lng))) > 0 ||
-			   (((c.lng - a.lng)*(b.lat - a.lat) - (c.lat - a.lat)*(b.lng - a.lng))*
-				((d.lng - a.lng)*(b.lat - a.lat) - (d.lat - a.lat)*(b.lng - a.lng))) > 0)
+			if((((a_lng - c_lng)*(d_lat - c_lat) - (a_lat - c_lat)*(d_lng - c_lng))*
+				((b_lng - c_lng)*(d_lat - c_lat) - (b_lat - c_lat)*(d_lng - c_lng))) > 0 ||
+			   (((c_lng - a_lng)*(b_lat - a_lat) - (c_lat - a_lat)*(b_lng - a_lng))*
+				((d_lng - a_lng)*(b_lat - a_lat) - (d_lat - a_lat)*(b_lng - a_lng))) > 0)
 			{
 				continue;
 			}
@@ -245,7 +307,4 @@ function validateLines(polygon){
 		};
 	};
 	return true;
-};
-function polygonPostion(polygonBig,polygonMin){
-	
 };

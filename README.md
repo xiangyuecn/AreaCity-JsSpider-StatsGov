@@ -6,10 +6,6 @@
 
 坐标和行政区域边界范围数据可到[releases](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases)中下载，实际数据存储在[AreaCity-JsSpider-StatsGov-GEO](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov-GEO)分库中。
 
-## 采集环境
-
-chrome 控制台，`41.0.2272.118`这版本蛮好，新版本乱码、SwitchyOmega代理没有效果、各种问题（[简单制作chrome便携版实现多版本共存](https://github.com/xiangyuecn/Docs/blob/master/Other/%E8%87%AA%E5%B7%B1%E5%88%B6%E4%BD%9Cchrome%E4%BE%BF%E6%90%BA%E7%89%88%E5%AE%9E%E7%8E%B0%E5%A4%9A%E7%89%88%E6%9C%AC%E5%85%B1%E5%AD%98.md)）
-
 
 ## 数据源
 
@@ -18,12 +14,42 @@ chrome 控制台，`41.0.2272.118`这版本蛮好，新版本乱码、SwitchyOme
 - 高德地图坐标和行政区域边界范围
 
 
+## 采集环境
+
+chrome 控制台，`41.0.2272.118`这版本蛮好，新版本乱码、SwitchyOmega代理没有效果、各种问题（[简单制作chrome便携版实现多版本共存](https://github.com/xiangyuecn/Docs/blob/master/Other/%E8%87%AA%E5%B7%B1%E5%88%B6%E4%BD%9Cchrome%E4%BE%BF%E6%90%BA%E7%89%88%E5%AE%9E%E7%8E%B0%E5%A4%9A%E7%89%88%E6%9C%AC%E5%85%B1%E5%AD%98.md)）
+
+
 ## 采集深度
 
 - 2019文件夹采集了4层，省、市、区、镇，[2018版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2018/index.html)。采集高德省市区三级坐标和行政区域边界范围。
 - 2018文件夹采集了3层，省、市、区，[2017版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2017/index.html)。
 - 2017文件夹采集了3层，省、市、区，[2016版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2016/index.html)。
 - 2013文件夹采集了4层，省、市、区、镇，[2013版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2013/index.html)。
+
+
+## ok_data表字段
+省市区镇数据表。
+
+字段|描述
+:--:|--
+id|统计局的编号经过去除后缀的`0{3,6,8}`得到的短编号；如果是添加的港澳台等数据，此编号为自定义编号。
+pid|上级ID
+deep|层级深度，0：省，1：市，2：区，3：镇。
+name|城市名称，为统计局的名称精简过后的。
+pinyin_prefix|`name`的拼音前缀，取的是第一个字前两个字母和后两个字首字母组成的。
+pinyin|`name`的完整拼音。
+ext_id|统计局原始的编号；如果是添加的港澳台等数据，此编号为0。
+ext_name|原始名称，为未精简的名称。
+
+## ok_geo表字段
+此表为坐标和行政区域边界范围数据表，因为数据文件过大（130M+），所以分开存储。
+
+字段|描述
+:--:|--
+id|和`ok_data`表中的`ID`相同，通过这个`ID`关联到省市区具体数据。
+geo|城市中心坐标，高德地图`GCJ-02`火星坐标系
+polygon|行政区域边界，高德地图GCJ-02火星坐标系。存在多个地块时用`;`分隔，每个地块的坐标点用` `空格分隔，特别要注意：多个地块组合在一起可能是`MULTIPOLYGON`或者`POLYGON`，需用工具进行计算和对数据进行验证。js没找到求`polygon`并集的方法。
+
 
 
 # :open_book:拼音标注
@@ -48,16 +74,6 @@ chrome 控制台，`41.0.2272.118`这版本蛮好，新版本乱码、SwitchyOme
 
 所以放弃使用百度地图数据。
 
-## 字段
-### ID
-`AreaCity-JsSpider-StatsGov`中的`ID`，通过这个`ID`关联到省市区具体数据。
-
-### GEO
-城市中心坐标，高德地图`GCJ-02`火星坐标系
-
-### POLYGON
-
-行政区域边界，高德地图GCJ-02火星坐标系。存在多个地块时用`;`分隔，每个地块的坐标点用` `空格分隔，特别要注意：多个地块组合在一起可能是`MULTIPOLYGON`或者`POLYGON`，需用工具进行计算和对数据进行验证。js没找到求`polygon`并集的方法。
 
 ## 如何使用坐标和边界数据
 

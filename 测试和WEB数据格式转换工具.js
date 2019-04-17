@@ -1,4 +1,5 @@
 /*
+GitHub: https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov
 【WEB数据格式转换工具】
 用来将csv数据转换成js或者json，当然改造一下转成任意格式都是可以的。
 
@@ -6,7 +7,7 @@
 */
 "use strict";
 var AllowAccessFolder="2019/采集到的数据";
-var AllowAccessFiles=["ok_data_level3.csv(省市区)","ok_data_level4.csv(省市区镇)"];
+var AllowAccessFiles=["ok_data_level3.csv(3级省市区)","ok_data_level4.csv(4级省市区镇)"];
 
 
 /******************************
@@ -37,21 +38,25 @@ function JsonArrayFormat(list,mapping){
 	return Result("",code,"area_format_array.json",`${codeLen}字节`);
 };
 function JsonObjectFormat(list,mapping){
-	var data={}
 	var x=function(obj){
 		if(!obj.childs.length){
 			return;
 		};
+		var p={};
 		for(var i=0;i<obj.childs.length;i++){
 			var itm=obj.childs[i];
-			data[itm.id]={
+			p[itm.id]={
 				n:itm.name
 				,y:itm.pinyin
 			};
-			x(itm);
+			var c=x(itm);
+			if(c){
+				p[itm.id].c=c;
+			};
 		};
+		return p;
 	};
-	x(mapping[0]);
+	var data=x(mapping[0]);
 	
 	var code=JSON.stringify(data);
 	var codeLen=new Blob([code],{"type":"text/plain"}).size+3;
@@ -123,7 +128,7 @@ function JsFormat(list,mapping){
 	var codeLen=new Blob([code],{"type":"text/plain"}).size+3;
 	var info=`${codeLen}字节 解压${orgLen}字节 压缩率`+(codeLen/orgLen*100).toFixed(2)+"%"
 	
-	return Result("",code,"area_format.js",info);
+	return Result("",code,"area_format_js.js",info);
 };
 
 
@@ -157,7 +162,7 @@ window.FormatClick=function(type){
 		return;
 	};
 	
-	var info=res.maxLevel+"级转换完成，共"+res.list.length+"条数据，"+res.i+" <span class='FormatDownA'></span>";
+	var info=res.findMaxLevel+"级"+(res.findMaxLevel<res.maxLevel?"(数据源没有"+res.maxLevel+"级)":"")+"转换完成，共"+res.list.length+"条数据，"+res.i+" <span class='FormatDownA'></span>";
 	log(info);
 	
 	var url=URL.createObjectURL(
@@ -182,34 +187,245 @@ window.FormatClick=function(type){
 /******************************
 ** 点击测试和联动代码生成处理
 *****************************/
-window.TestClick=function(type){
+window.TestClick=function(type,_log,selectID){
 	var res=Format(type);
+	var logElem=el(_log||".AreaFormatResult");
 	if(res.m){
-		log(res.m,1);
+		logElem.innerHTML=res.m;
 		return;
 	};
 	
-	var info=res.maxLevel+"级转换完成，共"+res.list.length+"条数据，"+res.i+" <div class='TestBox'></div>";
-	log(info);
+	var idx=TestClick.idx=(TestClick.idx||0)+1;
+	var info=res.findMaxLevel+"级"+(res.findMaxLevel<res.maxLevel?"(数据源没有"+res.maxLevel+"级)":"")+" "+type+"转换完成，共"+res.list.length+"条数据，"+res.i+" <div class='TestBox"+idx+"'><div class='_select'></div><div class='_selectInfo'></div><div class='_code'></div></div>";
+	logElem.innerHTML=info;
 	
-	el(".TestBox").innerHTML="联动生成和测试代码还没有写~ TODO";
+	var select=el(".TestBox"+idx+" ._select");
+	var data;
+	if(type=="js"){
+		try{
+			data=eval(res.v+"AreaCityData");
+		}catch(e){
+			select.innerHTML="类型"+type+"生成代码出错"+(e.message.indexOf("unsafe-eval")!=-1?"，此网页不允许调用eval方法，请换一个网页":"")+"："+e.message;
+			return;
+		};
+	}else if(type=="jsonObject"){
+		data=JSON.parse(res.v);
+	}else if(type=="jsonArray"){
+		data=JSON.parse(res.v);
+	}else{
+		select.innerHTML="类型"+type+"无法生成联动代码";
+		return;
+	};
+	
+	var RXOrgCityData=data;
+	var buildDataFn=type=="jsonArray"?function(){
+		var data=RXOrgCityData;
+		var obj={};
+		for(var i=0;i<data.length;i++){
+			var o=data[i];
+			obj[o.i]={
+				id:o.i
+				,pid:o.p
+				,name:o.n
+				,y:o.y
+			};
+		};
+		return obj;
+	}:function(){
+		var data=RXOrgCityData;
+		var obj={};
+		var x=function(arr,p){
+			for(var k in arr){
+				var o=arr[k];
+				obj[k]={
+					id:+k
+					,pid:p
+					,name:o.n
+					,y:o.y
+				};
+				x(o.c||{},+k);
+			};
+		};
+		x(data,0);
+		return obj;
+	};
+	AreaCityData=buildDataFn();
+	BuildCitySelect(el(".TestBox"+idx+" ._select"),selectID,function(id,hasChild,data){
+		var infos=[];
+		var p=data[id];
+		while(p){
+			infos.push("("+p.id+")"+p.name);
+			p=data[p.pid];
+		};
+		infos.reverse();
+		el(".TestBox"+idx+" ._selectInfo").innerHTML=infos.join(" - ")+" 状态："+(hasChild?"还可以选择":"选择到了最后一层");
+	});
+	
+	var code=`/* GitHub: https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov
+【${res.findMaxLevel}级联动】
+本代码由WEB数据格式转换工具于${new Date().toLocaleString()}生成
+
+使用文档：
+【1】在需要的地方引入本js文件
+
+【2】在需要显示选择城市的地方调用下面方法
+BuildCitySelect(element,defaultSelectID,changeCall)
+	element: 必填，城市选择下拉框显示位置，可以是css选择器、dom节点、jQuery选择的节点
+	defaultSelectID：可留空值，默认为0，任意级别的城市ID，创建时自动按路径选择到这个城市 
+	changeCall：fn(id,hasChild,cityData) 必填，下拉框值改变时回调，用来接收结果数据
+					id：当前选择的城市
+					hasChild：是否还有下一级未选，如果未选，也许可以在表单最后确认时给提示
+					cityData：城市数据列表，结构为{"11":{id:11,pid:0,name:"北京"},...}
+
+调用这个方法后会立即创建相应的下拉框，用户选择城市后会调用changeCall回调，需要及时保存id信息当做结果。
+*/
+
+/***测试代码开始，使用时应该将此段注释掉***/
+//将本文件内容全部复制到浏览器任意页面控制台中就能运行
+setTimeout(function(){
+	document.body.innerHTML='<div class="test1"></div><div class="test2"></div><div class="test3"></div>';
+	
+	BuildCitySelect(".test1");
+	BuildCitySelect(".test2",460204);//选中 三亚 天涯
+	BuildCitySelect(".test3",11);//选中 北京
+});
+/***测试代码结束***/
+
+
+`+("var BuildCitySelect=("
+		+buildCitySelectFn.toString()
+		+")();")
+			.replace(/buildCitySelectFn;/
+				,("var AreaCityData=("
+				+buildDataFn.toString()
+				+")();")
+					.replace(/var data=RXOrgCityData;/,type=="js"?res.v+"var data=AreaCityData;":"var data="+res.v+";"));
+	
+	var url=URL.createObjectURL(
+		new Blob([
+			new Uint8Array([0xEF,0xBB,0xBF])
+			,code
+		]
+		,{"type":"text/plain"})
+	);
+	var file=res.f.replace(/\.[^.]+$/,"")+".level"+res.findMaxLevel+".js";
+	var downA=document.createElement("A");
+	downA.innerHTML="点此下载"+res.findMaxLevel+"级联动源码（含数据） "+file;
+	downA.href=url;
+	downA.download=file;
+	el(".TestBox"+idx+" ._code").appendChild(downA);
 };
 
-//城市数据数组按拼音排序，返回{id:,name}标准选项数组或buildFn(cityObject,newName)处理数组
-function CityPinYinSort(arr,buildFn){
-	var rtv=[];
-	arr.sort(function(a,b){return a.p.localeCompare(b.p);});
-	for(var i=0,o,name;i<arr.length;i++){
-		o=arr[i];
-		name=o.p.substr(0,1).toUpperCase()+" "+o.name;
-		if(buildFn){
-			rtv.push(buildFn(o,name));
-		}else{
-			rtv.push({id:o.id,name:name});
+var AreaCityData;
+var buildCitySelectFn=function(){
+	buildCitySelectFn;
+	var BuildSelect=function(elem,set,changeFn){
+		var data=AreaCityData;
+		if(typeof(elem)=="string"){
+			elem=document.querySelector(elem);
+		}else if(elem.length){
+			elem=elem[0];
 		};
+		
+		var build=function(pid,id,ids){
+			var has=false;
+			var arr=[];
+			for(var k in data){
+				var o=data[k];
+				if(o.pid==pid){
+					has=true;
+					arr.push(o);
+				};
+			};
+			if(set.sort){
+				arr=set.sort(arr);
+			};
+			var defName=set.defName||"--请选择--";
+			if(pid==0&&!arr.length){
+				defName=set.emptyName||defName;
+			};
+			var html=['<select pid="'+pid+'"><option value="0">'+defName+'</option>'];
+			var idsFind=ids?" "+ids.join(" ")+" ":"";
+			for(var i=0,o;i<arr.length;i++){
+				o=arr[i];
+				var slc=false;
+				if(ids){
+					slc=idsFind.indexOf(" "+o.id+" ")!=-1;
+				}else{
+					slc=o.id==id;
+				};
+				html.push('<option value="'+o.id+'" '+(slc?'selected':'')+'>'+o.name+'</option>');
+			};
+			html.push('</select>');
+			return pid==0||has?html.join("\n"):"";
+		};
+		
+		
+		var loopid=set.id,pid=-1,html=[],hasChild=false,childSelect;
+		while(pid!=0){
+			pid=data[loopid]&&data[loopid].pid||0;
+			html.push(build(pid,loopid,null));
+			loopid=pid;
+		};
+		html.reverse();
+		if(set.id){
+			childSelect=build(set.id,0);
+			if(childSelect){
+				hasChild=true;
+				html.push(childSelect);
+			};
+		};
+		
+		var onChange=function(tg,id,pid){
+			var values=[];
+			if(!id){
+				id=pid;
+			};
+			set.id=id;
+			set.values=values;
+			childSelect=BuildSelect(elem,set,changeFn);
+			changeFn&&changeFn(id,childSelect,data);
+		};
+		elem.innerHTML=html.join("\n");
+		elem.querySelectorAll("select").forEach(function(a){
+			a.addEventListener("change",function(e){
+				var tg=e.target;
+				onChange(tg,+tg.value,+tg.getAttribute("pid"));
+			});
+		});
+		return hasChild;
 	};
-	return rtv;
+	function sort(arr,buildFn){
+		var rtv=[];
+		arr.sort(function(a,b){
+			a=a.y;b=b.y;
+			if(!a||!b){
+				return !a&&!b||a?1:-1;
+			};
+			for(var i=0;i<a.length;i++){
+				if(a[i]!=b[i]){
+					return a[i]>b[i]?1:-1;
+				};
+			};
+			return 1;
+		});
+		for(var i=0,o,name;i<arr.length;i++){
+			o=arr[i];
+			name=o.y.substr(0,1).toUpperCase()+" "+o.name;
+			if(buildFn){
+				rtv.push(buildFn(o,name));
+			}else{
+				rtv.push({id:o.id,name:name});
+			};
+		};
+		return rtv;
+	};
+	
+	return function(elem,id,changeFn){
+		return BuildSelect(elem,{id:id,sort:sort},changeFn);
+	};
 };
+window.BuildCitySelect=buildCitySelectFn();
 
 
 
@@ -277,6 +493,7 @@ function Format(type){
 	xLevel(mapping[0]);
 	
 	//移除不符合level的数据，并重建映射
+	var findMaxLevel=0;
 	mapping={"0":{level:0,childs:[]}};
 	for(var i=0;i<list.length;i++){
 		var itm=list[i];
@@ -285,6 +502,7 @@ function Format(type){
 			i--;
 			continue;
 		};
+		findMaxLevel=Math.max(findMaxLevel,itm.level);
 		itm.childs=[];
 		mapping[itm.id]=itm;
 	};
@@ -306,6 +524,7 @@ function Format(type){
 	};
 	
 	rtv.maxLevel=maxLevel;
+	rtv.findMaxLevel=findMaxLevel;
 	rtv.list=list;
 	rtv.mapping=mapping;
 	return rtv;
@@ -354,13 +573,20 @@ body{
 	color: #fff;
 	font-size:14px;
 }
+.AreaFormat select {
+	height: 30px;
+	margin:8px 0;
+}
+a{text-decoration: none;}
+.GitHub a{color:#fff}
+
 .AreaFormat_Title{
 	line-height: 80px;
 	font-size: 40px;
 	text-align: center;
 }
 .AreaFormat_Btn{
-	padding: 5px 20px;
+	padding: 10px 20px;
 }
 
 .F2{
@@ -368,6 +594,9 @@ body{
 }
 </style>
 <div class="AreaFormat">
+	<div class="GitHub" style="position: absolute;left:30px; top:20px;">
+		<a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov">返回 GitHub</a>
+	</div>
 	<div class="AreaFormat_Title">
 		测试和WEB数据格式转换工具
 	</div>
@@ -388,10 +617,10 @@ body{
 				选择的级别需要数据源内包含此级的数据，比如level3不包含镇级，就算选了镇，也不会导出此级数据
 			</div>
 			<select class="AreaFormatLevel">
-				<option value="1">省</option>
-				<option value="2">省市</option>
-				<option value="3" selected>省市区</option>
-				<option value="4">省市区镇</option>
+				<option value="1">(1级)省</option>
+				<option value="2">(2级)省市</option>
+				<option value="3">(3级)省市区</option>
+				<option value="4" selected>(4级)省市区镇</option>
 			</select>
 			
 			<hr>

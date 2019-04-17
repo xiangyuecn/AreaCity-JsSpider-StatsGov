@@ -6,19 +6,8 @@
 
 `ok_geo.csv.7z`为省市区3级的坐标和行政区域边界范围数据，解压后130M+。
 
+在线测试数据（多级联动）：[https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/)
 
-## 测试和WEB数据格式转换工具
-
-在线测试工具地址：[https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/)
-
-或者直接使用`测试和WEB数据格式转换工具.js`，在任意网页控制台中使用。
-
-### 工具支持：
-1. 数据预览。
-2. 将csv数据导出成压缩后的紧凑版js格式文件。
-3. 将csv数据导出成JSON对象、JSON数组。
-4. 网页版省市区镇多级联动测试。
-5. 网页版省市区多级联动代码生成。
 
 ## 数据源
 
@@ -62,6 +51,30 @@ ext_name|原始名称，为未精简的名称。
 id|和`ok_data`表中的`ID`相同，通过这个`ID`关联到省市区具体数据，`map_geo_格式化.js`中有数据合并SQL语句。
 geo|城市中心坐标，高德地图`GCJ-02`火星坐标系
 polygon|行政区域边界，高德地图`GCJ-02`火星坐标系。存在多个地块时用`;`分隔，每个地块的坐标点用` `空格分隔，特别要注意：多个地块组合在一起可能是`MULTIPOLYGON`或者`POLYGON`，需用工具进行计算和对数据进行验证。js没找到求`polygon`并集的方法。
+
+
+
+
+
+# 测试和WEB数据格式转换工具
+
+在线测试工具地址：[https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/)
+
+或者直接使用`测试和WEB数据格式转换工具.js`，在任意网页控制台中使用。
+
+此工具主要用于把csv数据转换成别的格式，另外提供省市区多级联动测试，并且可生成js源码（含数据）下载，3级联动生成的文件紧凑版68kb，4级联动紧凑版1mb大小。
+
+## 工具支持：
+1. 数据预览和测试。
+2. 将csv数据导出成压缩后的紧凑版js格式纯数据文件，省市区3级数据65kb大小。
+3. 将csv数据导出成JSON对象、JSON数组纯数据文件，省市区3级数据120kb+。
+4. 网页版省市区镇多级联动测试。
+5. 网页版省市区多级联动js代码生成（含数据）。
+
+## 效果图
+![](.assets/tools.png)
+
+
 
 
 

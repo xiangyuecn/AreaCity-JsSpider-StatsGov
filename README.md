@@ -1,12 +1,16 @@
 # :open_book:省市区数据采集并标注拼音、坐标和边界范围
 
-当前最新版为`2019文件夹`内的`2018版数据`，此数据发布于`2019-01-31`。
+当前最新版为`2019文件夹`内的`2018版数据`，此数据发布于`2019-01-31`；在线测试数据（多级联动）：[https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/)。
 
 可直接打开`采集到的数据`文件夹内的`ok_data_level4.csv`来使用，level4是省市区镇4级数据，level3是省市区3级数据。另外不需要的数据可以简单的用Excel筛选后直接删除。csv格式非常方便解析或导入数据库。
 
-`ok_geo.csv.7z`为省市区3级的坐标和行政区域边界范围数据，解压后130M+。
+`ok_geo.csv.7z`为省市区3级的坐标和行政区域边界范围数据，csv格式，解压后130M+。
 
-在线测试数据（多级联动）：[https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/)
+> 如果在使用csv文件过程中出现乱码、错乱等情况，请自行调对utf-8编码（或者使用文本编辑器 `如notepad++` 把文件转成需要的编码），文本限定符为`"`。
+> 
+> 数据已测试在: `win10`+`notepad++`+`UltraEdit`+`WPS`+`SQL Server` 中无需任何设置，全部都能直接打开，并且数据保持工整，没有发现异常情况。
+> 
+> csv导入数据库中本来就是复杂的事情，参考`3_格式化.js` 中在SQL Server中的导入流程。
 
 
 ## 数据源
@@ -56,7 +60,7 @@ polygon|行政区域边界，高德地图`GCJ-02`火星坐标系。存在多个�
 
 
 
-# 测试和WEB数据格式转换工具
+# :open_book:测试和WEB数据格式转换工具
 
 在线测试工具地址：[https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/)
 

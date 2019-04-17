@@ -387,12 +387,13 @@ var buildCitySelectFn=function(){
 			changeFn&&changeFn(id,childSelect,data);
 		};
 		elem.innerHTML=html.join("\n");
-		elem.querySelectorAll("select").forEach(function(a){
-			a.addEventListener("change",function(e){
+		var arr=elem.querySelectorAll("select");
+		for(var i=0;i<arr.length;i++){
+			arr[i].addEventListener("change",function(e){
 				var tg=e.target;
 				onChange(tg,+tg.value,+tg.getAttribute("pid"));
 			});
-		});
+		};
 		return hasChild;
 	};
 	function sort(arr,buildFn){
@@ -673,7 +674,8 @@ while(true){
 var elem=document.createElement("div");
 elem.innerHTML=bodyHtml;
 document.body.appendChild(elem);
-document.documentElement.scrollTo(0,0);
+document.body.scrollTop=0;
+document.documentElement.scrollTop=0;
 
 elem.addEventListener("click",function(e){
 	var exec=e.target.getAttribute("exec");

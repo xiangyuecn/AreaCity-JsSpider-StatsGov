@@ -36,6 +36,7 @@ select * from [ok_data - 副本] where not exists(select * from area_city where 
 select * from area_city where not exists(select * from [ok_data - 副本] where id=area_city.id) order by id
 	
 */
+"use strict";
 var Max_Level=4 //1省 2市 3区 4镇
 
 if(!$(".DataTxt").length){
@@ -246,16 +247,9 @@ for(var i=0;i<pinyinList.length;i++){
 	};
 	var ps=p2.length?p2:p1;
 	var pinyin=ps.join(" ").toLowerCase();
-	ps=pinyin.split(" ");
-	
-	
-	var pf="";
-	for(var j=0;j<ps.length&&j<3;j++){
-		pf+=ps[j].substr(0,j==0?2:1);
-	};
 	
 	CITY_CSV.push(o.id+","+o.pid+","+o.deep+","+CSVName(o.name)
-		+","+CSVName(pf)+","+CSVName(pinyin)
+		+","+CSVName(pinyin.substr(0,1))+","+CSVName(pinyin)
 		+","+CSVName(o.ext_id+"")+","+CSVName(o.ext_name+""));
 };
 CITY_CSV.push("");

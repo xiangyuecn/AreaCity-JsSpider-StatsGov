@@ -107,7 +107,9 @@ var QueryPinYin=function(end){
 					console.log(idx_+"已查询"+count+"个");
 					
 					saveCache(adds);
-					run();
+					
+					console.log("等待20s 进行下个查询");
+					setTimeout(run,20000);
 				}
 			});
 		};

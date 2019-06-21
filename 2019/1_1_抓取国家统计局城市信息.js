@@ -197,7 +197,7 @@ var load_end=function(isErr){
 	LogX(logTxt);
 	
 	var data=[];
-	window.CITY_LIST=data;
+	window.CITY_LIST1=data;
 	for(var i=0;i<DATA.length;i++){
 		data.push(DATA[i].getValue());
 	}
@@ -205,7 +205,7 @@ var load_end=function(isErr){
 	var url=URL.createObjectURL(
 		new Blob([
 			new Uint8Array([0xEF,0xBB,0xBF])
-			,"var CITY_LIST="
+			,"var CITY_LIST1="
 			,JSON.stringify(data,null,"\t")
 		]
 		,{"type":"text/plain"})
@@ -213,7 +213,7 @@ var load_end=function(isErr){
 	var downA=document.createElement("A");
 	downA.innerHTML="下载查询好城市的文件";
 	downA.href=url;
-	downA.download="data.txt";
+	downA.download="data1_1.txt";
 	logX.append(downA);
 	downA.click();
 	

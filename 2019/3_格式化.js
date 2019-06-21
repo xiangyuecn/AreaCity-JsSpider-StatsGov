@@ -84,10 +84,10 @@ add("900201|9002|2|澳门|ao men");
 add("900301|9003|2|台湾|tai wan");
 add("910101|9101|2|海外|hai wai");
 
-add("90010101|900101|3|香港|xiang gang");
-add("90020101|900201|3|澳门|ao men");
-add("90030101|900301|3|台湾|tai wan");
-add("91010101|910101|3|海外|hai wai");
+add("900101001|900101|3|香港|xiang gang");
+add("900201001|900201|3|澳门|ao men");
+add("900301001|900301|3|台湾|tai wan");
+add("910101001|910101|3|海外|hai wai");
 
 
 
@@ -114,9 +114,6 @@ for(var i=0;i<pinyinList.length;i++){
 	o.ext_name=o.isExt?"":(o.ext_name||o.name);
 	o.name2=o.name;
 	if(!o.isExt){
-		if(o.deep==0){
-			o.ext_id=o.id;
-		};
 		if(o.ext_id==0){
 			throw new Error("ext_id=0",o);
 		};
@@ -149,14 +146,34 @@ for(var i=0;i<pinyinList.length;i++){
 	if(o.deep==0){
 		name=name.replace(/(省|市|自治区)$/ig,"");
 	}else if(o.deep==1){
-		if(/行政区划$/ig.test(name)){
-			name="直辖市";
-			o.P2="zhi xia shi";
-		}else if(name.length>2){
-			name=name.replace(/(市|地区)$/ig,"");
+		if(name.length>2){
+			name=name.replace(/(市|区|县|地区)$/ig,"");
 		};
 	}else{
-		if(/区$/.test(name)){//区结尾的太复杂单独处理
+		if(o.deep==2&&/高新技术(产业)?开发区$/.test(name)){
+			name="高新区";
+			o.P2_2=o.P2;
+			o.P2="gao xin qu";
+		}else if(o.deep==2&&/高新技术(产业)?园区$/.test(name)){
+			name="高新产业园";
+			o.P2_2=o.P2;
+			o.P2="gao xin chan ye yuan";
+		}else if(o.deep==2&&/现代产业园区$/.test(name)){
+			name="现代产业园";
+			o.P2_2=o.P2;
+			o.P2="xian dai chan ye yuan";
+		}else if(o.deep==2&&/工业园区$/.test(name)){
+			name="工业园区";
+			o.P2_2=o.P2;
+			o.P2="gong ye yuan qu";
+		}else if(o.deep==2&&/经济(技术)?开发区$/.test(name)){
+			name="经济开发区";
+			o.P2_2=o.P2;
+			o.P2="jing ji kai fa qu";
+		}
+		
+		
+		else if(/区$/.test(name)){//区结尾的太复杂单独处理
 			if(o.deep==2 && (name.length==3||name.length==4)){//只处理区的	只处理34个字的			
 				if(!/^市辖区$|(矿区|新区)$/.test(name)){
 					name=name.replace(/区$/ig,"");
@@ -196,7 +213,9 @@ select k,COUNT(*) as c from (select SUBSTRING(ext_name, len(ext_name)-LEN(@t), L
 			
 			//两个都恢复原名，本身这种就没有多少，如果保留一个短的会有歧义
 			name=o.name2;
+			o.P2=o.P2_2||o.P2;
 			o2.name=o2.name2;
+			o2.P2=o2.P2_2||o2.P2;
 		};
 	};
 	//简化后是否和【直接】上级重名
@@ -207,6 +226,7 @@ select k,COUNT(*) as c from (select SUBSTRING(ext_name, len(ext_name)-LEN(@t), L
 			
 			//恢复原名，这种和上级重名的蛮多，如：市下面的同名区、县
 			name=o.name2;
+			o.P2=o.P2_2||o.P2;
 		};
 	};
 	

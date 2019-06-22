@@ -147,7 +147,7 @@ for(var i=0;i<pinyinList.length;i++){
 		name=name.replace(/(省|市|自治区)$/ig,"");
 	}else if(o.deep==1){
 		if(name.length>2){
-			name=name.replace(/(市|区|县|地区)$/ig,"");
+			name=name.replace(/(市|区|县|盟|地区|林区)$/ig,"");
 		};
 	}else{
 		if(o.deep==2&&/高新技术(产业)?开发区$/.test(name)){

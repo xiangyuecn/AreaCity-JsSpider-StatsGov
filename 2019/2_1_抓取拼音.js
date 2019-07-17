@@ -2,7 +2,7 @@
 拼音先进行本地翻译一遍，准确度不高
 
 
-代码运行先前启动拼音服务.pinyin-python-server
+代码运行先前启动拼音服务assets\pinyin-python-server
 
 加载数据
 	找个干净、小的页面，直接执行本代码

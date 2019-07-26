@@ -64,7 +64,7 @@ polygon|行政区域边界，高德地图`GCJ-02`火星坐标系。存在多个�
 
 
 ## 案例效果
-[<img src="assets/use_picker.gif" width="200px">](https://jiebian.life/start/test/app?picker=1) [<img src="assets/use_select.png" width="300px">](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/)
+[<img src="assets/use_picker.gif" width="280px">](https://jiebian.life/start/test/app?picker=1) [<img src="assets/use_select.png" width="460px">](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/)
 
 
 

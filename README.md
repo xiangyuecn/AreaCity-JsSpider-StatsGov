@@ -5,7 +5,7 @@
 在线测试数据（多级联动）：[https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/)
 
 可直接打开`2019/采集到的数据`文件夹内的文件来使用：
-- `ok_data_level3.csv`: 省市区3级数据。
+- [ok_data_level3.csv](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/2019/%E9%87%87%E9%9B%86%E5%88%B0%E7%9A%84%E6%95%B0%E6%8D%AE/ok_data_level3.csv): 省市区3级数据。
 - `ok_data_level4.csv`: 省市区镇4级数据。
 - `ok_geo.csv.7z`: 为省市区3级的坐标和行政区域边界范围数据，csv格式，解压后130M+。
 
@@ -61,6 +61,10 @@ id|和`ok_data`表中的`ID`相同，通过这个`ID`关联到省市区具体数
 geo|城市中心坐标，高德地图`GCJ-02`火星坐标系
 polygon|行政区域边界，高德地图`GCJ-02`火星坐标系。存在多个地块时用`;`分隔，每个地块的坐标点用`,`分隔，特别要注意：多个地块组合在一起可能是`MULTIPOLYGON`或者`POLYGON`，需用工具进行计算和对数据进行验证。js没找到求`polygon`并集的方法，参考[2019/map_geo_格式化.js](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/2019/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)内的SQL Server的解析语句
 
+
+
+## 案例效果
+[<img src="assets/use_picker.gif" width="200px">](https://jiebian.life/start/test/app?picker=1) [<img src="assets/use_select.png" width="300px">](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/)
 
 
 

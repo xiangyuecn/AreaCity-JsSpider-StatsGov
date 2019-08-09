@@ -1,19 +1,15 @@
 # :open_book:省市区数据采集并标注拼音、坐标和边界范围
 
-当前最新版为 **2019文件夹** 内的`2018.190805版数据`，此数据发布于`统计局2019-01-31`、`民政部2019-08-05`。
-
-在线测试数据（多级联动）：[https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/)
+[在线测试和预览（转换成JSON）](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/)；当前最新版为 **2019文件夹** 内的`2018.190805版数据`，此数据发布于`统计局2019-01-31`、`民政部2019-08-05`。
 
 可直接打开`2019/采集到的数据`文件夹内的文件来使用：
 - [ok_data_level3.csv](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/2019/%E9%87%87%E9%9B%86%E5%88%B0%E7%9A%84%E6%95%B0%E6%8D%AE/ok_data_level3.csv): 省市区3级数据。
 - `ok_data_level4.csv`: 省市区镇4级数据。
 - `ok_geo.csv.7z`: 为省市区3级的坐标和行政区域边界范围数据，csv格式，解压后130M+。
 
-> csv格式非常方便解析成其他格式，并且可以使用Excel打开进行编辑，算是比较通用；如果在使用csv文件过程中出现乱码、错乱等情况，需自行调对utf-8编码（或者使用文本编辑器 `如 notepad++` 把文件转成需要的编码），文本限定符为`"`。
+> csv格式非常方便解析成其他格式，算是比较通用；如果在使用csv文件过程中出现乱码、错乱等情况，需自行调对utf-8（带BOM）编码（或者使用文本编辑器 `如 notepad++` 把文件转成需要的编码），文本限定符为`"`。
 > 
-> 数据已测试在: `win10`+`notepad++`+`UltraEdit`+`WPS`+`SQL Server` 中无需任何设置，全部都能直接打开，并且数据保持工整，没有发现异常情况。
-> 
-> csv导入数据库如果接触的比较多应该能很快能完成导入，参考[2019/map_geo_格式化.js](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/2019/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js) 中在SQL Server中的导入流程。
+> csv文件导入数据库如果接触的比较多应该能很快能完成导入，坐标和边界可参考[2019/map_geo_格式化.js](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/2019/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js) 中SQL Server的导入流程。
 
 
 ## 数据源
@@ -27,7 +23,7 @@
 
 ## 采集环境
 
-chrome 控制台，`Chrome 41`这版本蛮好，win7能用，`Chrome 46`这版本win10能用；新版本`Chrome 72+`乱码（统计局内页编码为`gb2312`，新版本`xhr`对编码反而支持的超级不友好，估计是印度佬干的）、SwitchyOmega代理没有效果、各种问题（[简单制作chrome便携版实现多版本共存](https://github.com/xiangyuecn/Docs/blob/master/Other/%E8%87%AA%E5%B7%B1%E5%88%B6%E4%BD%9Cchrome%E4%BE%BF%E6%90%BA%E7%89%88%E5%AE%9E%E7%8E%B0%E5%A4%9A%E7%89%88%E6%9C%AC%E5%85%B1%E5%AD%98.md)）
+chrome 控制台，`Chrome 41`这版本蛮好，win7能用，`Chrome 46`这版本win10能用；新版本`Chrome 72+`乱码（统计局内页编码为`gb2312`，新版本`xhr`对编码反而支持的超级不友好，估计是印度阿三干的）、SwitchyOmega代理没有效果、各种问题（[简单制作chrome便携版实现多版本共存](https://github.com/xiangyuecn/Docs/blob/master/Other/%E8%87%AA%E5%B7%B1%E5%88%B6%E4%BD%9Cchrome%E4%BE%BF%E6%90%BA%E7%89%88%E5%AE%9E%E7%8E%B0%E5%A4%9A%E7%89%88%E6%9C%AC%E5%85%B1%E5%AD%98.md)）
 
 
 ## 采集深度
@@ -53,13 +49,13 @@ ext_id|统计局原始的编号；如果是添加的港澳台等数据，此编�
 ext_name|原始名称，为未精简的名称
 
 ## ok_geo表字段
-此表为坐标和行政区域边界范围数据表，因为数据文件过大（130M+），所以分开存储。
+此表为坐标和行政区域边界范围数据表，因为数据文件过大（130M+），所以分开存储。由于边界数据的解析比较复杂，请参考[2019/map_geo_格式化.js](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/2019/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)内的SQL Server的解析语句。
 
 字段|描述
 :--:|--
 id|和`ok_data`表中的`ID`相同，通过这个`ID`关联到省市区具体数据，`map_geo_格式化.js`中有数据合并SQL语句
-geo|城市中心坐标，高德地图`GCJ-02`火星坐标系
-polygon|行政区域边界，高德地图`GCJ-02`火星坐标系。存在多个地块时用`;`分隔，每个地块的坐标点用`,`分隔，特别要注意：多个地块组合在一起可能是`MULTIPOLYGON`或者`POLYGON`，需用工具进行计算和对数据进行验证。js没找到求`polygon`并集的方法，参考[2019/map_geo_格式化.js](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/2019/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)内的SQL Server的解析语句
+geo|城市中心坐标，高德地图`GCJ-02`火星坐标系。格式："lng lat" | "EMPTY"，少量的EMPTY代表此城市没有抓取到坐标信息
+polygon|行政区域边界，高德地图`GCJ-02`火星坐标系。格式："lng lat,...;lng lat,..." | "EMPTY"，少量的EMPTY代表此城市没有抓取到边界信息；存在多个地块时用`;`分隔，每个地块的坐标点用`,`分隔，特别要注意：多个地块组合在一起可能是`MULTIPOLYGON`或者`POLYGON`，需用工具进行计算和对数据进行验证
 
 
 

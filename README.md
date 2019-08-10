@@ -113,9 +113,9 @@ polygon|行政区域边界，高德地图`GCJ-02`火星坐标系。格式："lng
 # :open_book:坐标和行政区域边界范围
 
 ## 数据源
-使用高德接口采集的，本来想采百度地图的，但经过使用发现百度地图数据有严重问题：
+使用高德接口采集的，本来想采百度地图的，但经过使用发现百度地图数据~~有严重问题(百度已更新，不能复现了)~~：
 
-参考 `肃宁县（右下方向那块飞地）`、`路南区（唐山科技职业技术学院那里一段诡异的边界）` 边界，百度数据大量线段交叉的无效`polygon`（[百度地图测试](http://lbsyun.baidu.com/jsdemo.htm#c1_10)），没有人工无法修正，高德没有这个问题（[高德地图测试](https://lbs.amap.com/api/javascript-api/example/district-search/draw-district-boundaries)）；
+参考 `肃宁县（右下方向那块飞地）`、`路南区（唐山科技职业技术学院那里一段诡异的边界）` 边界，~~百度数据大量线段交叉的无效`polygon`(百度已更新，不能复现了)~~（[百度地图测试](http://lbsyun.baidu.com/jsdemo.htm#c1_10)），没有人工无法修正，高德没有这个问题（[高德地图测试](https://lbs.amap.com/api/javascript-api/example/district-search/draw-district-boundaries)）；
 
 并且高德对镂空性质的地块处理比百度强，参考`天津市`对`唐山`大块飞地的处理，高德数据只需要`Union`操作就能生成`polygon`，百度既有`Union`操作又有`Difference`操作，极其复杂数据还无效。
 

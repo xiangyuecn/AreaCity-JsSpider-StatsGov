@@ -201,6 +201,10 @@ polygon|行政区域边界，高德地图`GCJ-02`火星坐标系。格式："lng
 
 
 
+# :open_book:其他资源
+- 全国基础地理数据库：[http://www.webmap.cn](http://www.webmap.cn)
+- OpenStreetMap：[https://www.openstreetmap.org](https://www.openstreetmap.org)
+
 
 # :star:捐赠
 如果这个库有帮助到您，请 Star 一下。

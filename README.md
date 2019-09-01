@@ -13,6 +13,8 @@
 
 **温馨建议：不要在没有动态更新机制的情况下把数据嵌入到Android、IOS、等安装包内；缓存数据应定期从服务器拉取更新**
 
+注：本库最高采集省市区镇4级数据、省市区3级边界范围，如果需要街道5级数据、或者更高精度的边界范围，请参考底下的`其他资源`。
+
 
 ## 数据源
 
@@ -204,6 +206,7 @@ polygon|行政区域边界，高德地图`GCJ-02`火星坐标系。格式："lng
 # :open_book:其他资源
 - 全国基础地理数据库：[http://www.webmap.cn](http://www.webmap.cn)
 - OpenStreetMap：[https://www.openstreetmap.org](https://www.openstreetmap.org)
+- 含街道居委会（五级）数据：[https://github.com/modood/Administrative-divisions-of-China](https://github.com/modood/Administrative-divisions-of-China)
 
 
 # :star:捐赠

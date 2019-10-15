@@ -399,16 +399,12 @@ var buildCitySelectFn=function(){
 	function sort(arr,buildFn){
 		var rtv=[];
 		arr.sort(function(a,b){
-			a=a.y;b=b.y;
-			if(!a||!b){
-				return !a&&!b||a?1:-1;
+			var y=a.y.charCodeAt(0)-b.y.charCodeAt(0);
+			if(y){
+				return y;
+			}else{
+				return a.name.localeCompare(b.name);
 			};
-			for(var i=0;i<a.length;i++){
-				if(a[i]!=b[i]){
-					return a[i]>b[i]?1:-1;
-				};
-			};
-			return 1;
 		});
 		for(var i=0,o,name;i<arr.length;i++){
 			o=arr[i];
@@ -654,7 +650,7 @@ a{text-decoration: none;}
 			<hr/>
 			<input class="AreaFormat_Btn" type="button" value="导出为自定义" exec="FormatClick,user">
 			<div>
-				自行修改源码实现UserFormat方法，导出自己想要的格式
+				自行修改源码实现UserFormat方法，导出自己想要的格式。<a href="https://xiangyuecn.github.io/Recorder/assets/%E5%B7%A5%E5%85%B7-%E4%BB%A3%E7%A0%81%E8%BF%90%E8%A1%8C%E5%92%8C%E9%9D%99%E6%80%81%E5%88%86%E5%8F%91Runtime.html#sha1=2F20E517E01657880212173A2406FB3E76EFD4EF&shareCode=v1_LypAUnVudGltZSBNZXRhQCoqIOOAikFyZWFDaXR55a-85Ye65Li66Ieq5a6a5LmJ56S65L6L44CLCkDmupDnoIHmoIfpopgoVGl0bGUp77yaQXJlYUNpdHnlr7zlh7rkuLroh6rlrprkuYnnpLrkvosKQOS9nOiAhShBdXRob3Ip77ya6auY5Z2a5p6cCkDniYjmnKwoVmVyKe-8mjEuMApA5pe26Ze077yaMjAxOS8xMC8xNSDkuIvljYg3OjUwOjEyCkDmj4_ov7AoRGVzYynvvJpgYGAi5L6_5LqO5b-r6YCf5LiK5omL5a-85Ye6QXJlYUNpdHktSnNTcGlkZXItU3RhdHNHb3blupPnmoTmlbDmja7kuLroh6rlt7HpnIDopoHnmoTmoLzlvI_vvIzov5nkuKrnpLrkvovlr7zlh7rmoLzlvI_kuLrvvJpbe2NvZGU6IiIsbmFtZToiIixwaW55aW46IiIsY2hpbGRzOlsuLi5dfSwuLi5dImBgYAotLS0tLS0tLS0tLQpA5YWs6ZKl5oyH5pWwKFJTQV9QdWJsaWNfRXhwb25lbnQp77yaQVFBQgpA5qih5pWwKFJTQV9Nb2R1bHVzKe-8mnBpbXZER2JBZnhwUGZ4ZytOU0x3UjdVdnY5SEFCWkFBUU8rNDhqUWhhbS9DOXRHL0xvMnI0OHFGcnNhMGhDSXVrNVQ3MDJaRVM1di9OVFI0Rm5XKzhkaXIzZGd5WjJSQzNXSUhydEFmOU5PS1ZYMFlvdTFLb1JrcXZhZG5EaGZscUJRNVdQT1pZV1ltaDBYQURwMkp2UzliSDRpRVlja0xncUVaMHlsVlAwVT0KQOiupOivgeS_oeaBryhSU0FfVHJ1c3Qp77yaYGBgInsiVmVyIjoiMS4wIiwiVGltZSI6IjE1Njg0NjQxOTg2NTgiLCJSb290IjoiRzAxIiwiTmFtZSI6IumrmOWdmuaenCIsIlRydXN0IjoicUx6cVF5OS9EVEtsZWhPVldJdFFhZEFZRDlpRTBMU3NHcGM5N0d1SWg5WE1reHdSRTQvdTYraWVrUE1SSHAxclZIOExsNS9tb3ZOYjJWeWFPU2FUM0hCWldhNWFqQWw3UlV1c2tKRE9maXBDZGVVYTVjNUs0TGJzMjk0SWRSV0tzaVF2Mm01YXFxNzI3VTh0Z1BxQUIvY0pXN2l0djlLa2tqczVyaWhLckdzPSJ9ImBgYApA562-5ZCNKFJTQV9TaWduKe-8mmNqb2wrRXp3NDNEUldNL3JTaUcreE1sRTRET0c0NXVmcW9HOVlIaXZJa2dRVW9XUDgycERjM090RXczdk5rV3RaUHZ6MnNxQ3IzcEN6bHQ3SHVIS1JqM1k3NGxLNXp0bHN0UGZlOHA5MFRMZzVIVWR2VHBBUTk3czhQc2RTZmtLNlhPQUdYdkN0UkhURlA4bU1aUTRFZ3JFMGFqWEhRMnE2eUliN0Fybk11TT0KKipAUnVudGltZUAqLwoKCi8v5a-85Ye655qEanNvbiBrZXnphY3nva4KdmFyIFNldHRpbmdzPXsKCUNvZGU6ImNvZGUiCgksQ29kZU1pbkxlbjoyIC8vY29kZeacgOWwkeimgei_meS5iOmVv--8jOWPluWAvDLvvIw077yMNgoJLE5hbWU6Im5hbWUiCgksUGlueWluOiJwaW55aW4iCgksQ2hpbGRzOiJjaGlsZHMiCn07CgokKCIuYXJlYUNpdHkiKS5yZW1vdmUoKTsKUnVudGltZS5Mb2coJzxpZnJhbWUgY2xhc3M9ImFyZWFDaXR5IiBzdHlsZT0id2lkdGg6MTAwMHB4O2hlaWdodDo1MDBweCIgc3JjPSIvQXJlYUNpdHktSnNTcGlkZXItU3RhdHNHb3YvIj48L2lmcmFtZT4nKTsKJCgiLmFyZWFDaXR5IikuYmluZCgibG9hZCIsZnVuY3Rpb24oKXsKCXZhciB3aW49JCgiLmFyZWFDaXR5IilbMF0uY29udGVudFdpbmRvdzsKCXdpbi5Vc2VyRm9ybWF0PWZ1bmN0aW9uKGxpc3QsbWFwcGluZyl7CgkJdmFyIHg9ZnVuY3Rpb24ob2JqLGRpc3QpewoJCQlpZighb2JqLmNoaWxkcy5sZW5ndGgpewoJCQkJcmV0dXJuOwoJCQl9OwoJCQlmb3IodmFyIGk9MDtpPG9iai5jaGlsZHMubGVuZ3RoO2krKyl7CgkJCQl2YXIgaXRtPW9iai5jaGlsZHNbaV07CgkJCQl2YXIgbz17fTsKCQkJCWRpc3QucHVzaChvKTsKCQkJCQoJCQkJdmFyIGlkPShpdG0uaWQrIiIpLnJlcGxhY2UoLygwMDB8MDAwMDAwfDAwMDAwMDAwfDAwMDAwMDAwMDApJC8sIiIpOwoJCQkJb1tTZXR0aW5ncy5Db2RlXT1pZC5sZW5ndGg8U2V0dGluZ3MuQ29kZU1pbkxlbj8oaWQrIjAwMDAwMDAwMDAwMCIpLnN1YnN0cigwLFNldHRpbmdzLkNvZGVNaW5MZW4pOmlkOwoJCQkJb1tTZXR0aW5ncy5OYW1lXT1pdG0ubmFtZTsKCQkJCVNldHRpbmdzLlBpbnlpbiYmKG9bU2V0dGluZ3MuUGlueWluXT1pdG0ucGlueWluKTsKCQkJCW9bU2V0dGluZ3MuQ2hpbGRzXT1bXTsKCQkJCXZhciBjPXgoaXRtLG9bU2V0dGluZ3MuQ2hpbGRzXSk7CgkJCQlpZighYyl7CgkJCQkJZGVsZXRlIG9bU2V0dGluZ3MuQ2hpbGRzXTsKCQkJCX07CgkJCX07CgkJCXJldHVybiBkaXN0OwoJCX07CgkJdmFyIGRhdGE9eChtYXBwaW5nWzBdLFtdKTsKCQkKCQl2YXIgY29kZT1KU09OLnN0cmluZ2lmeShkYXRhLG51bGwsIlx0Iik7CgkJdmFyIGNvZGVMZW49bmV3IEJsb2IoW2NvZGVdLHsidHlwZSI6InRleHQvcGxhaW4ifSkuc2l6ZSszOwoJCQoJCXJldHVybiB3aW4uUmVzdWx0KCIiLGNvZGUsImFyZWFfZm9ybWF0X3VzZXIuanNvbiIsYCR7Y29kZUxlbn3lrZfoioJgKTsKCX07Cn0pOw.." target="_blank">在线编辑UserFormat源码>></a>
 			</div>
 		</div>
 		<div style="flex: 1;"></div>

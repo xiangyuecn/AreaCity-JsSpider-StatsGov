@@ -212,6 +212,7 @@ polygon|行政区域边界，高德地图`GCJ-02`火星坐标系。格式："lng
 
 
 # :open_book:其他资源
+- 行政区划吧：[百度贴吧链接](https://tieba.baidu.com/f?kw=%E8%A1%8C%E6%94%BF%E5%8C%BA%E5%88%92)，一个指点江山有味道的吧，区划变更先知道
 - 全国基础地理数据库：[http://www.webmap.cn](http://www.webmap.cn)
 - OpenStreetMap：[https://www.openstreetmap.org](https://www.openstreetmap.org)
 - 含街道居委会（五级）数据：[https://github.com/modood/Administrative-divisions-of-China](https://github.com/modood/Administrative-divisions-of-China)

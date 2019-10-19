@@ -1,15 +1,15 @@
 # :open_book:省市区数据采集并标注拼音、坐标和边界范围
 
-[在线测试和预览（转换成JSON）](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/)；当前最新版为 **2019文件夹** 内的数据，此数据发布于`统计局2019-01-31`、`民政部2019-09-29`、`腾讯地图行政区划2019-07-22`、`腾讯地图行政区划采集当天`。
+[在线测试和预览（转换成JSON）](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/)；当前最新版为 **2019文件夹** 内的数据，此数据发布于`统计局2019-01-31`、`民政部2019-09-29`、`腾讯地图行政区划2019-07-22`、`高德地图行政区划采集当天`。
 
 可直接打开[2019/采集到的数据](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/tree/master/2019/%E9%87%87%E9%9B%86%E5%88%B0%E7%9A%84%E6%95%B0%E6%8D%AE)文件夹内的文件来使用：
-- [ok_data_level3.csv](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/2019/%E9%87%87%E9%9B%86%E5%88%B0%E7%9A%84%E6%95%B0%E6%8D%AE/ok_data_level3.csv)  [下载](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/2019/%E9%87%87%E9%9B%86%E5%88%B0%E7%9A%84%E6%95%B0%E6%8D%AE/ok_data_level3.csv): 省市区3级数据。
+- ok_data_level3.csv  [下载](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/2019/%E9%87%87%E9%9B%86%E5%88%B0%E7%9A%84%E6%95%B0%E6%8D%AE/ok_data_level3.csv): 省市区3级数据。
 - `ok_data_level4.csv` [下载](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/2019/%E9%87%87%E9%9B%86%E5%88%B0%E7%9A%84%E6%95%B0%E6%8D%AE/ok_data_level4.csv): 省市区镇4级数据。
 - `ok_geo.csv.7z` [下载](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/2019/%E9%87%87%E9%9B%86%E5%88%B0%E7%9A%84%E6%95%B0%E6%8D%AE/ok_geo.csv.7z): 为省市区3级的坐标和行政区域边界范围数据，csv格式，解压后130M+。
 
 > csv格式非常方便解析成其他格式，算是比较通用；如果在使用csv文件过程中出现乱码、错乱等情况，需自行调对utf-8（带BOM）编码（或者使用文本编辑器 `如 notepad++` 把文件转成需要的编码），文本限定符为`"`。
 > 
-> csv文件导入数据库如果接触的比较多应该能很快能完成导入，[城市数据参考导入教程](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/2019/3_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)、[坐标和边界参考导入教程](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/2019/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js) ，教程在代码开头注释中，是SQL Server的导入流程和SQL语句。
+> csv文件导入数据库如果接触的比较多应该能很快能完成导入，城市数据参考[导入教程](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/2019/3_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)、坐标和边界参考[导入教程](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/2019/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js) ，教程在代码开头注释中，是SQL Server的导入流程和SQL语句。
 
 **温馨建议：不要在没有动态更新机制的情况下把数据嵌入到Android、IOS、等安装包内；缓存数据应定期从服务器拉取更新**
 
@@ -18,15 +18,15 @@
 
 ## 数据源
 
-- [国家统计局](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/) 统计用区划和城乡划分代码，此为主要数据源，数据比较齐全但是比较杂，并且数据是一年一更可能会存在滞后，需额外移除和处理开发区、经济区、高新区、国家级新区等区域；此数据源为省市区三级数据的主要数据源，镇级辅助数据源。
+- [国家统计局](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/) ：统计用区划和城乡划分代码，此数据比较齐全但是比较杂，并且数据是一年一更可能会存在滞后，需额外移除和处理开发区、经济区、高新区、国家级新区等区域；此数据源为省市区三级数据的主要数据源，镇级辅助数据源。
 
-- [民政部](http://www.mca.gov.cn/article/sj/xzqh/) 行政区划代码，提供省市区三级数据，一月一更；为辅助数据源。
+- [民政部](http://www.mca.gov.cn/article/sj/xzqh/) ：行政区划代码，提供省市区三级数据，一月一更；为辅助数据源。
 
-- [腾讯地图行政区划](https://lbs.qq.com/webservice_v1/guide-region.html)，提供省市区镇四级数据，更新比较频繁；为镇级主要数据源，省市区三级辅助数据源。
+- [腾讯地图行政区划](https://lbs.qq.com/webservice_v1/guide-region.html)：提供省市区镇四级数据，更新比较频繁；为镇级主要数据源，省市区三级辅助数据源。
 
-- [高德地图行政区域](https://lbs.amap.com/api/webservice/guide/api/district)，提供省市区镇数据，实际采用前三级，更新比较频繁但具体时间未知；为辅助数据源。
+- [高德地图行政区域](https://lbs.amap.com/api/webservice/guide/api/district)：提供省市区镇数据，实际采用前三级，更新比较频繁但具体时间未知；为辅助数据源。
 
-- [高德地图坐标和行政区域边界范围](https://lbs.amap.com/api/javascript-api/example/district-search/draw-district-boundaries) 当城市数据有变化时，主动从高德查询坐标和边界信息。
+- [高德地图坐标和行政区域边界范围](https://lbs.amap.com/api/javascript-api/example/district-search/draw-district-boundaries)：当城市数据有变化时，主动从高德查询坐标和边界信息。
 
 
 ## 采集环境

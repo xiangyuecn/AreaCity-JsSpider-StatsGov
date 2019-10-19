@@ -5,13 +5,17 @@
 代码运行先前启动拼音服务assets\pinyin-python-server
 
 加载数据
-	找个干净、小的页面，直接执行本代码
-	先直接运行本代码，根据提示输入data1_2.txt到文本框 (内容太大，控制台吃不消，文本框快很多)
+	找个干净、小的页面，直接执行本代码 http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/ http的页面可行
+	先直接运行本代码，根据提示输入MergeAllSaveName对应的文件到文本框 (内容太大，控制台吃不消，文本框快很多)
 	或者使用本地网址更快：
-	var s=document.createElement("script");s.src="https://地址/data1_2.txt";document.documentElement.appendChild(s)
+	var url="https://地址/";
+	var s=document.createElement("script");s.src=url+"Step1_5_Merge_All.txt?t="+Date.now();document.documentElement.appendChild(s)
 
 然后再次运行本代码
 */
+var SaveName="Step2_1_Pinyin_Local";
+var MergeAllSaveName="Step1_5_Merge_All";
+
 var PinyinStop=false;
 
 var logX=$('<div class="LogX" style="position: fixed;bottom: 80px;right: 100px;padding: 50px;background: #0ca;color: #fff;font-size: 16px;width: 600px;z-index:9999999"></div>');
@@ -24,7 +28,7 @@ function LogX(txt){
 }
 $("body").append(logX);
 if(!$(".DataTxt").length){
-	$("body").append('<div style="position: fixed;bottom: 80px;left: 100px;padding: 20px;background: #0ca;z-index:9999999">输入data1_2.txt<textarea class="DataTxt"></textarea></div>');
+	$("body").append('<div style="position: fixed;bottom: 80px;left: 100px;padding: 20px;background: #0ca;z-index:9999999">输入'+MergeAllSaveName+'.txt<textarea class="DataTxt"></textarea></div>');
 };
 
 var QueryPinYin=function(end){
@@ -61,12 +65,13 @@ var QueryPinYin=function(end){
 			,pid:p&&+p.code||0
 			,deep:o.deep
 		};
+		if(o.qqPY){
+			o2.qqPY=o.qqPY;
+		};
 		
-		if(o.deep==1){
-			if(name=="市辖区"){//北京、天津等，"市"级直接用"省"级名称
-				o2.name=p.name;
-				o2.ext_name=name;
-			};
+		if(name=="市辖区"){//北京、天津、嘉峪关等的唯一一个的辖区，"市"级直接用上级名称
+			o2.name=p.name;
+			o2.ext_name=name;
 		};
 		return o2;
 	};
@@ -74,8 +79,8 @@ var QueryPinYin=function(end){
 	if(window.CITY_LIST_Locals){
 		datas=CITY_LIST_Locals;
 	}else{
-		for(var i=0;i<CITY_LIST2.length;i++){
-			var shen=CITY_LIST2[i];
+		for(var i=0;i<CityData.cityList.length;i++){
+			var shen=CityData.cityList[i];
 			shen.deep=0;
 			datas.push(fix(fixCode(shen,null),null));
 			
@@ -97,8 +102,8 @@ var QueryPinYin=function(end){
 				};
 			};
 		};
-		console.log(CITY_LIST2);
-		CITY_LIST2=null;
+		console.log(CityData);
+		
 		window.CITY_LIST_Locals=datas;
 	}
 	//console.log(JSON.stringify(datas,null,"\t"))
@@ -175,33 +180,45 @@ var QueryPinYin=function(end){
 
 var ViewDown=function(){
 	console.log("完成："+(Date.now()-RunPinYin.T1)/1000+"秒");
-	window.CITY_LIST_PINYIN_Local=CITY_LIST_Locals;
+	
+	var saveData={};
+	window[SaveName]=saveData;
+	for(var k in CityData){
+		if(k!="cityList"){
+			saveData[k]=CityData[k];
+		};
+	};
+	saveData.cityList=CITY_LIST_Locals;
+	
 	var url=URL.createObjectURL(
 		new Blob([
 			new Uint8Array([0xEF,0xBB,0xBF])
-			,"var CITY_LIST_PINYIN_Local="
-			,JSON.stringify(CITY_LIST_Locals,null,"\t")
+			,"var "+SaveName+"="
+			,JSON.stringify(saveData,null,"\t")
 		]
 		,{"type":"text/plain"})
 	);
 	var downA=document.createElement("A");
-	downA.innerHTML="下载查询好城市的文件";
+	downA.innerHTML="下载本地拼音处理好的城市文件";
 	downA.href=url;
-	downA.download="data-pinyin-local.txt";
+	downA.download=SaveName+".txt";
 	logX.append(downA);
 	downA.click();
 };
 
 var RunPinYin=function(){
-	if(!window.CITY_LIST2){
+	if(!window[MergeAllSaveName]){
 		var val=$(".DataTxt").val();
 		if(!val){
-			console.error("需要输入data1_2.txt");
+			console.error("需要输入"+MergeAllSaveName+".txt");
 			return;
 		}else{
-			window.CITY_LIST2=eval(val+";CITY_LIST2");
+			window[MergeAllSaveName]=eval(val+";"+MergeAllSaveName);
 		};
 	};
+	
+	window.CityData=window[MergeAllSaveName];
+	window[MergeAllSaveName]=null;
 	
 	RunPinYin.T1=Date.now();
 	QueryPinYin(ViewDown);

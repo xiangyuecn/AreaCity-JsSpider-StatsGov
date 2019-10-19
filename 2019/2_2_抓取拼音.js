@@ -8,23 +8,36 @@ http://www.qqxiuzi.cn/zh/pinyin/
 打开上面这个页面
 
 加载数据
-	先直接运行本代码，根据提示输入data-pinyin-local.txt到文本框 (内容太大，控制台吃不消，文本框快很多)
+	先直接运行本代码，根据提示输入PinyinLocalSaveName对应文件到文本框 (内容太大，控制台吃不消，文本框快很多)
 	或者使用本地网址更快：
-	var s=document.createElement("script");s.src="https://地址/data-pinyin-local.txt";document.body.appendChild(s)
+	var url="https://地址/";
+	var s=document.createElement("script");s.src=url+"Step2_1_Pinyin_Local.txt?t="+Date.now();document.body.appendChild(s)
 
 然后再次运行本代码
 */
+var SaveName="Step2_2_Pinyin_WebApi";
+var PinyinLocalSaveName="Step2_1_Pinyin_Local";
 
 if(!$(".DataTxt").length){
-	$("body").append('<div style="position: fixed;bottom: 80px;left: 100px;padding: 20px;background: #0ca;z-index:9999999">输入data-pinyin-local.txt<textarea class="DataTxt"></textarea></div>');
+	$("body").append('<div style="position: fixed;bottom: 80px;left: 100px;padding: 20px;background: #0ca;z-index:9999999">输入'+PinyinLocalSaveName+'.txt<textarea class="DataTxt"></textarea></div>');
 };
 
 window.PageToken="";
 var FixTrim=function(name){
 	return name.replace(/^\s+|\s+$/g,"");
 };
+var checkqqPY=function(itm){
+	var q=itm.qqPY,p=itm.P2;
+	if(q&&p){
+		var a=q.length>p.length?q:p;
+		var b=a!=q?q:p;
+		if(a.indexOf(b)!=0){
+			console.log("和qq的拼音不一致qq:"+q+" <=> "+p,itm);
+		};
+	};
+};
 var QueryPinYin=function(end){
-	var datas=CITY_LIST_PINYIN_Local;
+	var datas=CityData.cityList;
 	
 	//一次性多查，一个个查被封的快又慢
 	var keyMp={};
@@ -33,6 +46,7 @@ var QueryPinYin=function(end){
 		if(!o.P2&&o.deep<3){
 			if(CacheDic[o.name]){
 				o.P2=CacheDic[o.name];
+				checkqqPY(o);
 			}else{
 				keyMp[o.name]||(keyMp[o.name]=[]);
 				keyMp[o.name].push(o);
@@ -101,6 +115,7 @@ var QueryPinYin=function(end){
 						adds[mps[0].name]=txt;
 						for(var j=0;j<mps.length;j++){
 							mps[j].P2=txt;
+							checkqqPY(mps[j]);
 							count++;
 						};
 					};
@@ -124,19 +139,21 @@ var QueryPinyinErrs=0;
 
 var ViewDown=function(){
 	console.log("完成："+(Date.now()-RunPinYin.T1)/1000+"秒");
-	window.CITY_LIST_PINYIN=CITY_LIST_PINYIN_Local;
+	
+	var saveData=CityData;
+	window[SaveName]=saveData;
 	var url=URL.createObjectURL(
 		new Blob([
 			new Uint8Array([0xEF,0xBB,0xBF])
-			,"var CITY_LIST_PINYIN="
-			,JSON.stringify(CITY_LIST_PINYIN_Local,null,"\t")
+			,"var "+SaveName+"="
+			,JSON.stringify(saveData,null,"\t")
 		]
 		,{"type":"text/plain"})
 	);
 	var downA=document.createElement("A");
-	downA.innerHTML="下载查询好城市的文件";
+	downA.innerHTML="下载WebApi拼音处理好的城市文件";
 	downA.href=url;
-	downA.download="data-pinyin.txt";
+	downA.download=SaveName+".txt";
 	document.body.appendChild(downA);
 	downA.click();
 };
@@ -149,20 +166,24 @@ function saveCache(add){
 
 var proxyID=+localStorage["proxyID"]||0;
 var RunPinYin=function(){
-	if(!window.CITY_LIST_PINYIN_Local){
+	if(!window[PinyinLocalSaveName]){
 		var val=$(".DataTxt").val();
 		if(!val){
-			console.error("需要输入data-pinyin-local.txt");
+			console.error("需要输入"+PinyinLocalSaveName+".txt");
 			return;
 		}else{
-			window.CITY_LIST_PINYIN_Local=eval(val+";CITY_LIST_PINYIN_Local");
+			window[PinyinLocalSaveName]=eval(val+";"+PinyinLocalSaveName);
 		};
 	};
+	
+	window.CityData=window[PinyinLocalSaveName];
+	window[PinyinLocalSaveName]=null;
 	
 	if(!CacheDic){
 		CacheDic={};
 		var cache=localStorage["CacheDic"];
 		if(cache){
+			console.warn("已加载拼音字符映射缓存，如果长时间未清理过，应该清除localStorage['CacheDic']后请求新的数据");
 			CacheDic=JSON.parse(cache);
 		};
 	};

@@ -3,9 +3,10 @@
 
 先加载数据
 	拼音页面如果没有关闭，直接运行本代码，或者：
-	先直接运行本代码，根据提示输入data-pinyin.txt到文本框 (内容太大，控制台吃不消，文本框快很多)
+	先直接运行本代码，根据提示输入PinyinWebApiSaveName对应文件到文本框 (内容太大，控制台吃不消，文本框快很多)
 	或者使用本地网址更快：
-	var s=document.createElement("script");s.src="https://地址/data-pinyin.txt";document.body.appendChild(s)
+	var url="https://地址/";
+	var s=document.createElement("script");s.src=url+"Step2_2_Pinyin_WebApi.txt?t="+Date.now();document.body.appendChild(s)
 	
 然后再次运行本代码
 
@@ -39,22 +40,30 @@ select * from area_city where not exists(select * from [ok_data - 副本] where 
 "use strict";
 var Max_Level=4 //1省 2市 3区 4镇
 
+var PinyinWebApiSaveName="Step2_2_Pinyin_WebApi";
+
 if(!$(".DataTxt").length){
-	$("body").append('<div style="position: fixed;bottom: 80px;left: 100px;padding: 20px;background: #0ca;z-index:9999999">输入data-pinyin.txt<textarea class="DataTxt"></textarea></div>');
+	$("body").append('<div style="position: fixed;bottom: 80px;left: 100px;padding: 20px;background: #0ca;z-index:9999999">输入'+PinyinWebApiSaveName+'.txt<textarea class="DataTxt"></textarea></div>');
 };
-if(!window.CITY_LIST_PINYIN){
+if(!window[PinyinWebApiSaveName]){
 	var val=$(".DataTxt").val();
 	if(!val){
-		throw new Error("需要输入data-pinyin.txt");
+		throw new Error("需要输入"+PinyinWebApiSaveName+".txt");
 	}else{
-		window.CITY_LIST_PINYIN=eval(val+";CITY_LIST_PINYIN");
+		window[PinyinWebApiSaveName]=eval(val+";"+PinyinWebApiSaveName);
 	};
 };
 
-var pinyinList=CITY_LIST_PINYIN;
-CITY_LIST_PINYIN=null;
+var pinyinList=window[PinyinWebApiSaveName].cityList;
+window[PinyinWebApiSaveName]=null;
 
-//添加港澳台数据
+//添加扩展数据
+var PinyinExt={
+	81:{name:"香港",prefix:"~1"}
+	,82:{name:"澳门",prefix:"~2"}
+	,71:{name:"台湾",prefix:"~3"}
+	,91:{name:"国外",prefix:"~4"}
+};
 function add(txt){
 	var val=txt.split("|");
 	pinyinList.push({
@@ -71,23 +80,10 @@ function add(txt){
 	});
 };
 //id|pid|deep|name|pinyin
-add("90|0|0|港澳台|~0");
-add("91|0|0|海外|~1");
-
-add("9001|90|1|香港|xiang gang");
-add("9002|90|1|澳门|ao men");
-add("9003|90|1|台湾|tai wan");
-add("9101|91|1|海外|hai wai");
-
-add("900101|9001|2|香港|xiang gang");
-add("900201|9002|2|澳门|ao men");
-add("900301|9003|2|台湾|tai wan");
-add("910101|9101|2|海外|hai wai");
-
-add("900101001|900101|3|香港|xiang gang");
-add("900201001|900201|3|澳门|ao men");
-add("900301001|900301|3|台湾|tai wan");
-add("910101001|910101|3|海外|hai wai");
+add("91|0|0|国外|guo wai");
+add("9100|91|1|国外|guo wai");
+add("910000|9100|2|国外|guo wai");
+add("910000000|910000|3|国外|guo wai");
 
 
 
@@ -96,16 +92,23 @@ var idMP={};
 for(var i=0;i<pinyinList.length;i++){
 	var o=pinyinList[i];
 	o.child=[];
+	if(idMP[o.id]){
+		console.error("存在重复ID",o);
+		throw new Error();
+	};
 	idMP[o.id]=o;
 };
 
-var newList=[];
+var newList=[],roots=[];
 for(var i=0;i<pinyinList.length;i++){
 	var o=pinyinList[i];
 	if(o.deep+1>Max_Level){
 		continue;
 	};
 	newList.push(o);
+	if(o.pid==0){
+		roots.push(o);
+	};
 	
 	if(o.pid){
 		idMP[o.pid].child.push(o);
@@ -115,11 +118,31 @@ for(var i=0;i<pinyinList.length;i++){
 	o.name2=o.name;
 	if(!o.isExt){
 		if(o.ext_id==0){
-			throw new Error("ext_id=0",o);
+			console.error("ext_id=0",o)
+			throw new Error();
 		};
 	};
 };
 pinyinList=newList;
+
+//检测条数据是否有足够的深度数据
+var deepCheck=function(arr,level){
+	for(var i=0;i<arr.length;i++){
+		var o=arr[i];
+		if(level<Max_Level){
+			if(o.child.length==0){
+				console.error("层级深度不足",arr[i]);
+				throw new Error();
+			};
+		};
+		if(o.deep+1!=level){
+			console.error("层级错误",arr[i]);
+			throw new Error();
+		};
+		deepCheck(o.child,level+1);
+	};
+};
+deepCheck(roots,1);
 
 //人工fix数据
 for(var i=0;i<pinyinList.length;i++){
@@ -143,10 +166,14 @@ for(var i=0;i<pinyinList.length;i++){
 	var name=o.name;
 	name=name.replace(/(..)(?:(?:各|汉|满|回|藏|苗|彝|壮|侗|瑶|白|傣|黎|佤|畲|水|土|羌|怒|京)族|(蒙古|维吾尔|布依|土家|哈尼|哈萨克|傈僳|高山|拉祜|东乡|纳西|景颇|柯尔克孜|达斡尔|仫佬|布朗|撒拉|毛南|仡佬|锡伯|阿昌|普米|朝鲜|塔吉克|乌孜别克|俄罗斯|鄂温克|德昂|保安|裕固|塔塔尔|独龙|鄂伦春|赫哲|门巴|珞巴|基诺)族?)+(自治[区州县旗]|(?:民族)?[乡镇])$/g,"$1");
 	
+	name=name.replace(/(自治区|特别行政区)$/ig,"");
+	
 	if(o.deep==0){
-		name=name.replace(/(省|市|自治区)$/ig,"");
+		name=name.replace(/(省|市)$/ig,"");
 	}else if(o.deep==1){
-		if(name.length>2){
+		if(o.pid==50){
+			//NOOP 重庆的两个子级明确的用高德的名称，此处优待优待
+		}else if(name.length>2){
 			name=name.replace(/(市|区|县|盟|地区|林区)$/ig,"");
 		};
 	}else{
@@ -267,12 +294,29 @@ for(var i=0;i<pinyinList.length;i++){
 	};
 	var ps=p2.length?p2:p1;
 	var pinyin=ps.join(" ").toLowerCase();
+	var pinyinPrefix=pinyin.substr(0,1);
+	var pyExtSet=PinyinExt[o.id];
+	if(pyExtSet){
+		pyExtSet.use=true;
+		if(pyExtSet.name!=o.name){
+			console.error("扩展拼音名称不符",pyExtSet,o);
+			throw new Error();
+		};
+		pinyinPrefix=pyExtSet.prefix;
+	};
 	
 	CITY_CSV.push(o.id+","+o.pid+","+o.deep+","+CSVName(o.name)
-		+","+CSVName(pinyin.substr(0,1))+","+CSVName(pinyin)
+		+","+CSVName(pinyinPrefix)+","+CSVName(pinyin)
 		+","+CSVName(o.ext_id+"")+","+CSVName(o.ext_name+""));
 };
 CITY_CSV.push("");
+
+for(var k in PinyinExt){
+	if(!PinyinExt[k].use){
+		console.error("PinyinExt存在未使用项",PinyinExt[k]);
+		throw new Error();
+	};
+};
 
 var url=URL.createObjectURL(
 	new Blob([

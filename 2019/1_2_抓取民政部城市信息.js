@@ -10,28 +10,33 @@ s.src="https://cdn.bootcss.com/jquery/1.9.1/jquery.min.js";
 document.body.append(s);
 
 加载数据
-	先直接运行本代码，根据提示输入data1_1.txt到文本框 (内容太大，控制台吃不消，文本框快很多)
+	先直接运行本代码，根据提示输入上一步结果到文本框 (内容太大，控制台吃不消，文本框快很多)
 	或者使用本地网址更快：
-	var s=document.createElement("script");s.src="https://地址/data1_1.txt";document.documentElement.appendChild(s)
+	var url="https://地址/";
+	var s=document.createElement("script");s.src=url+"Step1_1_StatsGov.txt?t="+Date.now();document.documentElement.appendChild(s)
 */
 "use strict";
 jQuery;
 
+var SaveName="Step1_2_Merge_MCA"
+var PrevSaveName="Step1_1_StatsGov";
+
 if(!$(".DataTxt").length){
-	$("body").append('<div style="position: fixed;bottom: 80px;left: 100px;padding: 20px;background: #0ca;z-index:9999999">输入data1_1.txt<textarea class="DataTxt"></textarea></div>');
+	$("body").append('<div style="position: fixed;bottom: 80px;left: 100px;padding: 20px;background: #0ca;z-index:9999999">输入'+PrevSaveName+'.txt<textarea class="DataTxt"></textarea></div>');
 };
-if(!window.CITY_LIST1){
+if(!window[PrevSaveName]){
 	var val=$(".DataTxt").val();
 	if(!val){
-		throw new Error("需要输入data1_1.txt");
+		throw new Error("需要输入"+PrevSaveName+".txt");
 	}else{
-		window.CITY_LIST1=eval(val+";CITY_LIST1");
+		window[PrevSaveName]=eval(val+";"+PrevSaveName);
 	};
 }else{
-	$(".DataTxt").val("CITY_LIST1="+JSON.stringify(CITY_LIST1,null,"\t"));
+	$(".DataTxt").val(PrevSaveName+"="+JSON.stringify(window[PrevSaveName],null,"\t"));
 };
-var cityList=CITY_LIST1;
-CITY_LIST1=null;
+var StatsGovData=window[PrevSaveName];
+var cityList=StatsGovData.cityList;
+window[PrevSaveName]=null;
 
 
 //*******生成民政部数据*******
@@ -57,7 +62,7 @@ if(arr[0].name!="北京市" || arr[arr.length-1].code!="82"){
 console.log("读取到"+arr.length+"条数据", arr);
 
 
-//人工修正数据，有些直辖市没有上级，用统计局的补齐
+//人工修正数据，有些直辖市mca没有上级，用统计局的补齐
 var fixParent={
 	1101:{name:"市辖区"}//北京市
 	,1201:{name:"市辖区"}//天津市
@@ -70,11 +75,11 @@ var fixParent={
 	,4690:{name:"省直辖县级行政区划"}//海南省
 	,6590:{name:"自治区直辖县级行政区划"}//新疆
 };
-//人工修正数据，民政部新数据已撤销的市，统计局滞后
+//人工修正数据，mca新数据已撤销的市，统计局滞后
 var fixRemove={
 	3712:"莱芜市" //2019.01已被拆分到济南市
 	
-	//移除单独的港澳台，采用集中的 港澳台 选项
+	//移除单独的港澳台，mca这些没有下级并且统计局没有这些
 	,71:"台湾省"
 	,81:"香港特别行政区"
 	,82:"澳门特别行政区"
@@ -120,8 +125,8 @@ console.log("民政部数据准备完成",list);
 
 
 //*******合并数据*******
-var notfinds=[];
-var notfindsIgnore=[];
+var notfinds=[];//没有在mca列表里的统计局多出来的数据
+var notfindsIgnore=[];//已知的多余
 var maxDeep=0;
 function merge(arr1,arr2,deep){
 	if(deep==3){
@@ -135,9 +140,6 @@ function merge(arr1,arr2,deep){
 	//检查冲突
 	for(var i=0;i<arr1.length;i++){
 		var oi=arr1[i];
-		if(deep==0&&!oi.code){
-			oi.code=oi.child[0].code.substr(0,2)+"0000000000";//【格式化】给省级加上code
-		};
 		var oiCode=(oi.code+"").substr(0,6).replace(/(0000|00)$/,"");
 		var find=false;
 		for(var j=0;j<arr2.length;j++){
@@ -163,9 +165,9 @@ function merge(arr1,arr2,deep){
 			}else if(deep==2&&oiCode.length==4){
 				//NOOP 补齐的区级，如东莞的区级
 			}else if(/(新区|新城|新城区|实验区|保税区|开发区|管理区|食品区|园区|产业园|名胜区|示范区)$/.test(oi.name)){
-				notfindsIgnore.push(oi);
+				notfindsIgnore.push({code:oi.code,name:oi.name});
 			}else{
-				notfinds.push(oi);
+				notfinds.push({code:oi.code,name:oi.name});
 			};
 		};
 	};
@@ -202,10 +204,10 @@ function merge(arr1,arr2,deep){
 merge(cityList,list,0);
 
 if(notfinds.length){
-	console.warn("发现"+notfinds.length+"条多余项", notfinds);
+	console.warn("发现"+notfinds.length+"条民政部没有的统计局多余项", notfinds);
 };
 if(notfindsIgnore.length){
-	console.log("忽略"+notfindsIgnore.length+"条多余项", notfindsIgnore);
+	console.log("忽略"+notfindsIgnore.length+"条民政部没有的统计局多余项", notfindsIgnore);
 };
 
 console.log("合并完成", cityList);
@@ -241,7 +243,7 @@ var format=function(arr,deep){
 		var oi=arr[i];
 		var o={
 			name:oi.name
-			,code:oi.code.length>=12?oi.code:(oi.code+"000000000000").substr(0,12)
+			,code:(oi.code+"000000000000").substr(0,12)
 			,child:[]
 		};
 		rtv.push(o);
@@ -261,25 +263,34 @@ var format=function(arr,deep){
 			};
 		};
 	};
+	rtv.sort(function(a,b){
+		return a.code.localeCompare(b.code);
+	});
 	return rtv;
 };
 cityList=format(cityList,0);
 
 console.log(cityList);
 
+var saveObj={
+	statsGovYear:StatsGovData.year
+	,notFinds:notfinds
+	,notFindsIgnore:notfindsIgnore
+	,cityList:cityList
+};
 
 var url=URL.createObjectURL(
 	new Blob([
 		new Uint8Array([0xEF,0xBB,0xBF])
-		,"var CITY_LIST2="
-		,JSON.stringify(cityList,null,"\t")
+		,"var "+SaveName+"="
+		,JSON.stringify(saveObj,null,"\t")
 	]
 	,{"type":"text/plain"})
 );
 var downA=document.createElement("A");
 downA.innerHTML="下载合并好的数据文件";
 downA.href=url;
-downA.download="data1_2.txt";
+downA.download=SaveName+".txt";
 downA.click();
 
 console.log("--完成--");

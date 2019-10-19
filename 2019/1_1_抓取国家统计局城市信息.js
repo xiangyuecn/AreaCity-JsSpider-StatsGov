@@ -1,12 +1,22 @@
 /*
-获取所有城市名称原始数据
+获取统计局所有城市名称原始数据
 
-在以下页面执行，可能需要低版本chrome，不然他们网页gbk格式的请求会乱码，chrome 41.0.2272.118没有乱码
+在以下页面执行
 http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/
+
+可能需要低版本chrome，不然他们网页gbk格式的请求会乱码，chrome 41没有乱码，Chrome 46这版本win10能用。或者篡改Content-Type响应头为Content-Type: text/html; charset=gb2312也可解决新版Chrome乱码问题，比如：FildderScript OnBeforeResponse中添加：
+```
+if (oSession.HostnameIs("www.stats.gov.cn")){
+	if(/tjyqhdmhcxhfdm\/\d+/.test(oSession.fullUrl)){
+		oSession.oResponse.headers["Content-Type"]="text/html; charset=gb2312";
+	}
+}
+```
 */
 (function(){
 var Year=2018;
 var LoadMaxLevel=4;//采集几层
+var SaveName="Step1_1_StatsGov";
 var Level={
 	1:{n:"省",k:"shen"},
 	2:{n:"市",k:"si"},
@@ -53,10 +63,17 @@ function cityClass(name,url,code){
 }
 cityClass.prototype={
 	getValue:function(){
-		var obj={name:this.name,code:this.code,child:[]};
+		var obj={
+			name:this.name
+			,code:(this.code+"000000000000").substr(0,12)
+			,child:[]
+		};
 		for(var i=0;i<this.child.length;i++){
 			obj.child.push(this.child[i].getValue());
 		}
+		obj.child.sort(function(a,b){
+			return a.code.localeCompare(b.code);
+		});
 		return obj;
 	}
 }
@@ -64,6 +81,7 @@ cityClass.prototype={
 
 
 function load_shen_all(True){
+	DATA=[];
 	var path="http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/"+Year;
 	ajax(path+"/index.html",function(text){
 		var reg=/href='(.+?)'>(.+?)<br/ig,match;
@@ -76,10 +94,9 @@ function load_shen_all(True){
 					url=path+"/"+url;
 				}
 				var name=match[2];
-				DATA.push(new cityClass(name,url,0));
+				DATA.push(new cityClass(name,url,/(\d+).html/.exec(url)[1]));
 			}
 			
-			save();
 			True();
 		}else{
 			console.error("未发现省份数据");
@@ -96,7 +113,7 @@ $("body").append(logX);
 var logXn=0;
 function LogX(txt){
 	logXn++;
-	if(logXn%100==0){
+	if(LoadMaxLevel<4 || logXn%100==0){
 		logX.text(txt);
 	}
 };
@@ -113,13 +130,18 @@ function load_x_childs(itm, next){
 	LogX("读取"+loadReqCount+"次"+getJD()+" ["+city.name+"]"+levelObj.n);
 	
 	ajax(city.url,function(text){
+		if(!/统计用区划代码<\/td>/.test(text)){//保证中文和没有要输入验证码
+			city.load=Load_Max_Try;
+			next();
+			return;
+		};
 		var reg=/class='(citytr|countytr|towntr|villagetr)'.+?<\/tr>/ig;
 		var match;
 		var mode="";
 		var swapItem=null;
 		while(match=reg.exec(text)){
-			var err=function(){
-				console.error(":",city,match[0]);
+			var err=function(msg){
+				console.error(msg,city,match[0]);
 				city.load=Load_Max_Try;
 				
 				next();
@@ -168,10 +190,11 @@ function load_x_childs(itm, next){
 		
 		JD[levelNextObj.k+"_count"]+=city.child.length;
 		
-		if(itm.level<3)save();
 		next();
 	},function(){
-		load_x_childs(itm, next);
+		setTimeout(function(){
+			load_x_childs(itm, next);
+		},1000);
 	});
 };
 
@@ -184,7 +207,6 @@ function load_x_childs(itm, next){
 
 
 var load_end=function(isErr){
-	save();
 	StopLoad="End";
 		
 	if(isErr){
@@ -197,23 +219,26 @@ var load_end=function(isErr){
 	LogX(logTxt);
 	
 	var data=[];
-	window.CITY_LIST1=data;
 	for(var i=0;i<DATA.length;i++){
 		data.push(DATA[i].getValue());
 	}
+	var saveData={};
+	window[SaveName]=saveData;
+	saveData.year=Year;
+	saveData.cityList=data;
 	
 	var url=URL.createObjectURL(
 		new Blob([
 			new Uint8Array([0xEF,0xBB,0xBF])
-			,"var CITY_LIST1="
-			,JSON.stringify(data,null,"\t")
+			,"var "+SaveName+"="
+			,JSON.stringify(saveData,null,"\t")
 		]
 		,{"type":"text/plain"})
 	);
 	var downA=document.createElement("A");
 	downA.innerHTML="下载查询好城市的文件";
 	downA.href=url;
-	downA.download="data1_1.txt";
+	downA.download=SaveName+".txt";
 	logX.append(downA);
 	downA.click();
 	
@@ -310,9 +335,6 @@ function clearLoadErr(childs){
 
 
 
-function save(){
-	//localStorage["load_data"]=JSON.stringify(DATA); 数据太多无法存储
-}
 function getJD(){
 	var str="省:"+JD.shen_ok+"/"+JD.shen_count;
 	str+=" 市:"+JD.si_ok+"/"+JD.si_count;
@@ -341,10 +363,8 @@ window.RunLoad=function(){
 	};
 	
 	
-	console.log("如果是新运行，需要自行清理load_data存储数据");
-	var data=localStorage["load_data"];
-	if(data){
-		DATA=JSON.parse(data);
+	if(DATA.length){
+		console.log("恢复采集...");
 		clearLoadErr(DATA);
 		start();
 	}else{

@@ -15,15 +15,17 @@
 https://lbs.amap.com/api/javascript-api/example/district-search/draw-district-boundaries
 
 加载数据
-	先直接运行本代码，根据提示输入data-pinyin.txt到文本框 (内容太大，控制台吃不消，文本框快很多)
+	先直接运行本代码，根据提示输入PinyinWebApiSaveName对应文件到文本框  (内容太大，控制台吃不消，文本框快很多)
 	或者使用本地网址更快：
-	var s=document.createElement("script");s.src="https://地址/data-pinyin.txt";document.body.appendChild(s)
+	var url="https://地址/";
+	var s=document.createElement("script");s.src=url+"Step2_2_Pinyin_WebApi.txt?t="+Date.now();document.body.appendChild(s)
 	
 然后再次运行本代码，如果中途因错误停止，根据提示重复运行
 */
 "use strict";
 AMap.LngLat;
 console=top.console;
+var PinyinWebApiSaveName="Step2_2_Pinyin_WebApi";
 
 var GeoStop=false;
 
@@ -48,75 +50,31 @@ function LogX(txt){
 }
 if(!top.document.querySelector(".DataTxt")){
 	var div=top.document.createElement("div");
-	div.innerHTML=('<div style="position: fixed;bottom: 80px;left: 100px;padding: 20px;background: #0ca;z-index:9999999">输入data-pinyin.txt<textarea class="DataTxt"></textarea></div>');
+	div.innerHTML=('<div style="position: fixed;bottom: 80px;left: 100px;padding: 20px;background: #0ca;z-index:9999999">输入'+PinyinWebApiSaveName+'.txt<textarea class="DataTxt"></textarea></div>');
 	top.document.body.appendChild(div);
 };
 
-if(!window.CITY_LIST_PINYIN){
+if(!window[PinyinWebApiSaveName]){
 	var val=top.document.querySelector(".DataTxt").value;
 	if(!val){
-		throw new Error("需要输入data-pinyin.txt");
+		throw new Error("需要输入"+PinyinWebApiSaveName+".txt");
 	}else{
-		window.CITY_LIST_PINYIN=eval(val+";CITY_LIST_PINYIN");
+		window[PinyinWebApiSaveName]=eval(val+";"+PinyinWebApiSaveName);
 	};
 }else{
 	console.log("已读上次进度数据");
 };
 
-var pinyinList=CITY_LIST_PINYIN;
-
-//****copy 3_格式化中的数据***
-//添加港澳台数据
-function add(txt){
-	var val=txt.split("|");
-	pinyinList.push({
-		"id": +val[0],
-		"pid": +val[1],
-		"deep": +val[2],
-		"name": val[3],
-		"P2":  val[4],
-		
-		"ext_id": 0
-		,"ext_name": ""
-		
-		,isExt:true
-	});
-};
-//id|pid|deep|name|pinyin
-add("90|0|0|港澳台|~0");
-add("91|0|0|海外|~1");
-
-add("9001|90|1|香港|xiang gang");
-add("9002|90|1|澳门|ao men");
-add("9003|90|1|台湾|tai wan");
-add("9101|91|1|海外|hai wai");
-
-add("900101|9001|2|香港|xiang gang");
-add("900201|9002|2|澳门|ao men");
-add("900301|9003|2|台湾|tai wan");
-add("910101|9101|2|海外|hai wai");
-//****copy end***
+var pinyinList=window[PinyinWebApiSaveName].cityList;
 
 
 //人工fix数据
 var fixNames=function(itm){
 	var tag=itm.id+":"+itm.fullPath.join(" ")+"：";
 	
-	if(/(新区|新城|新城区|实验区|保税区|开发区|管理区|食品区|园区|产业园|名胜区|示范区|镇|管委会|街道办事处)$/.test(itm.name)){
-		console.warn(tag+"为空，正则匹配接受");
-		return 0;
-	};
-	
 var arr={
-	/*"371203": {name:"钢城",code:"370117"} //"山东省 莱芜市 钢城区",*/
-	
-	"5002": 0 //"重庆市 县",
-	,"232762": 0 //"黑龙江省 大兴安岭地区 松岭区",
-	,"232763": 0 //"黑龙江省 大兴安岭地区 新林区",
-	,"232764": 0 //"黑龙江省 大兴安岭地区 呼中区",
-	,"411471": 0 //"河南省 商丘市 豫东综合物流产业聚集区",
-	,"620201": 0 //"甘肃省 嘉峪关市 市辖区",
-	,"632857": 0 //"青海省 海西蒙古族藏族自治州 大柴旦行政委员会"
+	//"232762": 0 //"黑龙江省 大兴安岭地区 松岭区",
+	"632857": {name:"海西蒙古族藏族自治州直辖",code:"632825"} //"青海省 海西蒙古族藏族自治州 大柴旦行政委员会"
 };
 	var find=arr[itm.id];
 	if(find!=null){
@@ -127,24 +85,8 @@ var arr={
 		return find;
 	};
 	
-	if(tag.indexOf(":港澳台")+1){
-		var code;
-		if(itm.name=="港澳台"){
-			code=0;
-		}else if(itm.name=="香港"){
-			code="810000";
-		}else if(itm.name=="澳门"){
-			code="820000";
-		}else if(itm.name=="台湾"){
-			code="710000";
-		};
-		if(code==0){
-			console.warn(tag+"为空，接受"+itm.name);
-		};
-		return code?{name:itm.name,code:code}:code;
-	};
-	if(tag.indexOf(":海外")+1){
-		console.warn(tag+"为空，接受海外");
+	if(tag.indexOf(":国外")+1){
+		console.warn(tag+"为空，接受国外");
 		return 0;
 	};
 };
@@ -166,10 +108,8 @@ for(var i=0;i<pinyinList.length;i++){
 	
 	if(o.polygon=="EMPTY"){
 		/**代码变更，对未抓取到的重新抓取**/
-		/*
 		o.polygon="";
 		o.geo="";
-		*/
 	};
 	
 	var fullPath=[];
@@ -210,6 +150,16 @@ function load(itm, next, _try){
 		itm.polygon=polygon;
 		next();
 	};
+	
+	//排除台湾子级数据
+	if(itm.deep>0 && (itm.id+"").indexOf("71")==0){
+		if(itm.deep==1){
+			console.warn("高德没有台湾子级数据，已手动排除",itm);
+		};
+		setTimeout(end);
+		return;
+	};
+	
 	var addNeed=function(isNameNotMatch,isEmptyPaths){
 		needReg[itm.id]=fullPath;
 		console.error(itm.id+":"+fullPath

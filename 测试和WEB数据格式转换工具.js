@@ -15,7 +15,8 @@ var AllowAccessFiles=["ok_data_level3.csv(3级省市区)","ok_data_level4.csv(4�
 *****************************/
 function UserFormat(list,mapping){
 	//修改此方法实现自定义格式，可参考JsonArrayFormat的实现
-	//list中的字段如果不够，请修改Format中csv数据提取，默认只提取了id、name、pid、pinyin(为前缀)
+	//list为所有城市平铺列表，[{id,pid,deep,name,pinyin_prefix,pinyin,ext_id,ext_name,child:[]},...]
+	//mapping为id城市映射，0索引的是省级0:{child:[]}，其他为id：{id,pid,deep,name,pinyin_prefix,pinyin,ext_id,ext_name,child:[]}
 	return Result("自定义方法未实现，请修改UserFormat方法源码");
 };
 
@@ -29,7 +30,7 @@ function JsonArrayFormat(list,mapping){
 			n:itm.name
 			,i:itm.id
 			,p:itm.pid
-			,y:itm.pinyin
+			,y:itm.pinyin_prefix
 		});
 	}
 	var code=JSON.stringify(data);
@@ -47,7 +48,7 @@ function JsonObjectFormat(list,mapping){
 			var itm=obj.childs[i];
 			p[itm.id]={
 				n:itm.name
-				,y:itm.pinyin
+				,y:itm.pinyin_prefix
 			};
 			var c=x(itm);
 			if(c){
@@ -79,7 +80,7 @@ function JsFormat(list,mapping){
 			data.push(",");
 			data.push(itm.name);
 			data.push(",");
-			data.push(itm.pinyin);
+			data.push(itm.pinyin_prefix);
 			x(itm);
 		};
 		data.push("]")
@@ -403,7 +404,7 @@ var buildCitySelectFn=function(){
 			if(y){
 				return y;
 			}else{
-				return a.name.localeCompare(b.name);
+				return (a.y+a.name).localeCompare(b.y+b.name);
 			};
 		});
 		for(var i=0,o,name;i<arr.length;i++){
@@ -459,9 +460,14 @@ function Format(type){
 			var itm={
 				id:+arr[0]
 				,pid:+arr[1]
-				,level:-1
+				,deep:+arr[2]
 				,name:arr[3].replace(/""/g,'"').replace(/^"|"$/g,'')
-				,pinyin:arr[4].replace(/""/g,"").replace(/^"|"$/g,'')
+				,pinyin_prefix:arr[4].replace(/""/g,"").replace(/^"|"$/g,'')
+				,pinyin:arr[5].replace(/""/g,"").replace(/^"|"$/g,'')
+				,ext_id:arr[6].replace(/""/g,"").replace(/^"|"$/g,'')
+				,ext_name:arr[7].replace(/""/g,"").replace(/^"|"$/g,'')
+				
+				,level:-1
 				,childs:[]
 			};
 			list.push(itm);
@@ -482,8 +488,15 @@ function Format(type){
 	//计算level值
 	var xLevel=function(obj){
 		for(var i=0;i<obj.childs.length;i++){
-			obj.childs[i].level=obj.level+1;
-			xLevel(obj.childs[i]);
+			var o=obj.childs[i];
+			o.level=obj.level+1;
+			if(o.level!=o.deep+1){
+				var msg="数据存在错误，级别不对，请看控制台输出";
+				alert(msg);
+				console.error(msg,obj,o);
+				throw new Error();
+			};
+			xLevel(o);
 		};
 	};
 	xChild();

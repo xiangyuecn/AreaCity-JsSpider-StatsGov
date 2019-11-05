@@ -1,6 +1,6 @@
 # :open_book:省市区数据采集并标注拼音、坐标和边界范围
 
-[在线测试和预览（转换成JSON）](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/)；当前最新版为 **2019文件夹** 内的数据，此数据发布于`统计局2019-01-31`、`民政部2019-09-29`、`腾讯地图行政区划2019-07-22`、`高德地图行政区划采集当天`。
+[在线测试和预览（转换成JSON）](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/)；当前最新版为 **2019文件夹** 内的数据，此数据发布于`统计局2019-01-31`、`民政部2019-11-05`、`腾讯地图行政区划2019-07-22`、`高德地图行政区划采集当天`。
 
 可直接打开[2019/采集到的数据](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/tree/master/2019/%E9%87%87%E9%9B%86%E5%88%B0%E7%9A%84%E6%95%B0%E6%8D%AE)文件夹内的文件来使用：
 - `ok_data_level3.csv` [下载](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/2019/%E9%87%87%E9%9B%86%E5%88%B0%E7%9A%84%E6%95%B0%E6%8D%AE/ok_data_level3.csv): 省市区3级数据。
@@ -38,7 +38,7 @@ chrome 控制台，`Chrome 41`这版本蛮好，win7能用，`Chrome 46`这版�
 
 ## 采集深度
 
-- 2018.190929.0722版(2019)采集了4层，省、市、区、镇，来源：[统计局2018版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2018/index.html)；省市区3级合并了[民政部2019-09-29数据](http://www.mca.gov.cn/article/sj/tjyb/qgsj/2019/201909291543.html)、[高德地图行政区域](https://lbs.amap.com/api/webservice/guide/api/district)、[腾讯地图行政区划v20190722](https://lbs.qq.com/webservice_v1/guide-region.html)数据；镇级采用腾讯地图行政区划作为主要数据，综合高德和统计局的镇级。采集高德省市区三级坐标和行政区域边界范围。
+- 2018.191105.0722版(2019)采集了4层，省、市、区、镇，来源：[统计局2018版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2018/index.html)；省市区3级合并了[民政部2019-11-05数据](http://www.mca.gov.cn/article/sj/xzqh/2019/2019/201911051008.html)、[高德地图行政区域](https://lbs.amap.com/api/webservice/guide/api/district)、[腾讯地图行政区划v20190722](https://lbs.qq.com/webservice_v1/guide-region.html)数据；镇级采用腾讯地图行政区划作为主要数据，综合高德和统计局的镇级。采集高德省市区三级坐标和行政区域边界范围。
 - 2018版(2019)采集了4层，省、市、区、镇，来源：[统计局2018版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2018/index.html)；省市区3级额外合并了[民政部2019-08-27数据](http://www.mca.gov.cn/article/sj/xzqh/2019/201908/201908271607.html)。采集高德省市区三级坐标和行政区域边界范围。
 - 2017版(2018)采集了3层，省、市、区，来源：[统计局2017版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2017/index.html)。
 - 2016版(2017)采集了3层，省、市、区，来源：[统计局2016版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2016/index.html)。

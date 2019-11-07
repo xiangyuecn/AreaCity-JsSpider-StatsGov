@@ -73,11 +73,11 @@ polygon|行政区域边界，高德地图`GCJ-02`火星坐标系。格式："lng
 
 欢迎加QQ群：484560085，纯小写口令：`areacity`
 
-<img src="assets/qq_group_484560085.png" width="220px">
+<img src="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/assets/qq_group_484560085.png" width="220px">
 
 
 ## 案例效果
-[<img src="assets/use_picker.gif" width="280px">](https://jiebian.life/start/test/app?picker=1) [<img src="assets/use_select.png" width="460px">](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/)
+[<img src="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/assets/use_picker.gif" width="280px">](https://jiebian.life/start/test/app?picker=1) [<img src="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/assets/use_select.png" width="460px">](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/)
 
 
 
@@ -98,7 +98,7 @@ polygon|行政区域边界，高德地图`GCJ-02`火星坐标系。格式："lng
 5. 网页版省市区多级联动js代码生成（含数据）。
 
 ## 效果图
-![](assets/tools.png)
+![](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/assets/tools.png)
 
 
 
@@ -149,7 +149,7 @@ polygon|行政区域边界，高德地图`GCJ-02`火星坐标系。格式："lng
 
 ## 边界效果预览
 
-![](assets/geo-sheng.gif) ![](assets/geo-guangdong.gif)
+![](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/assets/geo-sheng.gif) ![](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/assets/geo-guangdong.gif)
 
 
 # :open_book:数据规则和相关问题
@@ -223,4 +223,4 @@ polygon|行政区域边界，高德地图`GCJ-02`火星坐标系。格式："lng
 
 你也可以选择使用支付宝给我捐赠：
 
-![](https://github.com/xiangyuecn/Recorder/raw/master/assets/donate-alipay.png)  ![](https://github.com/xiangyuecn/Recorder/raw/master/assets/donate-weixin.png)
+![](https://gitee.com/xiangyuecn/Recorder/raw/master/assets/donate-alipay.png)  ![](https://gitee.com/xiangyuecn/Recorder/raw/master/assets/donate-weixin.png)

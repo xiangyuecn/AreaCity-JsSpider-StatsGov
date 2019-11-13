@@ -120,8 +120,12 @@ close rs
 deallocate rs
 print '分解polygon完成，耗时'+cast(datediff(ms,@startTime,getdate()) as varchar(max))+'ms'
 
---保存数据到表
+--********保存数据到表********
 --select * into geoTableName from ##tb_polygon
+
+--********计算上下级之间差异超过1平方公里的数据*********
+drop table #tb1,#tb2;select (LEN(name)-LEN(REPLACE(name,' ',''))) as level,* into #tb1 from ##tb_polygon;select polygon.STArea()*10000 as a1,(select sum(t2.polygon.STArea()) from #tb1 as t2 where t2.level=t1.level+1 and CHARINDEX(t1.name, t2.name)=1)*10000 as a2,* into #tb2 from #tb1 as t1; select Round((a1-a2)/a1*100,2) as '%',a1-a2 as loss,* from #tb2 where level<2 and a1-a2>1 order by [%] desc
+
 
 select id,name,geo.STAsText(),polygon from ##tb_polygon where name not like '% %' or name like '%港澳台%'
 

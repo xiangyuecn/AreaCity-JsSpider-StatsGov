@@ -8,7 +8,7 @@
 
 合并结果：
 1. 前3级=(统计局 ∩ 民政部) ∪ (高德 ∪ 腾讯)
-2. 第4级=腾讯 ≈ 统计局
+2. 第4级=腾讯 || 统计局
 
 加载数据
 	var url="https://地址/";
@@ -33,6 +33,16 @@ var fixQQmapSplit={
 					{name:"重庆城区",keepName:true,govName:"市辖区",code:"500100000000"}
 					,{name:"重庆郊县",keepName:true,govName:"县",code:"500200000000"}
 				]}
+};
+//和高德数据对比前合并统计局数据
+var fixQQmapReplaceGovBeforeAmp={
+	3205:{
+		//高德多出的一个工业园，并且边界也是独立出来的，统计局也有这个数据，qq缺少了并且子级在分散在各城区，根据qq子级数据和参考淘宝的表现，此数据采用gov的
+		name:"苏州市",level:2
+		,childDiff:{
+			320571:{lostName:"苏州工业园区"}
+		}
+	}
 };
 //和高德对比完后qq地图数据替换处理
 var fixQQmapReplaceFillAfterAmap={
@@ -86,7 +96,6 @@ var amapDifference={
 	
 	
 	//标记QQ里确实不存在的
-	,320571:{lostName:"苏州工业园区"}//高德怎么跑了一个工业园进来，子级在qq中分散在各城区
 	,232718:{lostName:"加格达奇区"}//加格达奇区上面已使用统计局的编号
 	,4421:{lostName:"东沙群岛"}//未知情况，统计局查不到
 };
@@ -158,10 +167,21 @@ var copyItem=function(itm){
 	};
 	return o;
 };
+var setParent=function(p,arr,mp){
+	mp||(mp={});
+	for(var i=0;i<arr.length;i++){
+		var itm=arr[i];
+		mp[itm.code]=itm;
+		itm.parent=p;
+		setParent(itm,itm.child,mp);
+	};
+	return mp;
+};
 
 var qqMap=JSON.parse(JSON.stringify(window[QQmapSaveName]));
 var govData=JSON.parse(JSON.stringify(window[StatsGovMCASaveName]));
 
+var govDataMP=setParent(null,govData.cityList);
 
 
 
@@ -373,16 +393,6 @@ for(var k in fixQQmapReplaceFill){
 	};
 };
 
-//保证都有parent
-var xp=function(p,arr){
-	for(var i=0;i<arr.length;i++){
-		var itm=arr[i];
-		itm.parent=p;
-		xp(itm,itm.child);
-	};
-};
-xp(null,qqMap.cityList);
-
 console.log("格式化QQmap完成",qqMap);
 
 
@@ -395,7 +405,74 @@ console.log("格式化QQmap完成",qqMap);
 
 
 
+console.log("\n【·】对比Amap数据之前合并预定义的Gov数据>>>>>>>>>>");
+var formatQQ=function(arr,level){
+	var cpName=function(a,b){
+		return a.name==b.name||a.name.indexOf(b.name)==0||b.name.indexOf(a.name)==0;
+	};
+	
+	for(var i0=0;i0<arr.length;i0++){
+		var itm=arr[i0];
+		var scode=SCode(itm,level);
+		var replaceSet=fixQQmapReplaceGovBeforeAmp[scode];
+		if(replaceSet && replaceSet.level==level){
+			if(replaceSet.name!=itm.name){
+				console.error("fixQQmapReplaceGovBeforeAmp名称不匹配",replaceSet,itm);
+				throw new Error();
+			};
+			var govItm=govDataMP[itm.code];
+			if(!govItm){
+				console.error("fixQQmapReplaceGovBeforeAmp项在Gov中不存在",replaceSet,itm);
+				throw new Error();
+			};
+			
+			//检查子级数据+配置后的是否一致
+			var allow=function(obj,tips){
+				var diff=replaceSet.childDiff[SCode(obj)];
+				if(!diff||diff.lostName!=obj.name){
+					console.error("fixQQmapReplaceGovBeforeAmp项的"+tips+"不存在项在预定义中未找到",obj,diff,replaceSet);
+					throw new Error();
+				};
+			};
+			var govArr=[];govArr.push.apply(govArr,govItm.child);
+			for(var i=0;i<itm.child.length;i++){
+				var cItm=itm.child[i];
+				var find=0;
+				for(var i1=0;i1<govArr.length;i1++){
+					var gItm=govArr[i1];
+					if(cItm.code==gItm.code && cpName(cItm,gItm)){
+						govArr.splice(i1,1);
+						find=1;
+						break;
+					};
+				};
+				if(!find){
+					allow(cItm,"gov");
+				};
+			};
+			for(var i=0;i<govArr.length;i++){
+				allow(govArr[i],"qq");
+			};
+			
+			arr[i0]=govItm;
+			replaceSet.fix=true;
+			console.log(itm.code+":"+itm.name+"和子级已替换成统计局的数据",itm,govItm);
+		};
+		formatQQ(itm.child,level+1);
+	};
+};
+formatQQ(qqMap.cityList,1);
+for(var k in fixQQmapReplaceGovBeforeAmp){
+	if(!fixQQmapReplaceGovBeforeAmp[k].fix){
+		console.error("存在未被匹配的预定义fixQQmapReplaceGovBeforeAmp",k,fixQQmapReplaceGovBeforeAmp[k]);
+		throw new Error();
+	};
+};
 
+
+
+//保证都有正确的parent
+setParent(null,qqMap.cityList);
 
 
 

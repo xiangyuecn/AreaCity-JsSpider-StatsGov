@@ -17,6 +17,12 @@ body{
 pre{
 	white-space:pre-wrap;
 }
+
+.AreaFormat {
+	position: relative;
+	top:0;
+	margin-top:20px;
+}
 </style>
 
 <script src="https://xiangyuecn.github.io/BuildHTML/buildhtml.js"></script>
@@ -74,6 +80,16 @@ if(/^file:/.test(location.href)){
 };
 </script>
 
-	
+<!-- 加载打赏挂件 -->
+<div class="DonateLogs"></div>
+<div class="DonateView"></div>
+<script crossorigin="anonymous" src="https://xiangyuecn.github.io/Recorder/assets/zdemo.widget.donate.js"></script>
+<script>
+DonateWidget({
+	log:function(msg){var div=document.createElement("div");div.innerHTML=msg;document.querySelector(".DonateLogs").appendChild(div)}
+	,mobElem:document.querySelector(".DonateView")
+});
+</script>
+
 </body>
 </html>

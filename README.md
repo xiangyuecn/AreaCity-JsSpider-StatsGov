@@ -2,10 +2,10 @@
 
 [在线测试和预览（转换成JSON）](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/)；当前最新版为 **2019文件夹** 内的数据，此数据发布于`统计局2019-01-31`、`民政部2019-11-05`、`腾讯地图行政区划2019-07-22`、`高德地图行政区划采集当天`。
 
-可直接打开[2019/采集到的数据](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/tree/master/2019/%E9%87%87%E9%9B%86%E5%88%B0%E7%9A%84%E6%95%B0%E6%8D%AE)文件夹内的文件来使用：
-- `ok_data_level3.csv` [下载](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/2019/%E9%87%87%E9%9B%86%E5%88%B0%E7%9A%84%E6%95%B0%E6%8D%AE/ok_data_level3.csv): 省市区3级数据。
-- `ok_data_level4.csv` [下载](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/2019/%E9%87%87%E9%9B%86%E5%88%B0%E7%9A%84%E6%95%B0%E6%8D%AE/ok_data_level4.csv): 省市区镇4级数据。
-- `ok_geo.csv.7z` [下载](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/2019/%E9%87%87%E9%9B%86%E5%88%B0%E7%9A%84%E6%95%B0%E6%8D%AE/ok_geo.csv.7z): 为省市区3级的坐标和行政区域边界范围数据，csv格式，解压后130M+。
+可直接打开 `2019/采集到的数据` 文件夹内的文件来使用：
+- `ok_data_level3.csv` [点此下载](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/assets/download.html#file=ok_data_level3.csv) : 省市区3级数据。
+- `ok_data_level4.csv` [点此下载](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/assets/download.html#file=ok_data_level4.csv) : 省市区镇4级数据。
+- `ok_geo.csv.7z` [点此下载](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/assets/download.html#file=ok_geo.csv.7z) : 为省市区3级的坐标和行政区域边界范围数据，csv格式，解压后130M+。
 
 > csv格式非常方便解析成其他格式，算是比较通用；如果在使用csv文件过程中出现乱码、错乱等情况，需自行调对utf-8（带BOM）编码（或者使用文本编辑器 `如 notepad++` 把文件转成需要的编码），文本限定符为`"`。
 > 

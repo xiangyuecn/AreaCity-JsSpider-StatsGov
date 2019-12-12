@@ -60,7 +60,7 @@ ext_id|long|数据源原始的编号；如果是添加的数据，此编号为0
 ext_name|string|数据源原始的名称，为未精简的名称
 
 ## 【字段】ok_geo表
-此表为坐标和行政区域边界范围数据表，因为数据文件过大（130M+），所以分开存储。由于边界数据的解析比较复杂，请参考[2019/map_geo_格式化.js](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/2019/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)内的SQL Server的解析语句。
+此表为坐标和行政区域边界范围数据表，含省市区三级不含第四级；因为数据文件过大（130M+），所以分开存储。由于边界数据的解析比较复杂，请参考[2019/map_geo_格式化.js](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/2019/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)内的SQL Server的解析语句。
 
 字段|类型|描述
 :--:|:--:|--

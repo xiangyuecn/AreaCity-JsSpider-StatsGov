@@ -1,0 +1,145 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<link rel="shortcut icon" type="image/png" href="icon.png">
+
+<title>AreaCity 省市区镇+坐标边界 数据下载</title>
+
+<script>
+var AllowAccessFolder="/2019/采集到的数据";
+var AllowAccessFiles={level3:"ok_data_level3.csv",level4:"ok_data_level4.csv",geo:"ok_geo.csv.7z"};
+</script>
+<script src="https://xiangyuecn.github.io/Recorder/assets/ztest-jquery.min-1.9.1.js"></script>
+
+<style>
+body{
+	word-wrap: break-word;
+	background:#f5f5f5 center top no-repeat;
+    background-size: auto 680px;
+}
+pre{
+	white-space:pre-wrap;
+}
+a{
+	text-decoration: none;
+	color:#06c;
+}
+a:hover{
+	color:#f00;
+}
+
+.main{
+	max-width:700px;
+	margin:0 auto;
+	padding-bottom:80px
+}
+
+.mainBox{
+	margin-top:12px;
+	padding: 12px;
+	border-radius: 6px;
+	background: #fff;
+	--border: 1px solid #f60;
+	box-shadow: 2px 2px 3px #aaa;
+}
+
+
+.mainBtn{
+	display: inline-block;
+	cursor: pointer;
+	border: none;
+	border-radius: 3px;
+	background: #15822E;
+	color:#fff;
+	padding: 0 15px;
+	margin-right:20px;
+	line-height: 36px;
+	height: 36px;
+	overflow: hidden;
+	vertical-align: middle;
+}
+.mainBtn:active{
+	background: #165d26;
+}
+</style>
+</head>
+
+<body>
+<div class="main">
+	<div class="mainBox">
+		<span style="font-size:32px;color:#15822E;">AreaCity 省市区镇+坐标边界 数据下载</span>
+		<a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov">GitHub >></a>
+	</div>
+	
+	<div class="mainBox downArea" downkey="level3">
+		<div class="mainCodeBtn">
+			<a target="_blank" class="downBtn mainBtn">【三级】省市区 数据下载</a>
+			文件路径：<span class="downPath"></span>
+		</div>
+	</div>
+	
+	<div class="mainBox downArea" downkey="level4">
+		<div class="mainCodeBtn">
+			<a target="_blank" class="downBtn mainBtn">【四级】省市区镇 数据下载</a>
+			文件路径：<span class="downPath"></span>
+		</div>
+	</div>
+	
+	<div class="mainBox downArea" downkey="geo">
+		<div class="mainCodeBtn">
+			<a target="_blank" class="downBtn mainBtn">【GEO】坐标和边界 数据下载</a>
+			文件路径：<span class="downPath"></span>
+		</div>
+	</div>
+	
+	<div class="mainBox mainLogBox">
+		<div class="mainLog"></div>
+		<div class="DonateView"></div>
+	</div>
+</div>
+
+<script>
+function mainLog(s,color){
+	var now=new Date();
+	var t=("0"+now.getHours()).substr(-2)
+		+":"+("0"+now.getMinutes()).substr(-2)
+		+":"+("0"+now.getSeconds()).substr(-2);
+	$(".mainLog").prepend('<div style="color:'+(color==1?"red":color==2?"green":color)+'">['+t+']'+s+'</div>');
+};
+
+(function(){
+
+$(".downArea").each(function(k,v){
+	v=$(v);
+	var file=AllowAccessFiles[v.attr("downkey")];
+	var path=AllowAccessFolder+"/"+file;
+	v.find(".downPath").html('<a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master'+path+'" target="_blank">'+path+'</a>');
+	v.find(".downBtn").attr("href",".."+path);
+});
+
+
+var file=decodeURIComponent((/file=([^&]+)/.exec(location.href)||[])[1]||"");
+if(file){
+	mainLog("发现"+file,2);
+};
+
+mainLog('点击上方下载按钮即可下载csv格式数据，如果需要其他格式，<a href="../" target="_blank">点此在线转换</a>');
+mainLog('GitHub Releases中提供的下载连接可能下载缓慢，因此提供本GitHub Pages外链下载，速度会快很多~');
+
+})();
+</script>
+
+
+<!-- 加载打赏挂件 -->
+<script crossorigin="anonymous" src="https://xiangyuecn.github.io/Recorder/assets/zdemo.widget.donate.js"></script>
+<script>
+DonateWidget({
+	log:function(msg){mainLog(msg)}
+	,mobElem:$(".mainLog").append('<div class="DonateView"></div>').find(".DonateView")[0]
+});
+</script>
+
+</body>
+</html>

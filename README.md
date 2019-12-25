@@ -1,11 +1,23 @@
 # :open_book:省市区数据采集并标注拼音、坐标和边界范围
 
-[在线测试和预览（转换成JSON）](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/)；当前最新版为 **2019文件夹** 内的数据，此数据发布于`统计局2019-01-31`、`民政部2019-11-05`、`腾讯地图行政区划2019-07-22`、`高德地图行政区划采集当天`。
+[在线测试和预览（转换成JSON）](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/)；当前最新版为 **src文件夹** 内的数据，此数据发布于`统计局2019-01-31`、`民政部2019-11-05`、`腾讯地图行政区划2019-07-22`、`高德地图行政区划采集当天`。
 
-可直接打开 `src/采集到的数据` 文件夹内的文件来使用：
-- `ok_data_level3.csv` [点此下载](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/assets/download.html#file=ok_data_level3.csv) : 省市区3级数据。
-- `ok_data_level4.csv` [点此下载](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/assets/download.html#file=ok_data_level4.csv) : 省市区镇4级数据。
-- `ok_geo.csv.7z` [点此下载](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/assets/download.html#file=ok_geo.csv.7z) : 为省市区3级的坐标和行政区域边界范围数据，csv格式，解压后130M+。
+
+<p align="center"><a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov"><img width="100" src="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/assets/icon.png" alt="AreaCity logo"></a></p>
+
+<p align="center">
+  <a title="Stars" href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov"><img src="https://img.shields.io/github/stars/xiangyuecn/AreaCity-JsSpider-StatsGov?color=15822e&logo=github" alt="Stars"></a>
+  <a title="Forks" href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov"><img src="https://img.shields.io/github/forks/xiangyuecn/AreaCity-JsSpider-StatsGov?color=15822e&logo=github" alt="Forks"></a>
+  <a title="Releases Downloads" href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases"><img src="https://img.shields.io/github/downloads/xiangyuecn/AreaCity-JsSpider-StatsGov/total?color=15822e&logo=github" alt="Releases Downloads"></a>
+  <a title="Version" href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases"><img src="https://img.shields.io/github/v/release/xiangyuecn/AreaCity-JsSpider-StatsGov?color=f60&label=version&logo=github" alt="Version"></a>
+  <a title="License" href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/LICENSE"><img src="https://img.shields.io/github/license/xiangyuecn/AreaCity-JsSpider-StatsGov?color=f60&logo=github" alt="License"></a>
+</p>
+
+
+在[Releases](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases)中下载最新发布数据文件；如果下载缓慢可以[点此处](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/assets/download.html)通过GitHub Pages外链来下载；也可直接打开 `src/采集到的数据` 文件夹内的文件来使用：
+- `ok_data_level3.csv` : 省市区3级数据。
+- `ok_data_level4.csv` : 省市区镇4级数据。
+- `ok_geo.csv.7z` : 为省市区3级的坐标和行政区域边界范围数据，csv格式，解压后130M+。
 
 > csv格式非常方便解析成其他格式，算是比较通用；如果在使用csv文件过程中出现乱码、错乱等情况，需自行调对utf-8（带BOM）编码（或者使用文本编辑器 `如 notepad++` 把文件转成需要的编码），文本限定符为`"`。
 > 
@@ -43,6 +55,14 @@ chrome 控制台，`Chrome 41`这版本蛮好，win7能用，`Chrome 46`这版�
 - 2017版(2018)采集了3层，省、市、区，来源：[统计局2017版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2017/index.html)。
 - 2016版(2017)采集了3层，省、市、区，来源：[统计局2016版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2016/index.html)。
 - 2013版(2013)采集了4层，省、市、区、镇，来源：[统计局2013版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2013/index.html)。
+
+
+## 数据有效性和完整性
+本库会尽量和民政部的更新频率保持一致，但由于最为主要的两个数据源`国家统计局`、`腾讯地图行政区划`更新频度并没有民政部高；因此省市区三级准确度和民政部准确度是一量级，并且要更完整些；第四级镇级主要由`腾讯地图行政区划`提供，腾讯数据源并不经常更新，因此会导致小部分新增、调整的城市第四级没有数据（会用上级数据补齐），使用前应该考虑此缺陷。
+
+数据通过使用上级数据补齐的形式（具体细节请参考后面的数据规则），使得任何一个数据都能满足省市区镇4级结构，没有孤立的（ID全局唯一），因此不管从哪级进行下级选择，都能进行有效操作。可以通过ID结构来识别这种补齐填充的数据，只要ID为上级的ID+多个0，就代表此数据为补齐填充数据，比如：东莞（4419）-东莞（441900），很容易鉴别出441900为补齐用的填充数据。
+
+会发生补齐行为的数据很少，约50来个（不含台湾），主要为：直筒子市（东莞、儋州等）、省直辖县级市（济源、潜江等），他们的下一级仅有补齐的这条数据。另外直辖市（北京、天津等）下级也仅有一条数据，ID结尾为01（不包括重庆，重庆下级分成了市、县两个）。
 
 
 ## 【字段】ok_data表

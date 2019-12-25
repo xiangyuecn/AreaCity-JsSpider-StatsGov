@@ -2,14 +2,14 @@
 
 [在线测试和预览（转换成JSON）](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/)；当前最新版为 **2019文件夹** 内的数据，此数据发布于`统计局2019-01-31`、`民政部2019-11-05`、`腾讯地图行政区划2019-07-22`、`高德地图行政区划采集当天`。
 
-可直接打开 `2019/采集到的数据` 文件夹内的文件来使用：
+可直接打开 `src/采集到的数据` 文件夹内的文件来使用：
 - `ok_data_level3.csv` [点此下载](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/assets/download.html#file=ok_data_level3.csv) : 省市区3级数据。
 - `ok_data_level4.csv` [点此下载](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/assets/download.html#file=ok_data_level4.csv) : 省市区镇4级数据。
 - `ok_geo.csv.7z` [点此下载](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/assets/download.html#file=ok_geo.csv.7z) : 为省市区3级的坐标和行政区域边界范围数据，csv格式，解压后130M+。
 
 > csv格式非常方便解析成其他格式，算是比较通用；如果在使用csv文件过程中出现乱码、错乱等情况，需自行调对utf-8（带BOM）编码（或者使用文本编辑器 `如 notepad++` 把文件转成需要的编码），文本限定符为`"`。
 > 
-> csv文件导入数据库如果接触的比较多应该能很快能完成导入，城市数据参考[导入教程](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/2019/3_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)、坐标和边界参考[导入教程](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/2019/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js) ，教程在代码开头注释中，是SQL Server的导入流程和SQL语句。
+> csv文件导入数据库如果接触的比较多应该能很快能完成导入，城市数据参考[导入教程](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/src/3_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)、坐标和边界参考[导入教程](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/src/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js) ，教程在代码开头注释中，是SQL Server的导入流程和SQL语句。
 
 **温馨建议：不要在没有动态更新机制的情况下把数据嵌入到Android、IOS、等安装包内；缓存数据应定期从服务器拉取更新**
 
@@ -60,7 +60,7 @@ ext_id|long|数据源原始的编号；如果是添加的数据，此编号为0
 ext_name|string|数据源原始的名称，为未精简的名称
 
 ## 【字段】ok_geo表
-此表为坐标和行政区域边界范围数据表，含省市区三级不含第四级；因为数据文件过大（130M+），所以分开存储。由于边界数据的解析比较复杂，请参考[2019/map_geo_格式化.js](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/2019/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)内的SQL Server的解析语句。
+此表为坐标和行政区域边界范围数据表，含省市区三级不含第四级；因为数据文件过大（130M+），所以分开存储。由于边界数据的解析比较复杂，请参考[src/map_geo_格式化.js](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/src/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)内的SQL Server的解析语句。
 
 字段|类型|描述
 :--:|:--:|--
@@ -141,7 +141,7 @@ polygon|string|行政区域边界，高德地图`GCJ-02`火星坐标系。格式
 
 `坐标和边界数据` 和 `省市区` 数据是分开存储的，通过`ID`来进行关联。
 
-可以把`ok_geo.csv`导入到数据库内使用，由于`POLYGON`需要解析，蛮复杂的，可以参考[2019/map_geo_格式化.js](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/2019/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)内的SQL Server导入用的SQL语句的例子。
+可以把`ok_geo.csv`导入到数据库内使用，由于`POLYGON`需要解析，蛮复杂的，可以参考[src/map_geo_格式化.js](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/src/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)内的SQL Server导入用的SQL语句的例子。
 
 如果需要特定的`POLYGON`格式，可以根据上面介绍的字段格式，自行进行解析和验证。
 

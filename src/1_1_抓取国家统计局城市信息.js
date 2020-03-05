@@ -14,7 +14,7 @@ if (oSession.HostnameIs("www.stats.gov.cn")){
 ```
 */
 (function(){
-var Year=2018;
+var Year=2019;
 var LoadMaxLevel=4;//采集几层
 var SaveName="Step1_1_StatsGov";
 var Level={
@@ -27,8 +27,9 @@ var Level={
 window.StopLoad=false;//true手动停止运行，"End"假装采集完成
 var DATA=window.DATA||[];
 
+var LogAll=true;
 var Load_Thread_Count=4;//模拟线程数
-var Load_Max_Try=3;//错误重试次数
+var Load_Max_Try=10;//错误重试次数
 
 var Load_Wait_Child=91;//此城市下级列表已抓取完毕，等待子级完成抓取
 var Load_Full_End=92;//此城市包括下级全部抓取完毕
@@ -40,7 +41,7 @@ var loadReqCount=0;
 function ajax(url,True,False){
 	loadReqCount++;
 	var ajax=new XMLHttpRequest();
-	ajax.timeout=1000;
+	ajax.timeout=20000;
 	ajax.open("GET",url);
 	ajax.onreadystatechange=function(){
 		if(ajax.readyState==4){
@@ -113,7 +114,7 @@ $("body").append(logX);
 var logXn=0;
 function LogX(txt){
 	logXn++;
-	if(LoadMaxLevel<4 || logXn%100==0){
+	if(LogAll || LoadMaxLevel<4 || logXn%100==0){
 		logX.text(txt);
 	}
 };
@@ -129,6 +130,11 @@ function load_x_childs(itm, next){
 	
 	LogX("读取"+loadReqCount+"次"+getJD()+" ["+city.name+"]"+levelObj.n);
 	
+	if(!city.url){
+		console.warn("无url",city);
+		next();
+		return;
+	};
 	ajax(city.url,function(text){
 		if(!/统计用区划代码<\/td>/.test(text)){//保证中文和没有要输入验证码
 			city.load=Load_Max_Try;

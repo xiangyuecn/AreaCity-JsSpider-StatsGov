@@ -25,7 +25,7 @@ https://lbs.amap.com/api/javascript-api/example/district-search/draw-district-bo
 	先直接运行本代码，根据提示输入data-geo.txt到文本框 (内容太大，控制台吃不消，文本框快很多)
 	或者使用本地网址更快：
 	var url="https://地址/";
-	var s=document.createElement("script");s.src=url+"data-geo.txt?t="+Date.now();document.body.appendChild(s)
+	var s=document.createElement("script");s.src=url+"data_geo.txt?t="+Date.now();document.body.appendChild(s)
 	
 然后再次运行本代码，如果中途因错误停止，根据提示重复运行
 

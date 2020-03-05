@@ -43,6 +43,12 @@ var fixQQmapReplaceGovBeforeAmp={
 			320571:{lostName:"苏州工业园区"}
 		}
 	}
+	//2019-07伊春市变化太大，qq的数据和（高德==gov）有差异，此数据采用gov的
+	//当qq数据更新时，应当先注释此段看看差异，如果还是很大就继续替换掉
+	,2307:{
+		name:"伊春市",level:2
+		,childDiffAll:true
+	}
 };
 //和高德对比完后qq地图数据替换处理
 var fixQQmapReplaceFillAfterAmap={
@@ -57,19 +63,12 @@ var fixQQmapReplaceFill={
 	,442099:{name:"中山市",childReplace:true}
 	,460499:{name:"儋州市",childReplace:true}
 	,620299:{name:"嘉峪关市",childReplace:true} //统计局嘉峪关还有一个市辖区，上面三个没有
-	
-	
-	//修正qq的数据项
-	,361121:{name:"上饶县",replaceAs:{name:"广信区",keepName:true,govName:"上饶县"}} //已撤县设市
-	
+		
 	
 	//添加明确缺失的子级
-	,3303:{name:"温州市",addOnNotExists:[
-				{code:"330383000000",name:"龙港市"}//2019-08 龙港镇(330327101)升级为龙港市由温州市代管
-			]}
-	,2327:{name:"大兴安岭地区",addOnNotExists:[
+	/*,2327:{name:"大兴安岭地区",addOnNotExists:[
 				{code:"232761000000",name:"加格达奇区"}//似乎有争议地区，内蒙-呼伦贝尔-鄂伦春下面也有这个区，但统计局划分在黑龙江，此处编号也为统计局的
-			]}
+			]}*/
 	
 	
 	//移除特殊的
@@ -90,33 +89,44 @@ var amapDifference={
 		,childCompareName:true}
 	,82:{name:"澳门特别行政区",level:1,xAomenChild:true}//特殊的，高德和qq的完全不同，采用高德的全面些，但code规则按qq的来
 	
+	,232761:{name:"加格达奇区",compareName:true}//id不同，qq的是对的，通过名称可以匹配
 	
 	//声明名称不同但code相同的项，这种是qq未fix的，并且最终采用qq的名称
 	,632825:{name:"大柴旦行政委员会",amapName:"海西蒙古族藏族自治州直辖"}
 	
-	
 	//标记QQ里确实不存在的
-	,232718:{lostName:"加格达奇区"}//加格达奇区上面已使用统计局的编号
 	,4421:{lostName:"东沙群岛"}//未知情况，统计局查不到
 };
 
 //qq地图数据和统计局+MCA前三级数据有效的差异 和处理方式
 var gov3Difference={
-	//MCA没有的
+	//MCA没有的，但会出现在结果中的
 	71:{name:"台湾省",keep:true}
 	,81:{name:"香港特别行政区",keep:true}
 	,82:{name:"澳门特别行政区",keep:true}
-
-	,330383:{name:"龙港市",keep:true}
 	
 	
-	//qq没有的
+	//qq没有的，也不会添加到结果中的
 	,232762:{lostName:"松岭区"}//这三个qq确实没有，高德地图上这3地方边界属于鄂伦春，鄂伦春里面抠掉了加格达奇区
 	,232763:{lostName:"新林区"}
 	,232764:{lostName:"呼中区"}
 	
 	,152571:{lostName:"乌拉盖管委会"} //前三级中唯一的一个管委会，目测是开发区管理区之类的
 	,411471:{lostName:"豫东综合物流产业聚集区"}//目测是开发区管理区之类的
+		
+	
+	//MCA和qq名称称相同但id不同的，但qq和高德相同，暂采用qq和高德的便于数据处理
+	,231121:{name:"嫩江市",asID:231183}
+	,341822:{name:"广德市",asID:341882}
+	,361121:{name:"广信区",asID:361104}
+	,371523:{name:"茌平区",asID:371503}
+	,410728:{name:"长垣市",asID:410783}
+	,411626:{name:"淮阳区",asID:411603}
+	,430521:{name:"邵东市",asID:430582}
+	,451021:{name:"田阳区",asID:451003}
+	,510922:{name:"射洪市",asID:510981}
+	,610623:{name:"子长市",asID:610681}
+	
 };
 
 
@@ -428,6 +438,9 @@ var formatQQ=function(arr,level){
 			
 			//检查子级数据+配置后的是否一致
 			var allow=function(obj,tips){
+				if(replaceSet.childDiffAll){
+					return;
+				};
 				var diff=replaceSet.childDiff[SCode(obj)];
 				if(!diff||diff.lostName!=obj.name){
 					console.error("fixQQmapReplaceGovBeforeAmp项的"+tips+"不存在项在预定义中未找到",obj,diff,replaceSet);
@@ -516,6 +529,13 @@ var compareAmap=function(parent,qqmapArr,amapArrSrc,level){
 					compareName=true;
 				};
 			};
+			if(!compareName){
+				var diffSet=amapDifference[scode];
+				if(diffSet&&diffSet.compareName){
+					diffSet.hit=true;
+					compareName=true;
+				};
+			};
 			if(compareName){
 				for(var i1=0;i1<amapArr.length;i1++){
 					var itm=amapArr[i1];
@@ -557,7 +577,8 @@ var compareAmap=function(parent,qqmapArr,amapArrSrc,level){
 					throw new Error();
 				};
 			}else if(amapItm.name.indexOf(qqItm.name.replace(/县$/,""))==0){
-				//部分qq是县（正确）高德是区市（错误），前缀是相同的
+				//部分qq是县高德是区市，前缀是相同的，不管
+				console.warn("后缀县或市的差异，不处理",qqItm,amapItm);
 			}else if(qqItm.trust){
 				//代码添加的
 			}else{
@@ -726,7 +747,12 @@ var compareGov3=function(parent,qqmapArr,govArrSrc,level){
 		
 		for(var i1=0;i1<govArr.length;i1++){
 			var itm=govArr[i1];
-			if(itm.code==qqItm.code){
+			var isMatch=itm.code==qqItm.code;
+			if(!isMatch&&diffSet&&SCode(itm)==diffSet.asID){
+				diffSet.hit=true;
+				isMatch=true;
+			};
+			if(isMatch){
 				if(govItm){
 					console.error("gov存在多个和qq相同的ID",qqItm,govArr);
 					throw new Error();
@@ -775,7 +801,13 @@ var compareGov3=function(parent,qqmapArr,govArrSrc,level){
 		var diffSet=gov3Difference[scode];
 		if(diffSet){
 			diffSet.hit=true;
-			if(diffSet.lostName!=itm.name){
+			if(diffSet.add){
+				qqmapArr.push($.extend({},itm,{
+					child:[]
+					,trust:true
+				}));
+				console.log(parent.code+":"+parent.name+"添加明确缺失的子级"+itm.code+":"+itm.name,parent,itm);
+			}else if(diffSet.lostName!=itm.name){
 				console.error("gov3Difference中lostName不一致",diffSet,itm);
 				throw new Error();
 			};

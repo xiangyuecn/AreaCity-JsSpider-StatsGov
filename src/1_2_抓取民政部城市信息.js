@@ -77,12 +77,20 @@ var fixParent={
 };
 //人工修正数据，mca新数据已撤销的市，统计局滞后
 var fixRemove={
-	3712:"莱芜市" //2019.01已被拆分到济南市
+	140703:{name:"太谷区"} //暂时阻止添加新的区，暂用老的140726太谷县，方便后续处理，等统一使用后再添加进去
+	,340281:{name:"无为市"} //暂时阻止添加新的区，暂用老的340225无为县
+	,451082:{name:"平果市"} //暂时阻止添加新的区，暂用老的451023平果县
+	,530481:{name:"澄江市"} //暂时阻止添加新的区，暂用老的530422澄江县
+	,630106:{name:"湟中区"} //暂时阻止添加新的区，暂用老的630122湟中县
+	,652902:{name:"库车市"} //暂时阻止添加新的区，暂用老的652923库车县
+	
+	,360113:{name:"红谷滩区"} //暂时阻止添加新的区，方便后续处理，免得别的地方有撤销合并
+	,659010:{name:"胡杨河市"} //暂时阻止添加新的区
 	
 	//移除单独的港澳台，mca这些没有下级并且统计局没有这些
-	,71:"台湾省"
-	,81:"香港特别行政区"
-	,82:"澳门特别行政区"
+	,71:{name:"台湾省"}
+	,81:{name:"香港特别行政区"}
+	,82:{name:"澳门特别行政区"}
 };
 //构造成统一格式
 var list=[];
@@ -158,7 +166,9 @@ function merge(arr1,arr2,deep){
 			};
 		};
 		if(!find){
-			if(fixRemove[oiCode]==oi.name){//检查移除列表，发现就直接移除
+			var fixItem=fixRemove[oiCode];
+			if(fixItem&&fixItem.name==oi.name){//检查移除列表，发现就直接移除
+				fixItem.fix=true;
 				console.log("移除匹配项",oi);
 				arr1.splice(i,1);
 				i--;
@@ -184,7 +194,9 @@ function merge(arr1,arr2,deep){
 		};
 		//合并
 		if(!find){
-			if(fixRemove[oj.code]==oj.name){
+			var fixItem=fixRemove[oj.code];
+			if(fixItem&&fixItem.name==oj.name){
+				fixItem.fix=true;
 				console.log("阻止添加新项",oj);
 			}else{
 				console.log("已添加",oj);
@@ -208,6 +220,12 @@ if(notfinds.length){
 };
 if(notfindsIgnore.length){
 	console.log("忽略"+notfindsIgnore.length+"条民政部没有的统计局多余项", notfindsIgnore);
+};
+for(var k in fixRemove){
+	if(!fixRemove[k].fix){
+		console.error("存在未被匹配的预定义fixRemove",k,fixRemove[k]);
+		throw new Error();
+	};
 };
 
 console.log("合并完成", cityList);

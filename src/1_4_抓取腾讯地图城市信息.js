@@ -181,6 +181,7 @@ function load_x_childs(itm, next){
 	loadReqCount++;
 	$.ajax({
 		url:"https://apis.map.qq.com/ws/district/v1/getchildren?id="+city.code+"&key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77"
+		,timeout:20000
 		,error:function(){
 			threadSleep(function(){
 				load_x_childs(itm, next);

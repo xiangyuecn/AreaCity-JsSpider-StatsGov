@@ -15,9 +15,9 @@
 
 
 在[Releases](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases)中下载最新发布数据文件；如果下载缓慢可以[点此处](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/assets/download.html)通过GitHub Pages外链来下载；也可直接打开 `src/采集到的数据` 文件夹内的文件来使用：
-- `ok_data_level3.csv` : 省市区3级数据。
-- `ok_data_level4.csv` : 省市区镇4级数据。
-- `ok_geo.csv.7z` : 为省市区3级的坐标和行政区域边界范围数据，csv格式，解压后130M+。
+- [/src/采集到的数据/ok_data_level3.csv](src/采集到的数据/ok_data_level3.csv) : 省市区3级数据(可以预览)。
+- [/src/采集到的数据/ok_data_level4.csv](src/采集到的数据/ok_data_level4.csv) : 省市区镇4级数据(3M+大小GitHub不能预览)。
+- [/src/采集到的数据/ok_geo.csv.7z](src/采集到的数据/ok_geo.csv.7z) : 为省市区3级的坐标和行政区域边界范围数据，csv格式，解压后130M+。
 
 > csv格式非常方便解析成其他格式，算是比较通用；如果在使用csv文件过程中出现乱码、错乱等情况，需自行调对utf-8（带BOM）编码（或者使用文本编辑器 `如 notepad++` 把文件转成需要的编码），文本限定符为`"`。
 > 

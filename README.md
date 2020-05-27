@@ -1,6 +1,6 @@
 # :open_book:省市区数据采集并标注拼音、坐标和边界范围
 
-[在线测试和预览（转换成JSON）](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/)；当前最新版为 **src文件夹** 内的数据，此数据发布于`统计局2020-02-25`、`民政部2020-03-06`、`腾讯地图行政区划2020-02-20`、`高德地图行政区划采集当天`。
+[省市区镇四级数据在线测试和预览](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/)（支持转换成JSON、多级联动js）；坐标、边界范围转换：[AreaCity-Geo格式转换工具软件下载](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/assets/AreaCity-Geo-Transform-Tools.html)（支持转成`shp`、`geojson`、`sql`、`导入数据库`）；当前最新版为 **src文件夹** 内的数据，此数据发布于`统计局2020-02-25`、`民政部2020-03-06`、`腾讯地图行政区划2020-02-20`、`高德地图行政区划采集当天`。
 
 
 <p align="center"><a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov"><img width="100" src="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/assets/icon.png" alt="AreaCity logo"></a></p>
@@ -21,7 +21,7 @@
 
 > csv格式非常方便解析成其他格式，算是比较通用；如果在使用csv文件过程中出现乱码、错乱等情况，需自行调对utf-8（带BOM）编码（或者使用文本编辑器 `如 notepad++` 把文件转成需要的编码），文本限定符为`"`。
 > 
-> csv文件导入数据库如果接触的比较多应该能很快能完成导入，城市数据参考[导入教程](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/src/3_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)、坐标和边界参考[导入教程](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/src/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js) ，教程在代码开头注释中，是SQL Server的导入流程和SQL语句。
+> csv文件导入数据库如果接触的比较多应该能很快能完成导入，省市区数据参考[导入教程](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/src/3_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)、坐标和边界参考[AreaCity-Geo格式转换工具教程](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/assets/AreaCity-Geo-Transform-Tools.html) 或 [导入教程](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/src/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)，教程在代码开头注释中，是SQL Server的导入流程和SQL语句。
 
 **温馨建议：不要在没有动态更新机制的情况下把数据嵌入到Android、IOS、等安装包内；缓存数据应定期从服务器拉取更新**
 
@@ -81,7 +81,7 @@ ext_id|long|数据源原始的编号；如果是添加的数据，此编号为0
 ext_name|string|数据源原始的名称，为未精简的名称
 
 ## 【字段】ok_geo表
-此表为坐标和行政区域边界范围数据表，含省市区三级不含第四级；因为数据文件过大（130M+），所以分开存储。由于边界数据的解析比较复杂，请参考[src/map_geo_格式化.js](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/src/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)内的SQL Server的解析语句。
+此表为坐标和行政区域边界范围数据表，含省市区三级不含第四级；因为数据文件过大（130M+），所以分开存储。由于边界数据的解析比较复杂，请参考[src/map_geo_格式化.js](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/src/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)内的SQL Server的解析语句，或者直接使用[AreaCity-Geo格式转换工具软件](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/assets/AreaCity-Geo-Transform-Tools.html)进行转换成`shp`、`geojson`、`sql`格式或直接导入数据库。
 
 字段|类型|描述
 :--:|:--:|--
@@ -162,7 +162,7 @@ polygon|string|行政区域边界，高德地图`GCJ-02`火星坐标系。格式
 
 `坐标和边界数据` 和 `省市区` 数据是分开存储的，通过`ID`来进行关联。
 
-可以把`ok_geo.csv`导入到数据库内使用，由于`POLYGON`需要解析，蛮复杂的，可以参考[src/map_geo_格式化.js](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/src/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)内的SQL Server导入用的SQL语句的例子。
+可以把`ok_geo.csv`导入到数据库内使用，由于`POLYGON`需要解析，蛮复杂的，可以参考[src/map_geo_格式化.js](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/src/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)内的SQL Server导入用的SQL语句的例子，或者直接使用[AreaCity-Geo格式转换工具软件](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/assets/AreaCity-Geo-Transform-Tools.html)进行转换成`shp`、`geojson`、`sql`格式或直接导入数据库。
 
 如果需要特定的`POLYGON`格式，可以根据上面介绍的字段格式，自行进行解析和验证。
 
@@ -171,6 +171,18 @@ polygon|string|行政区域边界，高德地图`GCJ-02`火星坐标系。格式
 ## 边界效果预览
 
 ![](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/assets/geo-sheng.gif) ![](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/assets/geo-guangdong.gif)
+
+## AreaCity-Geo格式转换工具软件
+
+本工具软件用于将采集到的 ok_geo.csv 城市坐标和边界范围文件转成其他格式，比如：`shp`、`geojson`、`sql`；或者直接导入数据库：SQL Server、MySQL，[软件教程和下载地址](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/assets/AreaCity-Geo-Transform-Tools.html)。
+
+此软件可免费使用，但会受到限制，每次转换操作最多导出一个城市和它的下一级数据，可付费升级为完整版。
+
+**相关截图：**
+
+![](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/assets/AGT-Images/sy-4.png)
+
+![](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/assets/AGT-Images/sy-2.png)
 
 
 # :open_book:数据规则和相关问题

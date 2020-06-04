@@ -1,0 +1,627 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<link rel="shortcut icon" type="image/png" href="https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/assets/icon.png">
+
+<meta http-equiv="X-UA-Compatible" content="edge" />
+<title>AreaCity Geo格式转换工具</title>
+
+<script>
+var AppCmds=window.external||{};
+var AppCalls={
+	scope:{}
+	,translateGeoEnable:function(){
+		var fn=Runtime.AppCalls.translateGeoEnable;
+		if(fn){
+			var val=fn();
+			AppCalls.scope.tgEnable=val;
+			return val;
+		};
+		return "";
+	}
+	,translateGeos:function(geosStr){
+		var fn=Runtime.AppCalls.translateGeos;
+		if(fn){
+			var val=fn(geosStr);
+			
+			if(val!=null){
+				var tgCount=++AppCalls.scope.tgCount;
+				var tgpCount=AppCalls.scope.tgpCount=AppCalls.scope.tgpCount+geosStr.split(",").length+1;
+				Runtime.UpdateStatus(AppCalls.scope.execName+"已调用"+tgCount+"次坐标转换，共"+tgpCount+"个坐标点");
+			};
+			return val;
+		};
+		return null;
+	}
+	,onTransformStart:function(execName){
+		AppCalls.scope={execName:execName,tgEnable:"",tgCount:0,tgpCount:0};
+		Runtime.UpdateStatus("");
+		
+		var fn=Runtime.AppCalls.onTransformStart;
+		if(fn){
+			fn(execName);
+		}else{
+			Runtime.Mask("执行任务中:"+execName);
+		};
+	}
+	,onTransformSuccess:function(execMsg){
+		var fn=Runtime.AppCalls.onTransformSuccess;
+		if(fn){
+			fn(execMsg);
+		};
+	}
+	,onTransformEnd:function(){
+		var fn=Runtime.AppCalls.onTransformEnd;
+		if(fn){
+			fn();
+		}else{
+			Runtime.Mask(false);
+		};
+	}
+};
+var LM="2020-5-30 17:06:02";
+</script>
+
+<style>
+body{
+	word-wrap: break-word;
+	background:#f0f0f0 center top no-repeat;
+	background-size: auto 680px;
+}
+pre{
+	white-space:pre-wrap;
+}
+a{
+	text-decoration: none;
+	color:#06c;
+}
+a:hover{
+	color:#f00;
+}
+p{
+	text-indent: 32px;
+}
+img{
+	max-width:90%;
+}
+
+.Center{
+	text-align: center;
+}
+
+.main{
+	max-width:900px;
+	margin:0 auto;
+	padding-bottom:80px
+}
+
+.mainBox{
+	margin-top:12px;
+	padding: 12px;
+	border-radius: 6px;
+	background: #fff;
+	--border: 1px solid #f60;
+	box-shadow: 2px 2px 3px #aaa;
+}
+
+
+.mainBtn{
+	display: inline-block;
+	cursor: pointer;
+	border: none;
+	border-radius: 3px;
+	background: #0b1;
+	color:#fff;
+	padding: 0 15px;
+	margin:3px 20px 3px 0;
+	line-height: 36px;
+	height: 36px;
+	overflow: hidden;
+	vertical-align: middle;
+}
+.mainBtn:active{
+	background: #0a1;
+}
+
+
+.pd{
+	padding:0 0 6px 0;
+}
+.del{
+	text-decoration: line-through;
+}
+.b{
+	font-weight: bold;
+	font-style: normal;
+}
+.i{
+	padding: 2px 4px;
+	background-color: #f6f6f6;
+	vertical-align: middle;
+	color: #c7254e;
+	font-size: 12px;
+	white-space: pre-wrap;
+	border-radius: 3px;
+	font-style: normal;
+}
+.lb{
+	display:inline-block;
+	vertical-align: middle;
+	background:#00940e;
+	color:#fff;
+	font-size:14px;
+	padding:2px 8px;
+	border-radius: 99px;
+}
+
+select,select option{
+	height:80px
+}
+</style>
+
+<style>
+.Left{
+	text-align:left;
+}
+.Right{
+	text-align:right;
+}
+.Center{
+	text-align:center;
+}
+.CenterV{
+	display:-ms-box;
+	display:box;
+	display:-ms-flex;
+	display:flex;
+	-ms-box-align:center;
+	box-align:center;
+	-ms-align-items:center;
+	align-items:center;
+}
+.ILB{
+	display:inline-block;
+}
+
+
+.FlexBox{/*水平排列*/
+	display:-ms-box;
+	display:box;
+	display:-ms-flex;
+	display:flex;
+}
+.FlexBoxV{/*垂直排列*/
+	-ms-box-orient:vertical;
+	box-orient:vertical;
+	-ms-flex-direction:column;
+	flex-direction:column;
+}
+.FlexCenter{/*和FlexBox一起使用，内部元素的内容水平方向居中，可和FlexCenterV组合使用*/
+	-ms-box-pack:center;
+	box-pack:center;
+	-ms-justify-content:center;
+	justify-content:center;
+}
+.FlexCenterV{/*和FlexBox一起使用，内部元素的内容垂直方向居中，可用CenterV来简化*/
+	-ms-box-align:center;
+	box-align:center;
+	-ms-align-items:center;
+	align-items:center;
+}
+.FlexItem{
+	position:relative;
+	
+	-ms-box-flex:1;
+	box-flex:1;
+	-ms-flex:1;
+	flex:1;
+}
+
+
+.Fill{/*宽高填充整个区域*/
+	position:absolute;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	overflow:hidden;
+}
+</style>
+</head>
+<body>
+
+<div class="pageLoad Center" style="padding:180px 0">页面加载中，请稍后...</div>
+<div class="main" style="display:none">
+	<div class="mainBox" style="margin-top:0px">
+		<div style="border:1px solid #ddd">
+			<textarea class="codeEdit" style="width:98%;height:300px"></textarea>
+		</div>
+		
+		<div style="padding-top:12px">
+			<div class="FlexBox CenterV">
+				<div class="FlexItem">
+					<button class="mainBtn yingyongBtn" onclick="Runtime.CodeRunClick()" style="padding:0 40px">应用</button>
+				</div>
+				<div style="font-size:14px">
+					内置脚本：<span class="loadCodeSelect"></span>
+				</div>
+			</div>
+			
+			<div style="font-size:14px;margin-top:10px">
+				<span style="color:#666">状态:</span>
+				<span class="statusView"></span>
+			</div>
+			
+			<div class="ctrlBtns" style="display:none;margin-top:10px"></div>
+		</div>
+	</div>
+	
+	<div class="mainBox">
+		<div class="FlexBox" style="padding-bottom:10px">
+			<div class="FlexItem">
+				<button onclick='Runtime.LogClear()'>清除日志</button>
+				<button onclick='showCmds()'>显示可用命令</button>
+			</div>
+			<div>
+				<a href="https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/assets/AreaCity-Geo-Transform-Tools.html" target="_blank">详细教程、软件许可及服务协议、购买付费版>></a>
+			</div>
+		</div>
+		
+		<div class="mainLog"></div>
+	</div>
+</div>
+
+<script type="text/template" class="tp_loadCodeSelect">
+<select style="height:30px" onchange="if(this.value)Runtime.LoadCode(this.value);this.blur()">
+	<option value="">==== GCJ-02（高德）转其他坐标系 ====</option>
+	<option value="to_bd09">[插件] 转成 BD-09 百度地图 [误差约1米内]</option>
+	<option value="to_wgs84">[插件] 转成 WGS-84 GPS 谷歌地图 [误差约10米内]</option>
+	
+	<option value=""></option>
+	<option value="">==== 省市区镇转SQL、导入数据库 ====</option>
+	<option value="exec/city_to_sql">[转换] ok_data_level*.csv 省市区镇转SQL</option>
+	<option value="exec/city_to_db">[导入] ok_data_level*.csv 省市区镇导入数据库</option>
+	
+	<option value=""></option>
+	<option value="">==== 其他代码 ====</option>
+	<option value="exec/appcmds_test">[Test] 浏览器接口测试用例</option>
+</select>
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/gh/xiangyuecn/Recorder@latest/assets/ztest-jquery.min-1.9.1.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/xiangyuecn/Recorder@latest/assets/ztest-codemirror.min.5.48.4.js"></script>
+
+<script>
+(function(){
+window.NOOP=function(){};
+window.RootFolder="..";
+window.Runtime={
+	AppCalls:{}
+	,ExecData:{}
+	
+	/*注册显示的控制按钮*/
+	,Ctrls:function(ctrls){
+		this._ctrls=ctrls;
+		//ctrls.push({html:'<span style="color:#aaa;font-size:12px">提示：操作日志可能要拖到底下才能看到</span>'});
+		
+		var html=[];
+		for(var i=0;i<ctrls.length;i++){
+			var o=ctrls[i];
+			if(o.html){
+				html.push(o.html);
+			}else{
+				html.push('<button class="mainBtn '+o.cls+'" onclick="'+o.click+'()">'+o.name+'</button>');
+			};
+		};
+		html=html.join("\n");
+		$(".ctrlBtns").html(html)[html?"show":"hide"]();
+	}
+	
+	,Import:function(jsList,win){
+		win=win||window;
+		var doc=win.document;
+		var load=function(idx){
+			if(idx>=jsList.length){
+				Runtime.CodeRunClick(1);
+				return;
+			};
+			var itm=jsList[idx];
+			var url=itm.url;
+			if(itm.check()===false){
+				load(idx+1);
+				return;
+			};
+			
+			var elem=doc.createElement("script");
+			elem.setAttribute("type","text/javascript");
+			elem.setAttribute("src",url+"?t="+Date.now());
+			elem.onload=function(){
+				load(idx+1);
+			};
+			elem.onerror=function(e){
+				Runtime.Log("请求失败:"+(e.message||"-")+"，"+url,1);
+			};
+			doc.body.appendChild(elem);
+		};
+		setTimeout(function(){
+			load(0);
+		});
+		
+		Runtime.CodeRunImport();
+	}
+	
+	/*显示日志内容，color:0默认，1红色，2绿色，其他指定颜色*/
+	,Log:function(msg,color){
+		var now=new Date();
+		var t=("0"+now.getHours()).substr(-2)
+			+":"+("0"+now.getMinutes()).substr(-2)
+			+":"+("0"+now.getSeconds()).substr(-2);
+		$(".mainLog").prepend('<div style="color:'+(!color?"":color==1?"red":color==2?"#0b1":color)+'">['+t+']'+msg+'</div>');
+	}
+	,LogClear:function(){
+		$(".mainLog").html("");
+	}
+	
+	
+	,Load:function(url_,True,False){
+		True=True||NOOP;
+		False=False||NOOP;
+		var set={url:url_};
+		if(typeof(url_)!="string"){
+			set=url_;
+		};
+		if(!set.method || set.method.toUpperCase()=="GET"){
+			set.url=set.url+(set.url.indexOf("?")+1?"&":"?")+"t="+Date.now();
+		};
+		
+		var id=++Runtime.Load_Data.id;
+		set.callback="Runtime.Load_Data.cb"+id;
+		Runtime.Load_Data["cb"+id]=function(data){
+			var obj=data.v||{};
+			var status=+obj.status||0;
+			if(data.c!==0){
+				False("请求失败："+data.m, obj);
+			}else if(status<200||status>=300){
+				False("请求状态无效["+status+"]", obj);
+			}else{
+				True(obj.value,obj);
+			};
+		};
+		
+		AppCmds.load(JSON.stringify(set));
+	}
+	,Load_Data:{id:0}
+	
+	
+};
+
+
+$(window).bind("error",function(e){
+	Runtime.Log('【Error】:<pre>'+(e.error?e.error.stack:event.message)+'</pre>',1);
+});
+})();
+</script>
+
+<script>
+$(function(){
+var codeRunCtrl;
+Runtime.CodeRunImport=function(){
+	if(codeRunCtrl==1){
+		codeRunCtrl=2;
+		throw new Error("kill");
+	};
+};
+Runtime.CodeRunClick=function(isImport){
+	if(!isImport){
+		codeRunCtrl=1;
+	};
+	if(codeRunCtrl==1){
+		Runtime.Log("代码开始运行，请勿操作...",1);
+		$(".ctrlBtns").html("").hide();
+	};
+	if(codeRunCtrl==3){
+		return;
+	};
+	if(codeRunCtrl==2){
+		codeRunCtrl=3;
+	};
+	
+	try{
+		var code=$(".codeEdit").val();
+		window.eval(code);
+		Runtime.Log("代码已运行",2);
+		
+		codeChange(code,true);
+	}catch(e){
+		if(e.message.indexOf("kill")+1){
+			return;
+		};
+		Runtime.Log("运行出错:"+e.message+"<pre>"+e.stack+"</pre>",1);
+	};
+};
+
+
+
+
+Runtime.LoadCode=function(key){
+	var path="WebviewSettingsCodes/"+key+".js";
+	Runtime.Mask("正在加载"+path+"...");
+	$.ajax({
+		url:path+"?t="+Date.now()
+		,dataType:"text"
+		,success:function(data){
+			Runtime.Mask(false);
+			var idx=0;
+			data=data.replace(/(AppCmds.exec\(\s*)"([^"]+?)"(\s*\))/g,function(z,a,b,c){
+				var id="<此处已删除过长源码，复制无效-"+key+"-"+(++idx)+">";
+				Runtime.ExecData[id]=b;
+				return a+'Runtime.ExecData["'+id+'"]'+c;
+			});
+			Runtime.SetCode(data);
+			
+			var rn=(/《(.+?)》/.exec(data)||[])[1]||"";
+			Runtime.Log("已加载《"+(rn||path)+"》脚本源码，点击应用后才会生效",2);
+			
+			document.documentElement.scrollTop=$(".yingyongBtn").offset().top-200;
+		}
+		,error:function(){
+			Runtime.Mask(false);
+			Runtime.Log("加载指定的"+path+'失败，请到<a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/tree/master/assets/AGT/WebviewSettingsCodes" target="_blank">WebviewSettingsCodes</a>目录内手动复制源码',1);
+		}
+	});
+};
+
+
+
+$(".pageLoad").hide();
+$(".main").show();
+$(".loadCodeSelect").html($(".tp_loadCodeSelect").html());
+
+var elem=$(".codeEdit");
+var w=elem.width();
+var edit=CodeMirror.fromTextArea(elem[0],{
+		mode:"javascript"
+		,lineNumbers:true
+		,lineWrapping:true
+	});
+Runtime.CodeEdit=edit;
+edit.setSize(w+"px","auto");
+edit.on("change",function(a){
+	var val=a.getValue();
+	elem.val(val);
+	codeChange(val);
+});
+
+Runtime.SetCode=function(val){
+	edit.setValue(val);
+	
+	edit.refresh();
+	codeChange(val);
+};
+
+var codeChange=function(val,reset){
+	if(reset || val!=prevCode){
+		prevCode=val;
+		codeIsChange=reset?false:true;
+		Runtime.UpdateStatus(reset?"":null);
+	};
+};
+var prevCode="/**请选择内置脚本，或者在此处输入JavaScript代码**/\n\n";
+var codeIsChange=false;
+Runtime.SetCode(prevCode);
+
+
+Runtime.translateGeoDisable=function(){
+	Runtime.AppCalls.translateGeoEnable=null;
+	Runtime.AppCalls.translateGeos=null;
+	Runtime.UpdateStatus();
+};
+
+
+var statusMsg="";
+Runtime.UpdateStatus=function(msg){
+	statusMsg=msg==null?statusMsg:(msg||"");
+	var html=[];
+	if(codeIsChange){
+		html.push('<span style="color:red">代码已修改，应用后生效</span>');
+	};
+	
+	var tgEnable=Runtime.AppCalls.translateGeoEnable;
+	if(tgEnable){
+		var tgVal=tgEnable();
+		if(tgVal){
+			html.push('<span style="color:#0b1">坐标系转换插件已启用('+tgVal+')，在处理ok_geo.csv数据时会自动调用本坐标系转换<button onclick="Runtime.translateGeoDisable()">禁用</button></span>');
+		};
+	};
+	
+	if(statusMsg){
+		html.push(statusMsg);
+	};
+	$(".statusView").html(html.join("；")||'<span style="color:#999">无额外信息</span>');
+};
+Runtime.UpdateStatus();
+
+});
+</script>
+
+
+
+<script>
+var InitReadConfig={};
+(function(){
+Runtime.Mask=function(msg){
+	$(".maskView").remove();
+	if(msg!==false){
+		$("body").append('<div class="maskView Fill Center CenterV" style="position:fixed;background: rgba(0,0,0,0.3);z-index:9999;font-size:30px;color:#fff"><div class="FlexItem">'+msg+'</div></div>');
+	};
+};
+
+try{
+	InitReadConfig=JSON.parse(AppCmds.config());
+}catch(e){
+	Runtime.Mask("非工具软件环境，不支持运行本网页!");
+	return;
+};
+
+var IsIE=false,IEVersion=99;
+(function(){
+	var ua=navigator.userAgent,m;
+	m=/MSIE.+?(\d+)|Trident.+?rv:(\d+)/i.exec(ua);
+	if(m){
+		IsIE=true;
+		IEVersion=+(m[1]||m[2]);
+	};
+})();
+if(IEVersion<11){
+	Runtime.Mask("当前使用的IE"+IEVersion+"太过老旧，请重启本软件再试");
+	return;
+};
+
+AppCmds.ready();
+
+})();
+</script>
+
+
+
+
+
+<script type="text/template" class="tp_pageCmds">
+当前页面可调用Runtime方法列表：
+	RootFolder:"" 当前页面根目录，结尾不含/，实际为/assets/目录
+
+	Runtime.Import(jsList) 导入js列表，只能调用一次，jsList:[{url:"",check:fn()},...] check返回false跳过这条的导入
+
+	Runtime.Ctrls(ctrls) 在控制区显示按钮，只能调用一次，ctrls:[{name:"按钮名称",click:"函数名称",cls:"class name"},{html:"html代码"},...]
+	
+	Runtime.Log(msgHtml,color) 在日志区显示日志html，color:0默认，1红色，2绿色，其他指定颜色
+	
+	Runtime.LogClear() 清除显示的日志
+	
+	Runtime.Mask(msg) 弹出一个遮罩层，里面显示msg内容，msg=false时关闭遮罩
+	
+	Runtime.Load(url|set,True,False) 调用AppCmds.load加载资源，True(val,data)，False(msg, data)
+	
+	Runtime.SetCode(code) 输入框内显示代码
+	
+	Runtime.UpdateStatus(msg) 更新显示状态信息
+	
+	Runtime.AppCalls={***} 实现window.AppCalls相关方法给软件调用，如果不提供将使用默认方法
+</script>
+<script>
+var showCmds=function(){
+	Runtime.Log('<pre>'+$(".tp_pageCmds").html()+'</pre>'+AppCmds.help());
+};
+Runtime.Log("当前环境：<pre>LM: "+LM+"\n\nURL: "+location.href+"\n\nUA:"+navigator.userAgent+"\n\nApp: "+InitReadConfig.AppName+"["+InitReadConfig.AppVersion+"]</pre>");
+Runtime.Log("小提示：择一个内置插件并应用后，此插件可以作用到其他脚本，因此可以先后执行不同的脚本组成不同的数据处理结果。");
+Runtime.Log("脚本运行环境已准备好，每次修改脚本后需要点击应用才会生效哦。",2);
+</script>
+<div style="width:0;height:0;overflow:hidden;">
+	<img src="https://ia.51.la/go1?id=20807127&pvFlag=1">
+</div>
+
+</body>
+</html>

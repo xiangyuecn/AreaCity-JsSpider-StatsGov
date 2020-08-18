@@ -45,10 +45,10 @@ var fixQQmapReplaceGovBeforeAmp={
 	}
 	//2019-07伊春市变化太大，qq的数据和（高德==gov）有差异，此数据采用gov的
 	//当qq数据更新时，应当先注释此段看看差异，如果还是很大就继续替换掉
-	,2307:{
+	/*,2307:{
 		name:"伊春市",level:2
 		,childDiffAll:true
-	}
+	}*/
 };
 //和高德对比完后qq地图数据替换处理
 var fixQQmapReplaceFillAfterAmap={
@@ -80,6 +80,19 @@ var fixQQmapReplaceFill={
 	
 	//移除QQ单独的芦台区（唐山市芦台经济技术开发区），本着都没有开发区，像高德一样转移到路南区下面。qq的子级code和统计局不同，不处理
 	,130230:{name:"芦台区",childMove:"130202000000"}
+	
+	//新改名的，qq未及时更新，需更新为新名称
+	,130502:{name:"桥东区",newName:"襄都区"}
+	,130503:{name:"桥西区",newName:"信都区"}
+	
+	//移除已废弃的
+	,130521:{name:"邢台县",remove:true}//被撤销，瓜分到了襄都区、信都区
+	,220381:{name:"公主岭市",remove:true}//从四平市代管改为由长春市代管
+	,370634:{name:"长岛县",remove:true}//合并为蓬莱区
+	,370684:{name:"蓬莱市",remove:true}//合并为蓬莱区
+	,460321:{name:"西沙群岛",remove:true}
+	,460322:{name:"南沙群岛",remove:true}
+	,460323:{name:"中沙群岛的岛礁及其海域",remove:true}
 };
 
 //qq地图数据和高德地图前三级数据有效的差异
@@ -93,9 +106,12 @@ var amapDifference={
 	
 	//声明名称不同但code相同的项，这种是qq未fix的，并且最终采用qq的名称
 	,632825:{name:"大柴旦行政委员会",amapName:"海西蒙古族藏族自治州直辖"}
-	
-	//标记QQ里确实不存在的
-	,4421:{lostName:"东沙群岛"}//未知情况，统计局查不到
+		
+	//标记QQ里确实不存在的，如果需要添加到qq中需lostAdd=true
+	,220184:{lostName:"公主岭市",lostAdd:true}//从四平市代管改为由长春市代管
+	,370614:{lostName:"蓬莱区",lostAdd:true}//新设区
+	,460301:{lostName:"西沙区",lostAdd:true}//新设区
+	,460302:{lostName:"南沙区",lostAdd:true}//新设区
 };
 
 //qq地图数据和统计局+MCA前三级数据有效的差异 和处理方式
@@ -113,20 +129,40 @@ var gov3Difference={
 	
 	,152571:{lostName:"乌拉盖管委会"} //前三级中唯一的一个管委会，目测是开发区管理区之类的
 	,411471:{lostName:"豫东综合物流产业聚集区"}//目测是开发区管理区之类的
+	
+	,130521:{lostName:"邢台县"}//已废弃
+	,140726:{lostName:"太谷县"}
+	,220381:{lostName:"公主岭市"}
+	,340225:{lostName:"无为县"}
+	,360105:{lostName:"湾里区"}
+	,370634:{lostName:"长岛县"}
+	,370684:{lostName:"蓬莱市"}
+	,451023:{lostName:"平果县"}
+	,460321:{lostName:"西沙群岛"}
+	,460322:{lostName:"南沙群岛"}
+	,460323:{lostName:"中沙群岛的岛礁及其海域"}
+	,530422:{lostName:"澄江县"}
+	,630122:{lostName:"湟中县"}
+	,652923:{lostName:"库车县"}
 		
 	
 	//MCA和qq名称称相同但id不同的，但qq和高德相同，暂采用qq和高德的便于数据处理
-	,231121:{name:"嫩江市",asID:231183}
-	,341822:{name:"广德市",asID:341882}
-	,361121:{name:"广信区",asID:361104}
-	,371523:{name:"茌平区",asID:371503}
-	,410728:{name:"长垣市",asID:410783}
-	,411626:{name:"淮阳区",asID:411603}
-	,430521:{name:"邵东市",asID:430582}
-	,451021:{name:"田阳区",asID:451003}
-	,510922:{name:"射洪市",asID:510981}
-	,610623:{name:"子长市",asID:610681}
+	//,0:{name:"",asID:00}
 	
+	
+	//MAC没有的，但是是新出的
+	,140703:{name:"太谷区",keep:true}
+	,220184:{name:"公主岭市",keep:true}
+	,340281:{name:"无为市",keep:true}
+	,360113:{name:"红谷滩区",keep:true}
+	,370614:{name:"蓬莱区",keep:true}
+	,451082:{name:"平果市",keep:true}
+	,460301:{name:"西沙区",keep:true}
+	,460302:{name:"南沙区",keep:true}
+	,530481:{name:"澄江市",keep:true}
+	,630106:{name:"湟中区",keep:true}
+	,652902:{name:"库车市",keep:true}
+	,659010:{name:"胡杨河市",keep:true}
 };
 
 
@@ -312,8 +348,8 @@ var formatQQ=function(arr,parent,findBad){
 			replaceSet.fix=true;
 			if(replaceSet.remove||replaceSet.childMove){//移除特殊的
 				var moveTo=0,removeEnd=0;
-				for(var i=0;i<parent.child.length;i++){
-					var pItm=parent.child[i];
+				for(var i=0;i<arr.length;i++){
+					var pItm=arr[i];
 					if(pItm.code==replaceSet.childMove){
 						moveTo=pItm;
 					};
@@ -323,9 +359,10 @@ var formatQQ=function(arr,parent,findBad){
 							throw new Error();
 						};
 						removeEnd=1;
-						parent.child.splice(i,1);
+						arr.splice(i,1);
 						console.log(itm.code+":"+itm.name+"已移除",itm);
 						i--;
+						i0--;
 					};
 				};
 				if(replaceSet.childMove){//平级移动合并子级
@@ -335,6 +372,10 @@ var formatQQ=function(arr,parent,findBad){
 					console.log(itm.code+":"+itm.name+"子级"+itm.child.length+"个已平级移动到"+moveTo.name,itm,moveTo);
 				};
 				continue;
+			}else if(replaceSet.newName){
+				console.log(itm.code+":"+itm.name+" 已更名成 "+replaceSet.newName,itm);
+				itm.name=replaceSet.newName;
+				itm.keepName=true;
 			}else if(replaceSet.replaceAs){
 				$.extend(itm,replaceSet.replaceAs);
 				delete itm.qqPY;
@@ -622,6 +663,11 @@ var compareAmap=function(parent,qqmapArr,amapArrSrc,level){
 				console.error("amapDifference中lostName不一致",diffSet,itm);
 				throw new Error();
 			};
+			if(diffSet.lostAdd){
+				var addItm={name:itm.name,code:itm.code,child:[]};
+				qqmapArr.push(addItm);
+				console.log(addItm.code+":"+addItm.name+", 添加QQ没有的",addItm);
+			};
 			continue;
 		};
 		qq_amap_QQLost.push({level:level,code:itm.code,name:itm.name});
@@ -657,6 +703,8 @@ console.log("差异结果：前3级QQ修正后和Amap无差异");
 
 
 
+//保证都有正确的parent
+setParent(null,qqMap.cityList);
 
 
 
@@ -776,6 +824,8 @@ var compareGov3=function(parent,qqmapArr,govArrSrc,level){
 		if(!cpGovName(govItm.name,qqItm.name)&&!cpGovName(govItm.name,qqItm.govName||"_EOF_")){
 			if(govItm.name.indexOf(qqItm.name.replace(/县$/,""))==0){
 				//部分县结尾，QQ是精简过的，前缀是相同的
+			}else if(qqItm.keepName){
+				//已经改过名的
 			}else{
 				qq_gov3_Difference.push({level:level,code:qqItm.code,qq:qqItm.name,gov:govItm.name});
 			};
@@ -785,6 +835,7 @@ var compareGov3=function(parent,qqmapArr,govArrSrc,level){
 		if(!qqItm.keepName){
 			if(qqItm.name!=govItm.name){
 				delete qqItm.qqPY;
+				console.warn("QQ和MCA名称不同，以MCA为准:"+qqItm.name+"->"+govItm.name);
 			};
 			qqItm.name=govItm.name;
 		};

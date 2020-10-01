@@ -11,7 +11,7 @@
 var AllowAccessFolder="/src/采集到的数据";
 var AllowAccessFiles={level3:"ok_data_level3.csv",level4:"ok_data_level4.csv",geo:"ok_geo.csv.7z"};
 </script>
-<script src="https://xiangyuecn.github.io/Recorder/assets/ztest-jquery.min-1.9.1.js"></script>
+<script src="https://xiangyuecn.gitee.io/recorder/assets/ztest-jquery.min-1.9.1.js"></script>
 
 <style>
 body{
@@ -115,8 +115,8 @@ $(".downArea").each(function(k,v){
 	v=$(v);
 	var file=AllowAccessFiles[v.attr("downkey")];
 	var path=AllowAccessFolder+"/"+file;
-	v.find(".downPath").html('<a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master'+path+'" target="_blank">'+path+'</a>');
-	v.find(".downBtn").attr("href",".."+path);
+	v.find(".downPath").html('<a href="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master'+path+'" target="_blank">'+path+'</a>');
+	v.find(".downBtn").attr("href","https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master"+path);
 });
 
 
@@ -126,14 +126,14 @@ if(file){
 };
 
 mainLog('点击上方下载按钮即可下载csv格式数据，如果需要其他格式，<a href="../" target="_blank">点此在线转换</a>');
-mainLog('GitHub Releases中提供的下载连接可能下载缓慢，因此提供本GitHub Pages外链下载，速度会快很多~');
+mainLog('GitHub Releases中提供的下载连接可能下载缓慢，因此提供本Gitee Pages外链下载，速度会快很多~');
 
 })();
 </script>
 
 
 <!-- 加载打赏挂件 -->
-<script crossorigin="anonymous" src="https://xiangyuecn.github.io/Recorder/assets/zdemo.widget.donate.js"></script>
+<script crossorigin="anonymous" src="https://xiangyuecn.gitee.io/recorder/assets/zdemo.widget.donate.js"></script>
 <script>
 DonateWidget({
 	log:function(msg){mainLog(msg)}

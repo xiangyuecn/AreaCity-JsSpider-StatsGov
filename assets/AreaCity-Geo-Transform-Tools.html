@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-<link rel="shortcut icon" type="image/png" href="https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/assets/icon.png">
+<link rel="shortcut icon" type="image/png" href="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/icon.png">
 
 <title>AreaCity Geo格式转换工具</title>
 
@@ -140,11 +140,19 @@ img{
 			<li><a href="#az">安装教程</a></li>
 			<li>
 				<a href="#sy">使用教程</a>
-				<ul style="list-style-type: none;">
-					<li><a href="#sy-shp">转成shp文件</a></li>
-					<li><a href="#sy-geojson">转成geojson文件</a></li>
-					<li><a href="#sy-sql">转成sql文件</a></li>
-					<li><a href="#sy-db">导入数据库</a></li>
+				<ul style="list-style-type: none;margin-bottom:8px">
+					<li style="margin-top:8px">
+						<a href="#sy-shp">ok_geo.csv坐标边界 转成shp文件</a></li>
+					<li><a href="#sy-geojson">ok_geo.csv坐标边界 转成geojson文件</a></li>
+					<li><a href="#sy-sql">ok_geo.csv坐标边界 转成sql文件</a></li>
+					<li><a href="#sy-db">ok_geo.csv坐标边界 导入数据库</a></li>
+					
+					<li style="margin-top:8px">
+						<a href="#sy-city-sql">ok_data_level*.csv省市区镇 转成sql文件</a></li>
+					<li><a href="#sy-city-db">ok_data_level*.csv省市区镇 导入数据库</a></li>
+					
+					<li style="margin-top:8px">
+						<a href="#sy-user-var">用户自定义控制参数</a></li>
 				</ul>
 			</li>
 			<li><a href="#ff">升级付费</a></li>
@@ -158,20 +166,25 @@ img{
 			仓库内采集到的
 			<a href="#xz-csv">ok_geo.csv</a>
 			城市坐标和边界范围文件(130M+) 转成其他格式，比如：<i class="i">shp</i>、<i class="i">geojson</i>、<i class="i">sql</i>；或者直接导入数据库：<i class="i">SQL Server</i>、<i class="i">MySQL</i>。
+			
+			也提供将
+			<a href="#xz-csv">ok_data_level*.csv</a>
+			3级或4级 省市区镇 数据导入数据库功能。
 		</p>
 		<div class="Center">
-			<img src="AGT-Images/a0.png" style="max-height:320px">
+			<img src="AGT-Images/a0.png">
 		</div>
 		
 		
 		<div class="h2">功能特点<a name="gn"></a></div>
 		<div class="content">
 			<ul class="c_ul" style="list-style-type: square;">
-				<li>将 ok_geo.csv 转成 ESRI Shapefile (<i class="i">.shp</i>) 文件。</li>
-				<li>将 ok_geo.csv 转成 GeoJSON (<i class="i">.json</i>) 文件。</li>
-				<li>将 ok_geo.csv 转成 SQL (<i class="i">.sql</i>) 文件，支持SQL Server、MySQL数据库格式。</li>
-				<li>将 ok_geo.csv 导入 SQL Server 2008+ 数据库。</li>
-				<li>将 ok_geo.csv 导入 MySQL 5.7+ 数据库。</li>
+				<li>将 ok_geo.csv坐标边界 转成 ESRI Shapefile (<i class="i">.shp</i>) 文件。</li>
+				<li>将 ok_geo.csv坐标边界 转成 GeoJSON (<i class="i">.json</i>) 文件。</li>
+				<li>将 ok_geo.csv坐标边界 转成 SQL (<i class="i">.sql</i>) 文件，支持SQL Server、MySQL数据库格式。</li>
+				<li>将 ok_geo.csv坐标边界 导入 SQL Server 2008+ 数据库。</li>
+				<li>将 ok_geo.csv坐标边界 导入 MySQL 5.0+ 数据库。</li>
+				<li>支持将 ok_data_level*.csv省市区镇 转成 SQL 文件、导入 数据库；可同时将坐标、边界范围附加到同一表中。</li>
 				<li>支持限定导出数据级别，比如只导出全国所有市级数据，默认导出全部级别数据。</li>
 				<li>支持限定导出指定城市的数据，比如只导出湖北的所有城市，默认导出全国所有数据。</li>
 				<li>支持限定导出数据内容，比如可以只导出坐标或边界范围，默认两个都导出。</li>
@@ -192,17 +205,29 @@ img{
 						、[ <a href="https://pan.baidu.com/s/14LsvF_PuPOEiOXgGAWI20w" target="_blank">百度网盘下载</a> 提取码: b6ct]
 				</div>
 				<div style="margin-top:20px">
-					<i class="b">不带GDAL组件</i> (680KB+)：
-						[ <a href="https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/AreaCity-Geo格式转换工具.zip" target="_blank">前往GitHub下载</a> ]
+					<i class="b">不带GDAL组件</i> (700KB+)：
+						[ <a href="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/AreaCity-Geo格式转换工具.zip" target="_blank">前往GitHub下载</a> ]
 						、[ <a href="#xzqq">QQ群内下载</a> ]
 						、[ <a href="https://pan.baidu.com/s/14LsvF_PuPOEiOXgGAWI20w" target="_blank">百度网盘下载</a> 提取码: b6ct]
 					<div style="color:#f60;font-size:12px">由于GDAL组件偏大，影响GitHub存放和下载，因此此包删除了此组件，启动时会提示你到 GISInternals 下载GDAL组件，参考下面安装教程。</div>
 				</div>
 			</div>
 			
-			<div class="h3" style="margin-top:60px">城市坐标和边界范围数据下载<a name="xz-csv"></a></div>
+			<div class="h3" style="margin-top:60px">城市数据、坐标、边界范围数据下载<a name="xz-csv"></a></div>
 			<div class="desc">
-				<i class="b">ok_geo.csv</i> (13MB+ 解压后130M+)：[ <a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases" target="_blank">前往GitHub下载</a> ] 请下载 Releases 页面最新版本中的 <i class="i">ok_geo.csv.7z</i> 文件，解压后得到 <i class="i">ok_geo.csv</i> 。
+				<div>
+					<i class="b">ok_geo.csv</i> (坐标、边界范围，13MB+ 解压后130M+)：[ <a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases" target="_blank">前往GitHub下载</a> ] 请下载 Releases 页面最新版本中的 <i class="i">ok_geo.csv.7z</i> 文件，解压后得到 <i class="i">ok_geo.csv</i> 。
+				</div>
+				
+				<div style="margin-top:20px">
+					<i class="b">ok_data_level4.csv
+</i> (省市区镇 4级数据，3MB+)：[ <a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases" target="_blank">前往GitHub下载</a> ] 请下载 Releases 页面最新版本中的 <i class="i">ok_data_level4.csv</i> 文件 。
+				</div>
+				
+				<div style="margin-top:20px">
+					<i class="b">ok_data_level3.csv
+</i> (省市区 3级数据，200KB+)：[ <a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases" target="_blank">前往GitHub下载</a> ] 请下载 Releases 页面最新版本中的 <i class="i">ok_data_level3.csv</i> 文件 。
+				</div>
 			</div>
 		</div>
 		
@@ -248,7 +273,7 @@ img{
 		
 		<div class="h2">使用教程<a name="sy"></a></div>
 		<div class="content">
-			<div class="h3">转成shp文件<a name="sy-shp"></a></div>
+			<div class="h3">ok_geo.csv坐标边界 转成shp文件<a name="sy-shp"></a></div>
 			<div class="desc">
 				<div>
 					<i class="b">步骤一、</i>
@@ -264,7 +289,7 @@ img{
 
 						<div style="margin-top:20px">【包含数据】勾选：是否要导出相应的数据，ok_geo.csv中id、ext_path字段总是会导出，geo、polygon字段根据是否勾选才会导出。</div>
 						
-						<div style="margin-top:20px">【完整版激活密钥】填写激活密钥后：软件将打开所有可用功能（完整版），每次转换操作会导出所有匹配的数据。未填写激活密钥时：软件为体验版，每次转换操作最多导出一个城市和它的下一级数据。比如：要导出湖北省的全部数据，体验版只会导出湖北所有的市级数据，区级不会导出（可以手动一个个的导出每个市的所有区级），完整版会一次性导出湖北省全部市、区数据；导出全部数据：体验版只会导出所有的省这一级数据，完整版会一次性导出所有省、市、区数据。</div>
+						<div style="margin-top:20px">【付费版激活密钥】填写激活密钥后：软件将打开所有可用功能成为付费版，每次转换操作会导出所有匹配的数据。未填写激活密钥时：软件为免费版，每次转换操作最多导出一个城市和它的下一级数据。比如：要导出湖北省的全部数据，免费版只会导出湖北所有的市级数据，区级不会导出（可以手动一个个的导出每个市的所有区级），付费版会一次性导出湖北省全部市、区数据；导出全部数据：免费版只会导出所有的省这一级数据，付费版会一次性导出所有省、市、区数据。</div>
 					</div>
 				</div>
 				<div style="margin-top:20px">
@@ -272,12 +297,12 @@ img{
 					点击“转成shp文件”按钮，耐心等待转换完成（转换完全部数据大概需要3分钟），转换的数据保存在第一步你选择的 ok_geo.csv 文件所在目录中，shp开头的文件夹内就是转换完成的数据了。
 					
 					<div class="Center">
-						<img src="AGT-Images/sy-1.png" style="max-height:320px">
+						<img src="AGT-Images/sy-1.png">
 					</div>
 				</div>
 				<div style="margin-top:20px">
 					<i class="b">步骤四、</i>
-					可以将转换成的shp文件在 ArcMap 等GIS软件中打开查看；注意：ok_geo.csv为高德地图的坐标数据，坐标系为GCJ-02火星坐标系，相对WGS-84 GPS坐标系有肉眼可见的偏移；此处以 ArcMap 为例。
+					可以将转换成的shp文件在 ArcMap 等GIS软件中打开查看；注意：ok_geo.csv为高德地图的坐标数据，坐标系为GCJ-02火星坐标系，显示到Google地图、百度地图内有肉眼可见的偏移（几百米），可通过高级自定义脚本转换坐标系修正；此处以 ArcMap 为例。
 					<div style="padding-left:30px">
 						<div style="margin-top:20px">
 							1. 打开ArcMap，在Layers菜单上右键点击“Add Data”
@@ -301,11 +326,11 @@ img{
 			</div>
 			
 			
-			<div class="h3">转成geojson文件<a name="sy-geojson"></a></div>
+			<div class="h3">ok_geo.csv坐标边界 转成geojson文件<a name="sy-geojson"></a></div>
 			<div class="desc">
 				<div>
 					<i class="b">步骤一、步骤二、</i>
-					请参考上面的转成shp文件，按它的步骤一、步骤二操作。
+					请参考上面的ok_geo.csv坐标边界 转成shp文件，按它的步骤一、步骤二操作。
 				</div>
 				<div style="margin-top:20px">
 					<i class="b">步骤三、</i>
@@ -313,7 +338,7 @@ img{
 				</div>
 				<div style="margin-top:20px">
 					<i class="b">步骤四、</i>
-					可以将转换成的json文件在GIS软件中打开查看；注意：ok_geo.csv为高德地图的坐标数据，坐标系为GCJ-02火星坐标系，相对WGS-84 GPS坐标系有肉眼可见的偏移；此处以在线的 geojson.io 为例。
+					可以将转换成的json文件在GIS软件中打开查看；注意：ok_geo.csv为高德地图的坐标数据，坐标系为GCJ-02火星坐标系，显示到Google地图、百度地图内有肉眼可见的偏移（几百米），可通过高级自定义脚本转换坐标系修正；此处以在线的 geojson.io 为例。
 					
 					<div style="padding-left:30px">
 						<div style="margin-top:20px">
@@ -334,11 +359,11 @@ img{
 			</div>
 			
 			
-			<div class="h3">转成sql文件<a name="sy-sql"></a></div>
+			<div class="h3">ok_geo.csv坐标边界 转成sql文件<a name="sy-sql"></a></div>
 			<div class="desc">
 				<div>
 					<i class="b">步骤一、步骤二、</i>
-					请参考上面的转成shp文件，按它的步骤一、步骤二操作。
+					请参考上面的ok_geo.csv坐标边界 转成shp文件，按它的步骤一、步骤二操作。
 				</div>
 				<div style="margin-top:20px">
 					<i class="b">步骤三、</i>
@@ -360,16 +385,19 @@ img{
 				</div>
 				<div style="margin-top:20px">
 					<i class="b">步骤五、</i>
-					可以将转换成的sql文件导入到对应数据库中查看和使用，如何导入以实际的数据库类型为准，自行查阅相关资料。下面提供几段可能用得到的sql语句，为SQL Server版，其他数据库类型改写一下也不困难。
+					可以将转换成的sql文件导入到对应数据库中查看和使用，如何导入以实际的数据库类型为准，自行查阅相关资料。注意：ok_geo.csv为高德地图的坐标数据，坐标系为GCJ-02火星坐标系，显示到Google地图、百度地图内有肉眼可见的偏移（几百米），可通过高级自定义脚本转换坐标系修正；下面提供几段可能用得到的sql语句，为SQL Server版，其他数据库类型改写一下也不困难。
 					
 					<div style="padding-left:30px">
 						<div style="margin-top:20px">
-							<textarea style="width:90%;height:300px"
+							<textarea style="width:90%;height:360px"
 >-- 计算上下级之间差异超过1平方公里的数据
 drop table #tb1,#tb2;select (LEN(ext_path)-LEN(REPLACE(ext_path,' ',''))) as level,* into #tb1 from 【此处改成你的表名】;select polygon.STArea()*10000 as a1,(select sum(t2.polygon.STArea()) from #tb1 as t2 where t2.level=t1.level+1 and CHARINDEX(t1.ext_path, t2.ext_path)=1)*10000 as a2,* into #tb2 from #tb1 as t1; select Round((a1-a2)/a1*100,2) as '%',a1-a2 as loss,* from #tb2 where level<2 and a1-a2>1 order by [%] desc
 
 -- 查看所有省的边界，组成中国地图轮廓
 select id,ext_path,geo.STAsText(),polygon from 【此处改成你的表名】 where ext_path not like '% %' or ext_path like '%港澳台%'
+
+-- 查询某城市的周边城市
+select * from (select *,(LEN(ext_path)-LEN(REPLACE(ext_path,' ',''))) as deep from 【此处改成你的表名】) as t where deep=1 and polygon.STIntersects((select polygon from 【此处改成你的表名】 where ext_path='湖北省 武汉市'))=1
 
 -- 查看广东省的所有市、区
 select id,ext_path,geo.STAsText(),polygon from 【此处改成你的表名】 where ext_path like '%广东省%'
@@ -383,15 +411,15 @@ select id,ext_path,polygon from 【此处改成你的表名】 where polygon.STI
 			</div>
 			
 			
-			<div class="h3">导入数据库<a name="sy-db"></a></div>
+			<div class="h3">ok_geo.csv坐标边界 导入数据库<a name="sy-db"></a></div>
 			<div class="desc">
 				<div>
 					<i class="b">步骤一、步骤二、</i>
-					请参考上面的转成shp文件，按它的步骤一、步骤二操作。
+					请参考上面的ok_geo.csv坐标边界 转成shp文件，按它的步骤一、步骤二操作。
 				</div>
 				<div style="margin-top:20px">
 					<i class="b">步骤三、</i>
-					请参考上面的转成sql文件，按它的步骤三设置【SQL类型】和【SQL新表前缀】。
+					请参考上面的ok_geo.csv坐标边界 转成sql文件，按它的步骤三设置【SQL类型】和【SQL新表前缀】。
 					<div style="padding-left:30px">
 						<div style="margin-top:20px">【数据库连接】设置：导入数据库操作时需要设置的连接到数据库需要的参数信息集合，会通过此字符串中的参数连接到指定数据库，自动新建（表存在时会删除重建）表导入数据（数据入库后自己用sql去转移到别的表或填充别的表，自由度更大）。</div>
 					</div>
@@ -402,13 +430,74 @@ select id,ext_path,polygon from 【此处改成你的表名】 where polygon.STI
 				</div>
 				<div style="margin-top:20px">
 					<i class="b">步骤五、</i>
-					请参考上面的转成sql文件的步骤五，用一下那几段sql语句测试测试（SQL Server版）。
+					请参考上面的ok_geo.csv坐标边界 转成sql文件的步骤五，用一下那几段sql语句测试测试（SQL Server版）。注意：ok_geo.csv为高德地图的坐标数据，坐标系为GCJ-02火星坐标系，显示到Google地图、百度地图内有肉眼可见的偏移（几百米），可通过高级自定义脚本转换坐标系修正。
 					
 					<div class="Center">
 						<img src="AGT-Images/sy-5.png" style="max-height:320px">
 					</div>
 				</div>
 			</div>
+			
+			
+			<div class="h3">ok_data_level*.csv省市区镇 转成sql文件<a name="sy-city-sql"></a></div>
+			<div class="desc">
+				<div>
+					<i class="b">步骤一、</i>
+					点击“高级>>”按钮展开高级自定义脚本，在内置脚本下拉框中选择“省市区镇 转成sql”。
+					
+					<p>点击上方的“通用-选择文件”按钮选择 <a href="#xz-csv">ok_data_level3.csv</a> 或 <a href="#xz-csv">ok_data_level4.csv</a> 文件；如果你还没有准备此文件，请到GitHub Releases 页面中下载然后解压，参考上面的数据下载。</p>
+				</div>
+				<div style="margin-top:20px">
+					<i class="b">步骤二、</i>
+					数据库设置中、高级自定义脚本设置中配置相关参数，导出时将会按你的配置导出相关的数据。
+					<div style="padding-left:30px">
+						<div style="margin-top:20px">【SQL类型】设置：转成sql文件、导入数据库操作需要指明数据库类型。</div>
+						
+						<div style="margin-top:20px">【SQL新表前缀】设置：转成sql文件、导入数据库操作需要指明导入到的表的名称前缀，导出时会在名称后面拼接当前日期后缀，并重建此表。</div>
+						
+						<div style="margin-top:20px">【数据库连接】设置：导入数据库操作时需要设置的连接到数据库需要的参数信息集合，会通过此字符串中的参数连接到指定数据库，自动新建（表存在时会删除重建）表导入数据（数据入库后自己用sql去转移到别的表或填充别的表，自由度更大）。启用了附加坐标、边界字段功能时也需要提供数据库连接，用来读取坐标、边界数据。</div>
+						
+						<div style="margin-top:20px">【自定义字段名】设置：你可以设置需要从 ok_data_level*.csv 中导入哪些字段，清除不要的字段，并可以修改字段名称。</div>
+						
+						<div style="margin-top:20px">【附加坐标、边界字段】设置：你可以将 ok_geo.csv 中的数据先导入数据库，然后在导入 ok_data_level*.csv 时将需要的geo、polygon字段数据通过本设置自动添加到新导入的省市区表中。</div>
+					</div>
+				</div>
+				<div style="margin-top:20px">
+					<i class="b">步骤三、</i>
+					点击高级自定义脚本界面中的“省市区镇转SQL”按钮，耐心等待转换完成，转换的数据保存在第一步你选择的 ok_data_level*.csv 文件所在目录中，SQL开头的一个文件就是转换完成的数据了。
+				</div>
+			</div>
+			
+			
+			<div class="h3">ok_data_level*.csv省市区镇 导入数据库<a name="sy-city-db"></a></div>
+			<div class="desc">
+				<div>
+					<i class="b">步骤一、步骤二、</i>
+					请参考上面的ok_data_level*.csv省市区镇 转成sql文件，按它的步骤一、步骤二操作。
+				</div>
+				<div style="margin-top:20px">
+					<i class="b">步骤三、</i>
+					点击“省市区镇导入数据库”按钮，耐心等待导入完成，完成后可到数据库中查看你设置的新表前缀对应的表，数据全部在这个新表中。
+					
+					<div class="Center">
+						<img src="AGT-Images/sy-6.png">
+					</div>
+				</div>
+			</div>
+			
+			
+			<div class="h3">用户自定义控制参数<a name="sy-user-var"></a></div>
+			<div class="desc">
+				<p>用户自定义控制参数用来改变软件的某些运行行为，可通过修改storage.json（需重启软件）、高级自定义脚本中的AppCmds.setConfig(key,value)（大部分设置立即生效）两个手段来定义参数，可用参数参考以下列表。</p>
+				
+				<ul class="c_ul" style="list-style-type: square;">
+					<li><i class="b">User_WebviewSettingsUrl</i>：更换“高级自定义脚本”启动时打开的页面地址，需重启软件生效，默认地址为github.io|gitee.io地址，如果你的网络访问github|gitee缓慢，可以切换到其他可用源（如：github clone后的本地文件路径：<i class="i">file:///你路径/assets/AGT/WebviewSettings.html</i>）。</li>
+					
+					<li><i class="b">User_Spatial_GeogCS_WKT</i>：设置shp、geojson文件内的坐标系信息wkt格式，默认值为WGS84坐标系：<i class="i">GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433],AUTHORITY["EPSG",4326]]</i>，比如你要shp文件内的坐标系为CGCS2000，可以设置为此值：<i class="i">GEOGCS["GCS_China_Geodetic_Coordinate_System_2000",DATUM["D_China_2000",SPHEROID["CGCS2000",6378137.0,298.257222101]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433],AUTHORITY["EPSG",4490]]</i>；
+					更多坐标系的wkt值可自行搜索，或用ArcMap中的 Layers右键属性 -> Coordinate System点开后查看列表，找到需要的坐标系然后右键另存为即可得到wkt文本；注意：修改此值并不会转换ok_geo.csv的GCJ-02坐标到指定的坐标系，需要自行通过高级自定义脚本转换坐标的坐标系。</li>
+				</ul>
+			</div>
+			
 		</div>
 		
 		
@@ -416,49 +505,59 @@ select id,ext_path,polygon from 【此处改成你的表名】 where polygon.STI
 		<div class="h2">升级付费<a name="ff"></a></div>
 		<div class="content">
 			<div>
-				<i class="b">体验版：</i>未填写激活密钥时本工具软件为体验版，会受到限制，每次转换操作最多导出一个城市和它的下一级数据。
+				<i class="b">免费版：</i>未填写激活密钥时本工具软件为免费版，会受到限制，每次转换操作最多导出一个城市和它的下一级数据；免费版的功能也足够强大了，就算不付费，需要的数据量不大的情况下，多点几次也能达到和付费版相同的效果。
 			</div>
 			<div style="margin-top:12px">
-				<i class="b">完整版：</i>填写有效激活密钥后软件将打开所有可用功能，解除限制，每次转换操作会导出所有匹配的数据。
+				<i class="b">付费版：</i>填写有效激活密钥后软件将打开所有可用功能，解除限制，每次转换操作会导出所有匹配的数据。
 			</div>
 			<div style="margin-top:12px">
-				<i class="b">激活密钥：</i>激活密钥是体验版升级为完整版的核心许可凭据，密钥存在许可使用期限、可激活计算机数量的限制，激活密钥可通过付费购买、活动赠送等途径获得；激活密钥分多个种类，详细差异和价格请看下表。
+				<i class="b">激活密钥：</i>激活密钥是免费版升级为付费版的核心许可凭据，密钥存在许可使用期限、可激活计算机数量的限制，激活密钥可通过付费购买、活动赠送等途径获得；激活密钥分多个种类，详细差异和价格请看下表。
 			</div>
 			
 			<div style="margin-top:20px;text-align:center;font-size:28px;padding:10px">
-				《AreaCity Geo格式转换工具 - 完整版激活密钥报价》
+				《AreaCity Geo格式转换工具 - 激活密钥报价》
 			</div>
 			<table class="table">
 				<thead>
 					<tr>
 						<th style="width:20%"></th>
-						<th style="width:25%">1次激活密钥<sup>[1]</sup></th>
-						<th style="width:30%">单机许可激活密钥</th>
-						<th style="width:25%">批量许可激活密钥</th>
+						<th style="width:16%">免费版</th>
+						<th style="width:22%">1次激活密钥<sup>[1]</sup></th>
+						<th style="width:22%">单机许可激活密钥</th>
+						<th style="width:20%">批量许可激活密钥</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
 						<td class="right">许可有效期</td>
-						<td>7天</td>
+						<td style="color:#999">无限试用</td>
+						<td>3天</td>
 						<td style="color:#0b1;">不限</td>
 						<td style="color:#0b1;">不限</td>
 					</tr>
 					<tr>
 						<td class="right">密钥有效期</td>
-						<td>7天</td>
+						<td style="color:#999">-</td>
+						<td>3天</td>
 						<td style="color:#0b1;">每30天自助续期<sup>[2]</sup></td>
 						<td style="color:#0b1;">每30天人工续期<sup>[3]</sup></td>
 					</tr>
 					<tr>
 						<td class="right">可激活计算机数量</td>
+						<td style="color:#999;">免激活</td>
 						<td>1</td>
 						<td>1</td>
 						<td style="color:#0b1;">不限</td>
 					</tr>
 					<tr>
 						<td class="right">服务支持</td>
+						<td style="color:#999;font-size:12px;padding:10px 10px;text-align: left;">
+							<div>功能限制：</div>
+							<div style="margin-top:6px">每次可导出一个城市和它的下一级数据；</div>
+							<div style="margin-top:6px">软件中标注的免费版有限制的功能。</div>
+						</td>
 						<td>
+							<div>解除所有限制</div>
 							<div>消息优先处理</div>
 							<div class="del" style="color:#999">不支持软件升级</div>
 							<div class="del" style="color:#999">不支持数据更新</div>
@@ -466,22 +565,26 @@ select id,ext_path,polygon from 【此处改成你的表名】 where polygon.STI
 							<div style="color:#fb0;font-size:12px">升级成单机许可只需补差价</div>
 						</td>
 						<td>
+							<div>解除所有限制</div>
 							<div>消息优先处理</div>
 							<div style="color:#0b1;">支持软件升级</div>
 							<div style="color:#0b1;">支持数据更新</div>
-							<div style="color:#0b1;">3次技术指导机会<sup>[4]</sup></div>
+							<div style="color:#0b1;">1次技术指导机会<sup>[4]</sup></div>
 						</td>
-						<td>无</td>
+						<td>
+							<div>解除所有限制</div>
+						</td>
 					</tr>
 					<tr>
 						<td class="right">价格</td>
-						<td style="font-size:32px;color:#04f;">¥99</td>
-						<td style="font-size:32px;color:#04f;">¥299</td>
+						<td style="color:#999;">免费</td>
+						<td style="font-size:32px;color:#04f;">¥59</td>
+						<td style="font-size:32px;color:#04f;">¥289</td>
 						<td style="color:#999;">不售</td>
 					</tr>
 					<tr>
 						<td class="right">如何购买</td>
-						<td colspan="3" class="left" style="font-size:14px;color:#666">
+						<td colspan="4" class="left" style="font-size:14px;color:#666">
 							请先加QQ群： 484560085（口令:areacity），联系群主（即作者）后付款，提供需要激活的ID信息，然后群主给你签发激活密钥。<span style="color:red">请勿通过其他途径购买，以免造成损失。</span>
 						</td>
 					</tr>
@@ -489,11 +592,11 @@ select id,ext_path,polygon from 【此处改成你的表名】 where polygon.STI
 			</table>
 			
 			<div style="font-size:14px;margin-top:10px">
-				<div>[1] 1次激活密钥许可有效期只有一个礼拜的时间，一个礼拜之内你可以获得软件的完整版功能；主要用于单次或少量次数的数据转换导出，如果你的得到数据后不需要更新数据，相当于你只要用几次完整版此工具，那么购买此类型密钥会很划算。</div>
+				<div>[1] 1次激活密钥许可有效期只有3天的时间，3天之内你可以使用软件的所有功能；主要用于单次或少量次数的数据转换导出，如果你的得到数据后不需要更新数据，相当于你只要用几次付费版此工具，那么购买此类型密钥会很划算。</div>
 				<div style="margin-top:6px">[2] 单机许可签发的密钥有效期为30天，许可有效期内可通过<a href="https://jiebian.life/web/h5/github/areacity-agt-renew.aspx" target="_blank">自助服务</a>续签新密钥，新密钥拥有老密钥同等效力。</div>
 				<div style="margin-top:6px">[3] 批量许可签发的密钥有效期为30天，许可有效期内可联系群主续签新密钥，新密钥拥有老密钥同等效力。</div>
 				<div style="margin-top:6px">[4] 技术指导为一对一指导，单次服务最长时间为1小时；服务期间可提供软件功能范围内的：软件使用教学、数据导出配置方案；软件功能范围外的需求：如功能定制、特殊数据处理，根据需求复杂度和需要花费的预估时间，协商解决，如果需要的时间超出总的指导机会时间，需另付费。</div>
-				<div style="margin-top:6px;color:#0b1;font-size:22px">【活动】从2020-05-28 到 2020-06-30，QQ群内提供一套批量许可密钥，许可有效期到6月30号，一个月内无限制测试使用，有格式转换需求的新老群组成员欢迎体验；测试期间有任何问题或建议欢迎和群主反馈。</div>
+				<div style="margin-top:6px;color:#0b1;font-size:22px;display:none">【活动】从2020-05-28 到 2020-06-30，QQ群内提供一套批量许可密钥，许可有效期到6月30号，一个月内无限制测试使用，有格式转换需求的新老群组成员欢迎体验；测试期间有任何问题或建议欢迎和群主反馈。</div>
 			</div>
 		</div>
 		
@@ -510,7 +613,7 @@ select id,ext_path,polygon from 【此处改成你的表名】 where polygon.STI
 			
 			<div class="h3">为啥坐标、边界范围在非高德地图上绘制发生了偏移？</div>
 			<div class="desc">
-				<p>因为数据源ok_geo.csv内的数据为高德地图的坐标数据，坐标系为GCJ-02火星坐标系，相对WGS-84 GPS坐标系或其他坐标系有肉眼可见的偏移；在不同坐标系下不能直接显示，需要先转坐标系。</p>
+				<p>因为数据源ok_geo.csv内的数据为高德地图的坐标数据，坐标系为GCJ-02火星坐标系，显示到Google地图、百度地图内有肉眼可见的偏移（几百米）；在不同坐标系下不能直接显示，需要先转坐标系，可通过高级自定义脚本转换坐标系修正。</p>
 			</div>
 			
 			<div class="h3">如何在QQ群内下载本工具？<a name="xzqq"></a></div>
@@ -518,18 +621,18 @@ select id,ext_path,polygon from 【此处改成你的表名】 where polygon.STI
 				加入QQ群：<i class="i">484560085</i>，口令<i class="i">areacity</i>，然后到群文件中下载。
 			</div>
 			
-			<div class="h3">为何会限制使用，要激活密钥才能使用完整版？</div>
+			<div class="h3">为何会限制使用，要激活密钥才能使用所有功能？</div>
 			<div class="desc">
 				<p>以前有不少人咨询过我是否提供别的格式数据，我只能回答需要自己找工具写代码转换；但有的新手开发者底子薄，要完成这个平凡的任务却甚是艰难，可能花费好多天都出不了成果。</p>
 				<p>从第一版数据采集的源码中我就提供了将坐标和边界范围导入到SQL Server的sql代码，现在我就试着将这些功能封装成工具，想着要加入更多常见的格式，就把shp和geojson这两个常见的格式提供了支持，就有了本工具。</p>
-				<p>数据和时间都能产生价值，GitHub库里面csv格式数据是开放的，但作者也要恰饭的嘛，最值钱但又不值钱的时间才是应该被付费的；本工具是生产力，助你快速产出成果，蝴蝶效应下升职加薪、迎娶白富美、走上人生巅峰不算是梦话；但作者还是要恰饭的嘛，所以你需要付费购买激活密钥才能使用到完整版。</p>
-				<p>就算不付费，体验版的功能也足够强大了，多点几次也能达到和完整版相同的效果。</p>
+				<p>数据和时间都能产生价值，GitHub库里面csv格式数据是开放的，但作者也要恰饭的嘛，最值钱但又不值钱的时间才是应该被付费的；本工具是生产力，助你快速产出成果，蝴蝶效应下升职加薪、迎娶白富美、走上人生巅峰不算是梦话；但作者还是要恰饭的嘛，所以你需要付费购买激活密钥才能使用到所有功能。</p>
+				<p>就算不付费，免费版的功能也足够强大了，多点几次也能达到和付费版相同的效果。</p>
 				<p>我相信关注本库且动手能力强的你，虽然转换一下格式并不是难事，但本工具能帮你节省大量的时间，欢迎体验。</p>
 			</div>
 			
 			<div class="h3">购买激活密钥能砍价吗？</div>
 			<div class="desc">
-				谢绝砍价，不过节假日、活动时也许可以打个折。
+				已经很便宜了，软件开发不易谢绝砍价，不过节假日、活动时也许可以打个折。
 			</div>
 			
 			<div class="h3">可以免费获得激活密钥吗？</div>

@@ -1,3 +1,5 @@
+**【[源GitHub仓库](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov)】 | 【[Gitee镜像库](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov)】如果本文档图片没有显示，请手动切换到Gitee镜像库阅读文档。**
+
 # :open_book:省市区数据采集并标注拼音、坐标和边界范围
 
 [省市区镇四级数据在线测试和预览](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/)（支持转换成JSON、多级联动js）；导入数据库或坐标、边界范围转换：[AreaCity-Geo格式转换工具软件下载](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html)（支持转成`sql`、导入数据库，转成`shp`、`geojson`）；当前最新版为 **src文件夹** 内的数据，此数据发布于`统计局2020-02-25`、`民政部2020-07-28`、`腾讯地图行政区划2020-08-14`、`高德地图行政区划采集当天`。
@@ -35,7 +37,7 @@
 //Gitee镜像仓库: 速度快
 git clone --depth 1 https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov.git
 
-//原始GitHub仓库: 慢的一逼
+//源GitHub仓库: 可能比较慢或无法访问
 git clone --depth 1 https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov.git
 ```
 

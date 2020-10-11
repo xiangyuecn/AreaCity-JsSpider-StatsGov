@@ -165,7 +165,11 @@ img{
 			<i class="i">AreaCity-JsSpider-StatsGov</i>
 			仓库内采集到的
 			<a href="#xz-csv">ok_geo.csv</a>
-			城市坐标和边界范围文件(130M+) 转成其他格式，比如：<i class="i">shp</i>、<i class="i">geojson</i>、<i class="i">sql</i>；或者直接导入数据库：<i class="i">SQL Server</i>、<i class="i">MySQL</i>。
+			省市区三级坐标和边界范围csv文件(130M+) 转成其他格式，比如：<i class="i">shp</i>、<i class="i">geojson</i>、<i class="i">sql</i>；
+			
+			或者直接导入数据库：<i class="i">SQL Server</i>、<i class="i">MySQL</i>。
+			
+			支持处理<a href="#xz-csv">ok_geo4_*.csv</a>乡镇第四级数据（付费数据）；
 			
 			也提供将
 			<a href="#xz-csv">ok_data_level*.csv</a>
@@ -190,7 +194,7 @@ img{
 				<li>支持限定导出数据内容，比如可以只导出坐标或边界范围，默认两个都导出。</li>
 				<li>自动校验坐标和边界矢量数据的有效性。</li>
 				<li>转换精度高，速度快，内存占用小，3-5分钟左右可转换完所有数据。</li>
-				<li>支持Win10、Win8、Win7，32位、64位系统使用。</li>
+				<li>支持Win10、Win8、Win7，32位、64位系统使用（其他系统装虚拟机可用）。</li>
 			</ul>
 		</div>
 		
@@ -215,19 +219,30 @@ img{
 			
 			<div class="h3" style="margin-top:60px">城市数据、坐标、边界范围数据下载<a name="xz-csv"></a></div>
 			<div class="desc">
+				
 				<div>
-					<i class="b">ok_geo.csv</i> (坐标、边界范围，13MB+ 解压后130M+)：[ <a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases" target="_blank">前往GitHub下载</a> ] 请下载 Releases 页面最新版本中的 <i class="i">ok_geo.csv.7z</i> 文件，解压后得到 <i class="i">ok_geo.csv</i> 。
+					<i class="b"><span style="color:#fa0">[付费]【GEO四级】</span>乡镇 坐标+边界范围</i>
+					(ok_geo4_*.csv，140MB+压缩包 含数据350M+)：[ <a href="#xzqq">QQ群内下载</a> ]
+					、[ <a href="https://pan.baidu.com/s/14LsvF_PuPOEiOXgGAWI20w" target="_blank">百度网盘下载</a> 提取码: b6ct 进入到 <i class="i">AreaCity Geo格式转换工具/乡镇第4级坐标边界数据</i> 目录内下载]
+					<span style="color:#fa0">乡镇第4级坐标边界数据为付费数据，压缩包内提供了部分数据供免费体验，其他乡镇第4级坐标边界数据需 [ <a href="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-level4.html" target="_blank">付费购买</a> ] 。</span>
+					小提示：压缩包内已包含下面三个免费数据。
 				</div>
 				
 				<div style="margin-top:20px">
-					<i class="b">ok_data_level4.csv
-</i> (省市区镇 4级数据，3MB+)：[ <a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases" target="_blank">前往GitHub下载</a> ] 请下载 Releases 页面最新版本中的 <i class="i">ok_data_level4.csv</i> 文件 。
+					<i class="b"><span style="color:#0b1">[免费]【GEO三级】</span>省市区 坐标+边界范围</i>
+					(ok_geo.csv，13MB+压缩包 解压后130M+)：[ <a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases" target="_blank">前往GitHub下载</a> ] 请下载 Releases 页面最新版本中的 <i class="i">ok_geo.csv.7z</i> 文件，解压后得到 <i class="i">ok_geo.csv</i> 。
 				</div>
 				
 				<div style="margin-top:20px">
-					<i class="b">ok_data_level3.csv
-</i> (省市区 3级数据，200KB+)：[ <a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases" target="_blank">前往GitHub下载</a> ] 请下载 Releases 页面最新版本中的 <i class="i">ok_data_level3.csv</i> 文件 。
+					<i class="b"><span style="color:#0b1">[免费]【四级】</span>省市区镇  4级数据</i>
+					(ok_data_level4.csv，3MB+)：[ <a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases" target="_blank">前往GitHub下载</a> ] 请下载 Releases 页面最新版本中的 <i class="i">ok_data_level4.csv</i> 文件 。
 				</div>
+				
+				<div style="margin-top:20px">
+					<i class="b"><span style="color:#0b1">[免费]【三级】</span>省市区 3级数据</i>
+					(ok_data_level3.csv，200KB+)：[ <a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases" target="_blank">前往GitHub下载</a> ] 请下载 Releases 页面最新版本中的 <i class="i">ok_data_level3.csv</i> 文件 。
+				</div>
+				
 			</div>
 		</div>
 		
@@ -254,15 +269,17 @@ img{
 				</div>
 			</div>
 			
-			<div class="h3">三、.NET Framework 4.5+ 运行环境</div>
+			<div class="h3">三、系统要求</div>
 			<div class="desc">
+				<div><b class="b">支持的系统</b></div>
+				<p>支持Win10、Win8、Win7，32位、64位系统中运行，或者虚拟机中运行（需将软件和数据拷贝到虚拟机本地）；苹果电脑等系统请参考下面的 <a href="#otherSys">Mac OS等非Windows系统上如何使用</a> FAQ。</p>
+				
+				<div><b class="b">.NET Framework 4.5+ 运行环境</b></div>
 				<p>如果你电脑上没有安装.NET Framework 4.5.x以上版本（4.6.x、4.7.x均可），本工具软件将无法运行，请到微软官网下载
 				<a href="https://dotnet.microsoft.com/download/dotnet-framework/net472" target="_blank">.NET Framework 4.7.2 Runtime</a>
 				，安装完后再打开本工具软件。</p>
-			</div>
-			
-			<div class="h3">四、Microsoft Visual C++ 2015-2019 Redistributable x86版运行时</div>
-			<div class="desc">
+				
+				<div><b class="b">Microsoft Visual C++ 2015-2019 Redistributable x86版运行时</b></div>
 				<p>如果你电脑上没有安装32位版Visual C++ 2015-2019运行时，GDAL组件将无法运行，请到微软官网下载
 				<a href="https://support.microsoft.com/zh-cn/help/2977003/the-latest-supported-visual-c-downloads" target="_blank">vc_redist.x86.exe</a>
 				，安装完后再打开本工具软件。</p>
@@ -277,19 +294,23 @@ img{
 			<div class="desc">
 				<div>
 					<i class="b">步骤一、</i>
-					选择 <a href="#xz-csv">ok_geo.csv</a> 文件；如果你还没有准备此文件，请到GitHub Releases 页面中下载然后解压，参考上面的数据下载。
+					选择 <a href="#xz-csv">ok_geo.csv</a>
+					或 <a href="#xz-csv">ok_geo4_*.csv</a>
+					文件；如果你还没有准备此文件，请参考上面的数据下载。
 				</div>
 				<div style="margin-top:20px">
 					<i class="b">步骤二、</i>
 					通用设置中配置相关参数，导出时将会按你的配置导出相关的数据。
 					<div style="padding-left:30px">
-						<div style="margin-top:20px">【城市级别】设置：1省、2市、3区、4镇，多级之间用逗号隔开，如果你只要全国所有的区的数据请填写3就行，默认为1,2,3,4导出所有数据；转换后的数据只会出现你设置的级别的数据，目前数据源内没有第4级数据，填写了也不会导出第4级。</div>
+						<div style="margin-top:20px">【城市级别】设置：1省、2市、3区、4镇，多级之间用逗号隔开，如果你只要全国所有的区的数据请填写3就行，默认为1,2,3,4导出所有数据；转换后的数据只会出现你设置的级别的数据，目前免费数据源内没有第4级数据，填写了也不会导出第4级，第4级乡镇数据可联系群主购买。</div>
 
 						<div style="margin-top:20px">【城市名前缀】设置：如果你只需要某个城市下面的数据，请填写需要的城市前缀（为ok_geo.csv中ext_path字段匹配前缀），比如只要湖北武汉所有区的数据请填写：'湖北省 武汉市 '（限定城市级别为3），注意结尾有一个空格，如果不填结尾的空格，在未限定城市级别时，武汉市这条数据也会匹配到结果中。</div>
 
 						<div style="margin-top:20px">【包含数据】勾选：是否要导出相应的数据，ok_geo.csv中id、ext_path字段总是会导出，geo、polygon字段根据是否勾选才会导出。</div>
 						
-						<div style="margin-top:20px">【付费版激活密钥】填写激活密钥后：软件将打开所有可用功能成为付费版，每次转换操作会导出所有匹配的数据。未填写激活密钥时：软件为免费版，每次转换操作最多导出一个城市和它的下一级数据。比如：要导出湖北省的全部数据，免费版只会导出湖北所有的市级数据，区级不会导出（可以手动一个个的导出每个市的所有区级），付费版会一次性导出湖北省全部市、区数据；导出全部数据：免费版只会导出所有的省这一级数据，付费版会一次性导出所有省、市、区数据。</div>
+						<div style="margin-top:20px">【付费版激活密钥(数据密钥)】填写激活密钥后：软件将打开所有可用功能成为付费版，每次转换操作会导出所有匹配的数据。未填写激活密钥时：软件为免费版，每次转换操作最多导出一个城市和它的下一级数据。比如：要导出湖北省的全部数据，免费版只会导出湖北所有的市级数据，区级不会导出（可以手动一个个的导出每个市的所有区级），付费版会一次性导出湖北省全部市、区数据；导出全部数据：免费版只会导出所有的省这一级数据，付费版会一次性导出所有省、市、区数据。
+						</div>
+						<div>数据密钥为特殊的激活密钥：除了拥有激活密钥的功能外，专门用来转换付费版数据。</div>
 					</div>
 				</div>
 				<div style="margin-top:20px">
@@ -596,7 +617,7 @@ select id,ext_path,polygon from 【此处改成你的表名】 where polygon.STI
 				<div style="margin-top:6px">[2] 单机许可签发的密钥有效期为30天，许可有效期内可通过<a href="https://jiebian.life/web/h5/github/areacity-agt-renew.aspx" target="_blank">自助服务</a>续签新密钥，新密钥拥有老密钥同等效力。</div>
 				<div style="margin-top:6px">[3] 批量许可签发的密钥有效期为30天，许可有效期内可联系群主续签新密钥，新密钥拥有老密钥同等效力。</div>
 				<div style="margin-top:6px">[4] 技术指导为一对一指导，单次服务最长时间为1小时；服务期间可提供软件功能范围内的：软件使用教学、数据导出配置方案；软件功能范围外的需求：如功能定制、特殊数据处理，根据需求复杂度和需要花费的预估时间，协商解决，如果需要的时间超出总的指导机会时间，需另付费。</div>
-				<div style="margin-top:6px;color:#0b1;font-size:22px;display:none">【活动】从2020-05-28 到 2020-06-30，QQ群内提供一套批量许可密钥，许可有效期到6月30号，一个月内无限制测试使用，有格式转换需求的新老群组成员欢迎体验；测试期间有任何问题或建议欢迎和群主反馈。</div>
+				<div style="margin-top:6px;color:#0b1;font-size:22px;">【活动】乡镇坐标边界数据上线见者有份：从2020-10-10 到 2020-10-31，QQ群内提供一套批量许可密钥，许可有效期到10月31号，一个月内无限制使用，有格式转换需求的新老群组成员欢迎体验；活动期间有任何问题或建议欢迎和群主反馈。</div>
 			</div>
 		</div>
 		
@@ -619,6 +640,12 @@ select id,ext_path,polygon from 【此处改成你的表名】 where polygon.STI
 			<div class="h3">如何在QQ群内下载本工具？<a name="xzqq"></a></div>
 			<div class="desc">
 				加入QQ群：<i class="i">484560085</i>，口令<i class="i">areacity</i>，然后到群文件中下载。
+			</div>
+			
+			<div class="h3">Mac OS等非Windows系统上如何使用本工具？<a name="otherSys"></a></div>
+			<div class="desc">
+				<p>本软件只支持在Windows系统上使用，非Windows系统请在别的Windows电脑上使用，包括虚拟机都可以。</p>
+				<p>比如苹果电脑Mac OS上可以安装 <i class="i">Oracle VM VirtualBox</i> 虚拟机，注意：请将软件和数据全部拷贝到虚拟机内本地磁盘中，在虚拟机内转换导出数据，然后在将结果拷贝到物理机，不要用远程（尤其是SMB共享），否则软件将无法正常读写文件。</p>
 			</div>
 			
 			<div class="h3">为何会限制使用，要激活密钥才能使用所有功能？</div>

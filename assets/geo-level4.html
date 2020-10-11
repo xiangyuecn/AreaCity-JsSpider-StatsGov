@@ -1,0 +1,467 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<link rel="shortcut icon" type="image/png" href="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/icon.png">
+
+<title>乡镇第4级坐标+边界范围付费数据</title>
+
+
+<style>
+body{
+	word-wrap: break-word;
+	background:#f5f5f5 center top no-repeat;
+	background-size: auto 680px;
+}
+pre{
+	white-space:pre-wrap;
+}
+a{
+	text-decoration: none;
+	color:#06c;
+}
+a:hover{
+	color:#f00;
+}
+p{
+	text-indent: 32px;
+}
+img{
+	max-width:90%;
+}
+
+.Center{
+	text-align: center;
+}
+
+.main{
+	max-width:900px;
+	margin:0 auto;
+	padding-bottom:80px
+}
+
+.mainBox{
+	margin-top:12px;
+	padding: 12px;
+	border-radius: 6px;
+	background: #fff;
+	--border: 1px solid #f60;
+	box-shadow: 2px 2px 3px #aaa;
+}
+
+
+.pd{
+	padding:0 0 6px 0;
+}
+.del{
+	text-decoration: line-through;
+}
+.b{
+	font-weight: bold;
+	font-style: normal;
+}
+.i{
+	padding: 2px 4px;
+	background-color: #f6f6f6;
+	vertical-align: middle;
+	color: #c7254e;
+	font-size: 12px;
+	white-space: pre-wrap;
+	border-radius: 3px;
+	font-style: normal;
+}
+
+
+.h2{
+	font-size:24px;
+	font-weight: bold;
+	margin:80px 0 26px;
+	border-left:10px solid #0b1;
+	padding-left:10px;
+}
+.content{
+	padding-left:30px;
+}
+.h3{
+	font-size:18px;
+	font-weight: bold;
+	margin:20px 0;
+}
+.desc{
+	padding-left:30px;
+}
+
+.c_ul li{
+	margin:8px 0;
+}
+
+
+.table{
+	border-collapse: collapse;
+	min-width:100%;
+	
+	text-align:center;
+}
+.table .left{
+	text-align:left;
+}
+.table .right{
+	text-align:right;
+}
+.table thead{
+	color:#333;
+}
+.table thead tr{
+	background:#f0f0f0;
+}
+.table tr:nth-child(2n){
+	background:#f9faf4;
+}
+.table th,.table td{
+	word-break: break-all;
+	padding:10px 16px;
+	border:1px solid #ddd;
+}
+</style>
+</head>
+<body>
+
+<div class="main">
+	<div class="mainBox">
+		<span style="font-size:32px;color:#0B0;">乡镇第4级坐标+边界范围付费数据</span>
+		<a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov">GitHub >></a>
+	</div>
+	
+	<div class="mainBox">
+		<ul style="list-style-type: square;">
+			<li><a href="#gn">数据介绍</a></li>
+			<li><a href="#xz">数据下载</a></li>
+			<li><a href="#sy">使用教程</a></li>
+			<li><a href="#ff">费用报价</a></li>
+			<li><a href="#faq">FAQ</a></li>
+			<li><a href="#agreement">许可及服务协议</a></li>
+		</ul>
+		
+		<p>
+			本数据为乡镇第4级的坐标边界数据，下载到的数据在购买数据密钥后可通过《<a href="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html">AreaCity Geo格式转换工具</a>》转成其他格式，比如：<i class="i">shp</i>、<i class="i">geojson</i>、<i class="i">sql</i>；
+			
+			或者直接导入数据库：<i class="i">SQL Server</i>、<i class="i">MySQL</i>。
+		</p>
+		<p style="font-size:12px;color:#aaa">
+			本来想写“乡镇街道”几个字的，但有点太长，因此只写“乡镇”两个字；同理部分地方直接就省略成了“镇”一个字。
+		</p>
+		<div class="content">
+			<div class="h3">整体数据预览：</div>
+			<div>点击图片查看大图(4000x3000)；图片中红色区域为此区域暂时缺失对应乡镇边界数据；图片中间部分和靠沿海地区乡镇密集区域中凸显的大块绿色代表此区域极有可能也缺失对应的乡镇边界数据，但已填充了一块和区县大小一致的数据作为乡镇级数据。</div>
+			<div class="Center">
+				<a href="geo-level4/preview.png" target="_blank">
+					<img src="geo-level4/preview.png">
+				</a>
+			</div>
+		</div>
+		<div class="content">
+			<div class="h3">免费体验数据预览：</div>
+			<div>点击图片查看大图(1000x600)；免费提供广东深圳+中山、香港、澳门四个地区的第4级数据作为体验数据，可通过工具软件无限制导出。</div>
+			<div class="Center" style="margin-top:20px">
+				<a href="geo-level4/preview-free.png" target="_blank">
+					<img src="geo-level4/preview-free.png">
+				</a>
+			</div>
+		</div>
+		<div class="content">
+			<div class="h3">SQL Server中显示：</div>
+			<div class="Center" style="margin-top:20px">
+				<img src="geo-level4/z01.png">
+			</div>
+		</div>
+		
+		
+		<div class="h2">数据介绍<a name="gn"></a></div>
+		<div class="content">
+			<ul class="c_ul" style="list-style-type: square;">
+				<li>乡镇这级坐标边界数据免费数据源很难寻找，有些地区官方有提供，但整合很困难。</li>
+				<li>有第三方地图数据公司提供乡镇这级坐标和边界数据，比如：<a rel="nofollow" href="http://www.bigemap.com/">bigemap</a>、<a rel="nofollow" href="http://www.rivermap.cn/">rivermap</a>、<a rel="nofollow" href="http://www.91weitu.com/">91weitu</a>，一分钱一分货，均比较贵，并不清楚他们的数据完整性和准确性如何。</li>
+				<li>本数据的来源为：部分从第三方购买，部分从公开的数据源采集；出于商业目的，以上数据源更多信息恕不公开。
+				<li style="color:red">部分无数据源的区县使用此区县的整体范围作为唯一的一个四级子级。</li>
+				<li style="color:red">部分有少量乡镇但不全的区县将留空产生空缺区域。</li>
+				<li>受限于数据源的准确度，会存在部分边界数据和真实地理位置存在大的偏差问题，由于乡镇数量过于庞大，全部校对异常困难，<span style="color:red">因此作者不对数据的准确性做担保</span>。</li>
+				<li>作者已通过多个复杂校验规则和算法对数据进行了自动或人工校验和修正，因此边界图形数据的有效性是可靠的，均可正常转换成其他格式或导入数据库。</li>
+				<li style="color:#0b1">基于以上原因，所以本数据的价格相对非常便宜，但不是免费。</li>
+				<li>所有乡镇边界数据，均可和同一压缩包内的 ok_data_level*.csv、ok_geo.csv 进行关联。</li>
+				<li>数据为 <i class="i">GCJ-02</i> 坐标系（火星坐标），在高德、腾讯地图中可直接使用，在Google地图、百度地图中使用需先通过工具软件对坐标进行转换。</li>
+			</ul>
+			
+			
+			<div class="h3">数据字段文档</div>
+			<p style="margin-bottom:10px">坐标和边界两个字段的类型在转换成了不同数据时，类型以相应的格式为准，比如在csv中就是string，在数据库中就是geometry，下表中以string格式来介绍。</p>
+			<table class="table">
+				<thead>
+					<tr>
+						<th style="width:20%">数据字段</th>
+						<th style="width:10%">类型</th>
+						<th>描述</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td class="right">pid</td>
+						<td style="color:#999">int</td>
+						<td class="left">上级区县的ID，可以和 ok_data_level*.csv、ok_geo.csv 两个表中的id进行关联，注意需要同在一个压缩包内的数据才能稳定关联，否则可能因为区划调整导致关联不一致</td>
+					</tr>
+					<tr>
+						<td class="right">cid</td>
+						<td style="color:#999">int</td>
+						<td class="left">序号id，在同一个上级中这是第几个乡镇（根据名称排序得到的编号），普通数据cid值&lt;100；cid=301时（少量），代表此数据是使用区县填充的唯一的一个子级；cid&gt;400 && cid&lt;500时（少量），代表此数据是由数据源无法映射到 ok_data_level*.csv 中的上级区县时，通过区县边界来匹配到的一个上级，此种数据的准确性比cid&lt;100的要低很多</td>
+					</tr>
+					<tr>
+						<td class="right">unique_id</td>
+						<td style="color:#999">int</td>
+						<td class="left">唯一id，和省市区的id无关联，性质也完全不一样，可以当做是自定义编号来对待</td>
+					</tr>
+					<tr>
+						<td class="right">name</td>
+						<td style="color:#999">string</td>
+						<td class="left">乡镇的完整名称</td>
+					</tr>
+					<tr>
+						<td class="right">ext_path</td>
+						<td style="color:#999">string</td>
+						<td class="left">如：“广东省 深圳市 罗湖区 东湖街道”，为省市区镇四级完整名称，中间用空格分隔，所有数据均为此4级结构</td>
+					</tr>
+					<tr>
+						<td class="right">centroid_geo</td>
+						<td style="color:#999">string</td>
+						<td class="left">区域边界的几何中心坐标，GCJ-02火星坐标系。格式："lng lat" or "EMPTY"，EMPTY代表此乡镇没有边界信息（暂无此值的数据）；注意：几何中心相当于一个重心，会根据图形的不同而不同；甚至会受到弯曲程度的影响，导致中心不在边界范围内时，会将边界切分成小块取最优的一个中心</td>
+					</tr>
+					<tr>
+						<td class="right">polygon</td>
+						<td style="color:#999">string</td>
+						<td class="left">区域边界，GCJ-02火星坐标系。格式："lng lat,...~lng lat,...;lng lat,..." or "EMPTY"，EMPTY代表此乡镇没有边界信息（暂无此值的数据）；存在多个地块(如飞地)时用;分隔，每个地块的坐标点用,分隔，如果某个地块中需要抠除一个小地块会存在~分隔符，特别要注意：多个地块组合在一起可能是MULTIPOLYGON或者POLYGON，需用工具进行计算和对数据进行验证</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		
+		<div class="h2">数据下载<a name="xz"></a></div>
+		<div class="content">
+			
+			<div class="h3">工具软件下载【必须】</div>
+			<div class="desc">
+				付费版乡镇第四级坐标边界数据，需要通过《AreaCity Geo格式转换工具》来进行转换导出，<a href="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html#xz" target="_blank">点此下载</a>工具软件。
+			</div>
+			
+			<div class="h3" style="margin-top:60px">坐标、边界范围数据下载<a name="xz-csv"></a></div>
+			<div class="desc">
+				
+				<div>
+					<i class="b">乡镇 坐标+边界范围</i>
+					(ok_geo4_*.csv，140MB+压缩包 含数据350M+)：[ <a href="#xzqq">QQ群内下载</a> ]
+					、[ <a href="https://pan.baidu.com/s/14LsvF_PuPOEiOXgGAWI20w" target="_blank">百度网盘下载</a> 提取码: b6ct 进入到 <i class="i">AreaCity Geo格式转换工具/乡镇第4级坐标边界数据</i> 目录内下载]
+					<span style="color:#fa0">乡镇第4级坐标边界数据为付费数据，压缩包内提供了部分数据供免费体验，其他乡镇第4级坐标边界数据需付费购买 。</span>
+					小提示：压缩包内已包含免费的省市区三级坐标边界数据，和对应的省市区镇4级数据。
+				</div>
+				
+				<div style="margin-top:30px">进入相应的下载目录后，请下载 <i class="i">乡镇第4级坐标边界数据ok_geo4_****（完整版）.7z</i> 这个压缩包，里面包含了所有的数据。</div>
+				<div class="Center">
+					<img src="geo-level4/z02.png" style="height:360px">
+				</div>
+				
+				<div style="margin-top:30px">解压后的目录内包含以下两个关键文件：</div>
+				<ul class="c_ul" style="list-style-type: square;">
+					<li><i class="i">ok_geo4_ETD*.csv</i>: 为付费版乡镇坐标边界数据，为全国的第4级（乡镇这级）的完整数据（前3级省市区的在ok_geo文件内），需购买后用工具软件导出。</li>
+					<li><i class="i">ok_geo4_ETD*_free.csv</i>: 为免费体验版乡镇坐标边界数据，包含了广东深圳+中山、香港、澳门四个地区的第4级数据，直接使用工具软件无限制导出。</li>
+				</ul>
+				<div class="Center">
+					<img src="geo-level4/z03.png">
+				</div>
+				
+			</div>
+			
+		</div>
+		
+		
+		
+		<div class="h2">使用教程<a name="sy"></a></div>
+		<div class="content">
+			<div>本教程以导入数据库为例，演示将压缩包内所有数据导入到 <i class="i">数据库</i>；要转成 <i class="i">shp</i>、<i class="i">geojson</i> 的关键操作和导入数据库都一样，把不相干的步骤忽略了就行。</div>
+		
+			<div class="h3">【一】下载工具软件和数据</div>
+			<div class="desc">
+				<div>
+					通过上面数据下载得到 ok_geo4_ETD*.csv 等数据文件，和工具软件。
+				</div>
+			</div>
+			
+			<div class="h3">【二】打开工具软件进行设置</div>
+			<div class="desc">
+				<div style="margin-top:20px">
+					<i class="b">未购买数据密钥：</i>
+					如果你没有购买数据密钥，只能导出免费体验数据；先点击 <i class="i">选择ok_geo.csv文件</i> 按钮，选择 <i class="i">ok_geo4_ETD*_free.csv</i> 文件。
+				</div>
+				<div style="margin-top:20px">
+					<i class="b">已购买数据密钥：</i>
+					如果你已购买数据密钥，就能导出和密钥匹配的省份乡镇数据或全部数据；先点击 <i class="i">选择ok_geo.csv文件</i> 按钮，选择 <i class="i">ok_geo4_ETD*.csv</i> 文件；在 <i class="i">付费版激活密钥</i> 输入框中输入数据密钥。
+				</div>
+				<div style="margin-top:20px">
+					<i class="b">导出指定城市的乡镇：</i>
+					在城市名前缀输入框中可以通过输入指定的城市前缀来只导出某个城市下的所有乡镇，是通过对 <i class="i">ext_path</i> 字段来进行前缀匹配查找，比如输入： <i class="i">湖北</i> 会导出所有湖北下的乡镇，输入 <i class="i">湖北省 武汉</i> 会导出所有武汉市下的乡镇，输入 <i class="i">湖北省 武汉市 武昌</i> 会导出所有武昌区下的乡镇街道。
+				</div>
+				<div style="margin-top:20px">
+					更多设置请阅读《<a href="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html">AreaCity Geo格式转换工具</a>》文档学习了解详细的工具软件使用教程。
+				</div>
+				<div class="Center" style="margin-top:20px">
+					<img src="geo-level4/z04.png">
+				</div>
+			</div>
+			
+			<div class="h3">【三】点击导入数据库</div>
+			<div class="desc">
+				<div>
+					参考上面的工具使用教程文档，配置好数据库连接，然后就点击 <i class="i">导入数据库</i> 按钮，耐心等待一会，<i class="i">ok_geo4_ETD*.csv</i> 中的数据就导入到了数据库了。
+				</div>
+			</div>
+			
+			<div class="h3">【附】导入 ok_geo.csv 到数据库</div>
+			<div class="desc">
+				<div>
+					现在，你已经将乡镇坐标边界数据导入到了数据库，但省的、市的、区县的坐标边界数据库中还没有，你可以将压缩包解压出来的 <i class="i">ok_geo.csv</i> 导入数据库：
+				</div>
+				<div style="margin-top:20px">
+					点击 <i class="i">选择ok_geo.csv文件</i> 按钮，选择 <i class="i">ok_geo.csv</i> 文件。
+				</div>
+				<div style="margin-top:20px">
+					点击 <i class="i">导入数据库</i> 按钮，耐心等待一会，<i class="i">ok_geo.csv</i> 中的省市区三级坐标边界就导入到了数据库了。
+					<div style="font-size:12px;color:#aaa">这里假设你已经获得了软件激活密钥，这样就能一次性将 ok_geo.csv 导入数据库；否则点击一次只能导入一个城市的数据。</div>
+				</div>
+			</div>
+			
+			<div class="h3">【附】导入 ok_data_level*.csv 到数据库</div>
+			<div class="desc">
+				<div>
+					现在，你差最后一个了，将省市区镇多级数据导入数据库，你可以将压缩包解压出来的 <i class="i">ok_data_level*.csv</i> 导入数据库，<i class="i">ok_data_level3</i> 是省市区三级数据，<i class="i">ok_data_level4</i> 是省市区镇4级数据：
+				</div>
+				<div style="margin-top:20px">
+					点击 <i class="i">高级按钮</i> 按钮，点击右侧界面顶部 <i class="i">通用-选择文件</i> ，选择 <i class="i">ok_data_level*.csv</i> 文件。
+				</div>
+				<div style="margin-top:20px">
+					在右侧界面中选择内置脚本 <i class="i">[导入] ok_data_level*.csv省市区镇导入数据库</i> ，然后点击 <i class="i">应用</i> 。
+				</div>
+				<div style="margin-top:20px">
+					点击 <i class="i">ok_data_level*.csv省市区镇导入数据库</i> 按钮，耐心等待一会，<i class="i">ok_data_level*.csv</i> 中的省市区镇多级数据就导入到了数据库了。
+				</div>
+			</div>
+			
+		</div>
+		
+		
+		
+		<div class="h2">费用报价<a name="ff"></a></div>
+		<div class="content">
+		
+			<div style="margin-top:12px">
+				<i class="b">数据升级：</i><span style="color:red">购买的数据不支持升级</span>，当有新版本数据发布时，需另外购买，因此用户只能购买指定版本（最新版）的数据，<span style="color:#0b1">老用户可享受折扣优惠</span>（折扣以实际为准）。
+			</div>
+			<div style="margin-top:12px">
+				<i class="b">转换工具：</i>《AreaCity Geo格式转换工具》不是免费的，因此请在赠送的有效期内完成数据的导出转换处理，<span style="color:red">赠送的密钥过期后如果还需导出转换数据，需另外单独购买激活密钥（数据密钥）</span>；<span style="color:#0b1">一般情况下购买数据后因第一时间将数据导出，以免产生密钥过期的问题</span>；在密钥有效期内可以使用软件的所有功能，密钥仅限在购买时提供的指定的ID的电脑上使用。
+			</div>
+		
+			<div class="h3" style="margin-top:60px">购买全部数据</div>
+			<div class="desc">
+				<div>
+					价格：
+					<span style="font-size:32px;color:#04f;">¥998</span> / 套
+					
+					<span style="margin-left:30px;">工具激活密钥：</span>
+					<span style="color:#04f">赠送30天有效期</span>
+					<span style="font-size:12px;color:#aaa">，请在30天内完成数据的导出转换</span>
+				</div>
+				<div style="margin-top:20px">
+					全部数据含31个省、直辖市、自治区的乡镇第四级坐标边界数据，含香港、澳门数据，暂无台湾数据。
+				</div>
+			</div>
+			
+			<div class="h3" style="margin-top:60px">按省单独购买</div>
+			<div class="desc">
+				<div>
+					价格：
+					<span style="font-size:32px;color:#04f;">¥39</span> / 个
+					
+					<span style="margin-left:30px;">工具激活密钥：</span>
+					<span style="color:#04f">每个赠送1天有效期（多个累加）</span>
+					<span style="font-size:12px;color:#aaa">，请在有效期内完成数据的导出转换</span>
+				</div>
+				<div style="margin-top:20px">
+					比如：购买了“湖北”、“河南”两个省的乡镇坐标边界数据，会赠送2天的激活密钥，请在2天有效期内导出转换数据；导出的数据中只会包含“湖北”、“河南”两个省的乡镇坐标边界数据。
+				</div>
+			</div>
+			
+			<div class="h3" style="margin-top:60px">如何购买</div>
+			<div class="desc">
+				<div>
+					请先加QQ群： 484560085（口令:areacity），联系群主（即作者）后付款，提供需要购买的省份、和打开转换工具软件后显示的ID信息，然后群主给你签发数据密钥，使用此密钥就可以导出对应的数据了。<span style="color:red">请勿通过其他途径购买，以免造成损失。</span>
+				</div>
+			</div>
+			
+		</div>
+		
+		
+		
+		<div class="h2">FAQ<a name="faq"></a></div>
+		<div class="content">
+			
+			<div class="h3">为啥坐标、边界范围在非高德地图上绘制发生了偏移？</div>
+			<div class="desc">
+				<p>因为数据源ok_geo4_*.csv内的数据为GCJ-02坐标系（火星坐标），显示到Google地图、百度地图内有肉眼可见的偏移（几百米）；在不同坐标系下不能直接显示，需要先转坐标系，可通过高级自定义脚本转换坐标系修正。</p>
+			</div>
+			
+			<div class="h3">如何在QQ群内下载本数据？<a name="xzqq"></a></div>
+			<div class="desc">
+				加入QQ群：<i class="i">484560085</i>，口令<i class="i">areacity</i>，然后到群文件中下载。
+			</div>
+			
+			<div class="h3">购买数据能砍价吗？</div>
+			<div class="desc">
+				已经很便宜了，数据整合、校验、修正很费功夫谢绝砍价，不过节假日、活动时也许可以打个折。
+			</div>
+			
+			<div class="h3">可以免费获得数据吗？</div>
+			<div class="desc">
+				如果你是将本数据用于公益等领域，可以联系作者为你们组织提供免费许可。
+			</div>
+		</div>
+		
+		
+		
+		<div class="h2">许可及服务协议<a name="agreement"></a></div>
+		<div class="content">
+			<p class="b">您（以下称“用户”）下载、使用我（以下称“作者”）提供的软件、数据，应当阅读并遵守本许可协议。请用户务必审慎阅读、充分理解各条款内容，特别是免除或者限制责任的条款，并选择接受或不接受。除非用户已阅读并接受本协议所有条款，否则用户无权下载、安装或使用软件、数据及相关服务，用户的下载、安装、使用等行为即视为用户已阅读并同意本许可协议的约束。</p>
+			
+			<p>1. 用户应当直接从作者许可的途径，如GitHub AreaCity-JsSpider-StatsGov仓库、此仓库文档中包含的地址中、此仓库QQ群中等途径中获取软件、数据包；其他途径获取到的软件包是未经过作者授权的，存在安全隐患，可能会导致你的系统、资产受到侵害，作者对因此给用户造成的损失不予负责。</p>
+			
+			<p>2. 除法律法规有明确规定外，作者将尽最大努力确保提供的软件、数据及其所涉及的技术及信息安全、有效、准确、可靠，但受限于现有技术，用户理解作者不能对此进行担保。</p>
+			
+			<p>3. 用户理解，对于不可抗力及第三方原因导致的您的直接或间接损失，作者无法承担责任。</p>
+			
+			<p>4. 用户因使用作者提供的软件、数据进行处理、转换，和存储、转发、使用得到新数据，由此引起或与有关的包括但不限于利润损失、资料损失、业务中断的损害赔偿或其它商业损害赔偿或损失，需由用户自行承担。</p>
+			
+			<p>5. 如若发生赔偿、退款等行为，赔偿、退款等累计金额不得超过用户实际支付给作者的总金额。</p>
+			
+			<p>6. 用户不得使用作者提供的软件、数据从事违反法律法规政策、破坏公序良俗、损害公共利益的行为。</p>
+			
+			<p>7. 用户不得对作者提供的软件、数据及其中的相关信息擅自出租、出借、销售、逆向工程、破解，不得在未取得作者授权的情况下借助本软件、数据发展与软件、数据有关联的衍生软件产品、服务、插件、外挂等。</p>
+			
+			<p>8. 用户不得利用作者提供的软件、数据处理、传送、传播、储存侵害他人知识产权、商业秘密权等合法权利的内容，或从事欺诈、资金等违法犯罪活动。</p>
+		</div>
+	</div>
+</div>
+
+
+
+<div style="width:0;height:0;overflow:hidden;">
+	<img src="https://ia.51.la/go1?id=20807127&pvFlag=1">
+</div>
+
+</body>
+</html>

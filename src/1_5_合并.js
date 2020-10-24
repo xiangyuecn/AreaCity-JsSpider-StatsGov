@@ -144,6 +144,13 @@ var gov3Difference={
 	,530422:{lostName:"澄江县"}
 	,630122:{lostName:"湟中县"}
 	,652923:{lostName:"库车县"}
+	
+	//MCA新出的，但qq和高德都没有，暂时移除不添加到结果中
+	,130505:{lostName:"任泽区"}
+	,130506:{lostName:"南和区"}
+	,360783:{lostName:"龙南市"}
+	,510118:{lostName:"新津区"}
+	,632301:{lostName:"同仁市"}
 		
 	
 	//MCA和qq名称称相同但id不同的，但qq和高德相同，暂采用qq和高德的便于数据处理
@@ -152,7 +159,6 @@ var gov3Difference={
 	
 	//MAC没有的，但是是新出的
 	,140703:{name:"太谷区",keep:true}
-	,220184:{name:"公主岭市",keep:true}
 	,340281:{name:"无为市",keep:true}
 	,360113:{name:"红谷滩区",keep:true}
 	,370614:{name:"蓬莱区",keep:true}

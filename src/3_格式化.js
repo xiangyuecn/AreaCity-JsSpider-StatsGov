@@ -155,6 +155,14 @@ for(var i=0;i<pinyinList.length;i++){
 		
 		console.log("人工fix数据", "乐亭", o.name, o);
 	};
+	
+	//fix QQ 85005150 2020-8-23
+	if(o.id==621223 && /宕昌县?/.test(o.name)){
+		o.P&&(o.P=o.P.replace(/dang/g,"tan"));
+		o.P2&&(o.P2=o.P2.replace(/dang/g,"tan"));
+		
+		console.log("人工fix数据", "宕:tan", o.name, o);
+	};
 };
 
 

@@ -31,8 +31,6 @@ if(!window[PrevSaveName]){
 	}else{
 		window[PrevSaveName]=eval(val+";"+PrevSaveName);
 	};
-}else{
-	$(".DataTxt").val(PrevSaveName+"="+JSON.stringify(window[PrevSaveName],null,"\t"));
 };
 var StatsGovData=window[PrevSaveName];
 var cityList=StatsGovData.cityList;
@@ -91,6 +89,11 @@ var fixRemove={
 	,71:{name:"台湾省"}
 	,81:{name:"香港特别行政区"}
 	,82:{name:"澳门特别行政区"}
+};
+//人工修正数据，mca新数据已改名，统计局滞后
+var fixRename={
+	130502:{name:"襄都区"}
+	,130503:{name:"信都区"}
 };
 //构造成统一格式
 var list=[];
@@ -153,8 +156,15 @@ function merge(arr1,arr2,deep){
 		for(var j=0;j<arr2.length;j++){
 			var oj=arr2[j];
 			if(oiCode==oj.code && oi.name!=oj.name){
-				console.error("名称不同",oi,oj);
-				throw new Error();
+				var rename=fixRename[oiCode];
+				if(rename && rename.name==oj.name){
+					rename.fix=true;
+					console.log("改名项",oi,"->",oj);
+					oi.name=oj.name;
+				}else{
+					console.error("名称不同",oi,oj);
+					throw new Error();
+				};
 			};
 			if(oi.name==oj.name && oiCode!=oj.code){
 				console.error("编号不同",oi,oj);
@@ -224,6 +234,12 @@ if(notfindsIgnore.length){
 for(var k in fixRemove){
 	if(!fixRemove[k].fix){
 		console.error("存在未被匹配的预定义fixRemove",k,fixRemove[k]);
+		throw new Error();
+	};
+};
+for(var k in fixRename){
+	if(!fixRename[k].fix){
+		console.error("存在未被匹配的预定义fixRename",k,fixRename[k]);
 		throw new Error();
 	};
 };

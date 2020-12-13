@@ -2,7 +2,7 @@
 
 # :open_book:省市区数据采集并标注拼音、坐标和边界范围
 
-[省市区镇四级数据在线测试和预览](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/)（支持转换成JSON、多级联动js）；导入数据库或坐标、边界范围转换：[AreaCity-Geo格式转换工具软件下载](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html)（支持转成`sql`、导入数据库，转成`shp`、`geojson`）；当前最新版为 **src文件夹** 内的数据，此数据发布于`统计局2020-02-25`、`民政部2020-09-25`、`腾讯地图行政区划2020-08-14`、`高德地图行政区划采集当天`。
+[省市区镇四级数据在线测试和预览](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/)（支持转换成JSON、多级联动js）；导入数据库或坐标、边界范围转换：[AreaCity-Geo格式转换工具软件下载](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html)（支持转成`sql`、导入数据库，转成`shp`、`geojson`）；当前最新版为 **src文件夹** 内的数据，此数据发布于`统计局2020-11-06`、`民政部2020-11-20`、`腾讯地图行政区划2020-08-14`、`高德地图行政区划采集当天`。
 
 
 <p align="center"><a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov"><img width="100" src="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/assets/icon.png" alt="AreaCity logo"></a></p>
@@ -16,7 +16,7 @@
 </p>
 
 
-在 Releases 中下载最新发布数据文件，也可直接打开 `src/采集到的数据` 文件夹内的文件来使用；如果下载缓慢可以通过[Gitee Pages外链](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/download.html)来下载：
+在 [Releases](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases) 中下载最新发布数据文件，也可直接打开 `src/采集到的数据` 文件夹内的文件来使用；如果下载缓慢可以通过[Gitee Pages外链](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/download.html)来下载：
 - [【三级】省市区 数据下载](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_data_level3.csv) ： /src/采集到的数据/ok_data_level3.csv
 -  [【四级】省市区镇 数据下载](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_data_level4.csv) ： /src/采集到的数据/ok_data_level4.csv (3M+大小)
 - [【GEO三级】省市区 坐标和边界 数据下载](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_geo.csv.7z) ： /src/采集到的数据/ok_geo.csv.7z (解压后130M+)
@@ -64,6 +64,7 @@ chrome 控制台，`Chrome 41`这版本蛮好，win7能用，`Chrome 46`这版�
 
 ## 采集深度
 
+- 2020.201120.0814版(2020)采集了4层，省、市、区、镇，来源：[统计局2020版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2020/index.html)；省市区3级合并了[民政部2020-11-20数据](http://www.mca.gov.cn/article/sj/xzqh/2020/202011/20201100030582.shtml)、[高德地图行政区域](https://lbs.amap.com/api/webservice/guide/api/district)、[腾讯地图行政区划v20200814](https://lbs.qq.com/webservice_v1/guide-region.html)数据；镇级采用腾讯地图行政区划作为主要数据，综合高德和统计局的镇级。采集高德省市区三级坐标和行政区域边界范围。
 - 2019.200925.0814版(2020)采集了4层，省、市、区、镇，来源：[统计局2019版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2019/index.html)；省市区3级合并了[民政部2020-09-25数据](http://www.mca.gov.cn/article/sj/xzqh/2020/2020/2020092500801.html)、[高德地图行政区域](https://lbs.amap.com/api/webservice/guide/api/district)、[腾讯地图行政区划v20200814](https://lbs.qq.com/webservice_v1/guide-region.html)数据；镇级采用腾讯地图行政区划作为主要数据，综合高德和统计局的镇级。采集高德省市区三级坐标和行政区域边界范围。
 - 2018版(2019)采集了4层，省、市、区、镇，来源：[统计局2018版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2018/index.html)；省市区3级额外合并了[民政部2019-08-27数据](http://www.mca.gov.cn/article/sj/xzqh/2019/201908/201908271607.html)。采集高德省市区三级坐标和行政区域边界范围。
 - 2017版(2018)采集了3层，省、市、区，来源：[统计局2017版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2017/index.html)。

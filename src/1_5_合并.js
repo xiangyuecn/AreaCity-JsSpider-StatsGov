@@ -34,27 +34,80 @@ var fixQQmapSplit={
 					,{name:"重庆郊县",keepName:true,govName:"县",code:"500200000000"}
 				]}
 };
-//和高德数据对比前合并统计局数据
+//和高德数据对比前移除qq的数据
+var fixQQmapRemoveBeforeAmp={
+	130502:{
+		name:"桥东区",level:3,msg:"改名襄都区并调整了范围"
+	}
+	,130503:{
+		name:"桥西区",level:3,msg:"改名信都区并调整了范围"
+	}
+	,130526:{
+		name:"任县",level:3,msg:"新设任泽区"
+	}
+	,130527:{
+		name:"南和县",level:3,msg:"新设南和区"
+	}
+	,220381:{
+		name:"公主岭市",level:3,msg:"公主岭市从四平市代管改为由长春市代管"
+	}
+	,320611:{
+		name:"港闸区",level:3,msg:"撤销南通市崇川区、港闸区，设立新的南通市崇川区"
+		,childMoveTo:320602
+	}
+	,340208:{
+		name:"三山区",level:3,msg:"撤销芜湖市三山区、弋江区，设立新的芜湖市弋江区"
+		,childMoveTo:340203
+	}
+	,360727:{
+		name:"龙南县",level:3,msg:"新设龙南市"
+	}
+	,370634:{
+		name:"长岛县",level:3,msg:"新设蓬莱区"
+	}
+	,370684:{
+		name:"蓬莱市",level:3,msg:"新设蓬莱区"
+	}
+	,510132:{
+		name:"新津县",level:3,msg:"新数据为新津区，id: 510118"
+	}
+};
+//和高德数据对比前qq添加统计局的数据
+var fixQQmapAddGovBeforeAmp={
+	130502:{
+		name:"襄都区",pid:1305
+	}
+	,130503:{
+		name:"信都区",pid:1305
+	}
+	,130505:{
+		name:"任泽区",pid:1305
+	}
+	,130506:{
+		name:"南和区",pid:1305
+	}
+	,220184:{
+		name:"公主岭市",pid:2201
+	}
+	,360783:{
+		name:"龙南市",pid:3607
+	}
+	,370614:{
+		name:"蓬莱区",pid:3706
+	}
+	,510118:{
+		name:"新津区",pid:5101
+	}
+};
+//和高德数据对比前qq替换统计局数据，就是这些id对应的数据都采用统计局的数据
 var fixQQmapReplaceGovBeforeAmp={
 	3205:{
-		//高德多出的一个工业园，并且边界也是独立出来的，统计局也有这个数据，qq缺少了并且子级在分散在各城区，根据qq子级数据和参考淘宝的表现，此数据采用gov的
 		name:"苏州市",level:2
-		,childDiff:{
-			320571:{lostName:"苏州工业园区"}
-		}
+		,msg:"统计局、高德都有一个工业园（高德里面全国唯一一个，百度地图也有），并且边界也是独立出来的，qq缺少了并且子级在分散在各城区"
 	}
-	//2019-07伊春市变化太大，qq的数据和（高德==gov）有差异，此数据采用gov的
-	//当qq数据更新时，应当先注释此段看看差异，如果还是很大就继续替换掉
-	/*,2307:{
-		name:"伊春市",level:2
-		,childDiffAll:true
-	}*/
-};
-//和高德对比完后qq地图数据替换处理
-var fixQQmapReplaceFillAfterAmap={
-	//修正前缀和统计局一致
-	620200:{name:"嘉峪关市",level:3,replaceAs:{codePrefix:"620201",name:"市辖区"}}
-	,632825:{name:"大柴旦行政委员会",level:3,replaceAs:{codePrefix:"632857"}}
+	,6328:{
+		name:"海西",level:2,msg:"qq的大柴旦不正常，整个都用统计局的"
+	}
 };
 //qq地图数据用上级替换，表现为下级和上级的编号前缀不匹配，主要是那几个直筒子市是qq自定义的99结尾
 var fixQQmapReplaceFill={
@@ -63,6 +116,8 @@ var fixQQmapReplaceFill={
 	,442099:{name:"中山市",childReplace:true}
 	,460499:{name:"儋州市",childReplace:true}
 	,620299:{name:"嘉峪关市",childReplace:true} //统计局嘉峪关还有一个市辖区，上面三个没有
+	
+	,632321:{name:"同仁县",level:3,replaceAs:{codePrefix:"632301",name:"同仁市"}}
 		
 	
 	//添加明确缺失的子级
@@ -82,14 +137,13 @@ var fixQQmapReplaceFill={
 	,130230:{name:"芦台区",childMove:"130202000000"}
 	
 	//新改名的，qq未及时更新，需更新为新名称
-	,130502:{name:"桥东区",newName:"襄都区"}
-	,130503:{name:"桥西区",newName:"信都区"}
+	,320684:{name:"海门市",newName:"海门区"}
+	,340221:{name:"芜湖县",newName:"湾沚区"}
+	,340222:{name:"繁昌县",newName:"繁昌区"}
+	,421023:{name:"监利县",newName:"监利市"}
 	
 	//移除已废弃的
 	,130521:{name:"邢台县",remove:true}//被撤销，瓜分到了襄都区、信都区
-	,220381:{name:"公主岭市",remove:true}//从四平市代管改为由长春市代管
-	,370634:{name:"长岛县",remove:true}//合并为蓬莱区
-	,370684:{name:"蓬莱市",remove:true}//合并为蓬莱区
 	,460321:{name:"西沙群岛",remove:true}
 	,460322:{name:"南沙群岛",remove:true}
 	,460323:{name:"中沙群岛的岛礁及其海域",remove:true}
@@ -105,13 +159,20 @@ var amapDifference={
 	,232761:{name:"加格达奇区",compareName:true}//id不同，qq的是对的，通过名称可以匹配
 	
 	//声明名称不同但code相同的项，这种是qq未fix的，并且最终采用qq的名称
-	,632825:{name:"大柴旦行政委员会",amapName:"海西蒙古族藏族自治州直辖"}
-		
+	//,632825:{name:"大柴旦行政委员会",amapName:"海西蒙古族藏族自治州直辖"}
+	,632857:{name:"大柴旦行政委员会",useQQ:true}
+	
 	//标记QQ里确实不存在的，如果需要添加到qq中需lostAdd=true
-	,220184:{lostName:"公主岭市",lostAdd:true}//从四平市代管改为由长春市代管
-	,370614:{lostName:"蓬莱区",lostAdd:true}//新设区
+	,632825:{lostName:"海西蒙古族藏族自治州直辖"}//qq统计局为632857大柴旦行政委员会
 	,460301:{lostName:"西沙区",lostAdd:true}//新设区
 	,460302:{lostName:"南沙区",lostAdd:true}//新设区
+};
+
+
+//和高德对比完后qq地图数据替换处理
+var fixQQmapReplaceFillAfterAmap={
+	//修正前缀和统计局一致
+	620200:{name:"嘉峪关市",level:3,replaceAs:{codePrefix:"620201",name:"市辖区"}}
 };
 
 //qq地图数据和统计局+MCA前三级数据有效的差异 和处理方式
@@ -130,27 +191,13 @@ var gov3Difference={
 	,152571:{lostName:"乌拉盖管委会"} //前三级中唯一的一个管委会，目测是开发区管理区之类的
 	,411471:{lostName:"豫东综合物流产业聚集区"}//目测是开发区管理区之类的
 	
-	,130521:{lostName:"邢台县"}//已废弃
-	,140726:{lostName:"太谷县"}
-	,220381:{lostName:"公主岭市"}
-	,340225:{lostName:"无为县"}
-	,360105:{lostName:"湾里区"}
-	,370634:{lostName:"长岛县"}
-	,370684:{lostName:"蓬莱市"}
-	,451023:{lostName:"平果县"}
-	,460321:{lostName:"西沙群岛"}
+	,320611:{lostName:"港闸区"} //已被合并到其他新区
+	,340208:{lostName:"三山区"} 
+	,632321:{lostName:"同仁县"} 
+	
+	,460321:{lostName:"西沙群岛"} //下面新出的导致丢失
 	,460322:{lostName:"南沙群岛"}
 	,460323:{lostName:"中沙群岛的岛礁及其海域"}
-	,530422:{lostName:"澄江县"}
-	,630122:{lostName:"湟中县"}
-	,652923:{lostName:"库车县"}
-	
-	//MCA新出的，但qq和高德都没有，暂时移除不添加到结果中
-	,130505:{lostName:"任泽区"}
-	,130506:{lostName:"南和区"}
-	,360783:{lostName:"龙南市"}
-	,510118:{lostName:"新津区"}
-	,632301:{lostName:"同仁市"}
 		
 	
 	//MCA和qq名称称相同但id不同的，但qq和高德相同，暂采用qq和高德的便于数据处理
@@ -158,17 +205,8 @@ var gov3Difference={
 	
 	
 	//MAC没有的，但是是新出的
-	,140703:{name:"太谷区",keep:true}
-	,340281:{name:"无为市",keep:true}
-	,360113:{name:"红谷滩区",keep:true}
-	,370614:{name:"蓬莱区",keep:true}
-	,451082:{name:"平果市",keep:true}
 	,460301:{name:"西沙区",keep:true}
 	,460302:{name:"南沙区",keep:true}
-	,530481:{name:"澄江市",keep:true}
-	,630106:{name:"湟中区",keep:true}
-	,652902:{name:"库车市",keep:true}
-	,659010:{name:"胡杨河市",keep:true}
 };
 
 
@@ -383,8 +421,7 @@ var formatQQ=function(arr,parent,findBad){
 				itm.name=replaceSet.newName;
 				itm.keepName=true;
 			}else if(replaceSet.replaceAs){
-				$.extend(itm,replaceSet.replaceAs);
-				delete itm.qqPY;
+				replaceAsFn(itm,replaceSet);
 			}else if(replaceSet.addOnNotExists){//添加明确缺失的子级
 				for(var i=0;i<replaceSet.addOnNotExists.length;i++){
 					var o=replaceSet.addOnNotExists[i];
@@ -468,12 +505,71 @@ var formatQQ=function(arr,level){
 		return a.name==b.name||a.name.indexOf(b.name)==0||b.name.indexOf(a.name)==0;
 	};
 	
+	
 	for(var i0=0;i0<arr.length;i0++){
 		var itm=arr[i0];
 		var scode=SCode(itm,level);
+		
+		var removeSet=fixQQmapRemoveBeforeAmp[scode];
+		if(!itm.isAdd && removeSet && removeSet.level==level){
+			if(itm.name.indexOf(removeSet.name)!=0){
+				console.error("fixQQmapRemoveBeforeAmp名称不匹配",removeSet,itm);
+				throw new Error();
+			};
+			removeSet.fix=true;
+			console.log("已移除QQ数据："+removeSet.msg,itm);
+			arr.splice(i0,1);
+			i0--;
+			
+			if(removeSet.childMoveTo){
+				for(var i2=0;i2<arr.length;i2++){
+					var itm2=arr[i2];
+					var scode=SCode(itm2,level);
+					if(scode==removeSet.childMoveTo){
+						[].push.apply(itm2.child,itm.child);
+						console.warn("...子数据已移动(code未改变)",itm,itm2);
+					}
+				}
+			}
+			continue;
+		};
+	};
+	
+	for(var i0=0;i0<arr.length;i0++){
+		var itm=arr[i0];
+		var scode=SCode(itm,level);
+		
+		for(var k in fixQQmapAddGovBeforeAmp){
+			var addSet=fixQQmapAddGovBeforeAmp[k];
+			if(addSet.pid==scode){
+				for(var i1=0;i1<arr.length;i1++){
+					if(arr[i1].code.indexOf(k)==0){
+						console.error("fixQQmapAddGovBeforeAmp在qq存在相同id项",addSet,arr[i1],itm);
+						throw new Error();
+					};
+				};
+				
+				var govItm=govDataMP[(k+"000000000").substr(0,12)];
+				if(!govItm){
+					console.error("fixQQmapAddGovBeforeAmp项在Gov中不存在",k,addSet,itm);
+					throw new Error();
+				};
+				
+				console.log(itm.code+":"+itm.name+"已添加子级",govItm,itm);
+				addSet.fix=true;
+				govItm.isAdd=true;
+				itm.child.push(govItm);
+			};
+		};
+	};
+	
+	for(var i0=0;i0<arr.length;i0++){
+		var itm=arr[i0];
+		var scode=SCode(itm,level);
+		
 		var replaceSet=fixQQmapReplaceGovBeforeAmp[scode];
 		if(replaceSet && replaceSet.level==level){
-			if(replaceSet.name!=itm.name){
+			if(itm.name.indexOf(replaceSet.name)!=0){
 				console.error("fixQQmapReplaceGovBeforeAmp名称不匹配",replaceSet,itm);
 				throw new Error();
 			};
@@ -483,40 +579,11 @@ var formatQQ=function(arr,level){
 				throw new Error();
 			};
 			
-			//检查子级数据+配置后的是否一致
-			var allow=function(obj,tips){
-				if(replaceSet.childDiffAll){
-					return;
-				};
-				var diff=replaceSet.childDiff[SCode(obj)];
-				if(!diff||diff.lostName!=obj.name){
-					console.error("fixQQmapReplaceGovBeforeAmp项的"+tips+"不存在项在预定义中未找到",obj,diff,replaceSet);
-					throw new Error();
-				};
-			};
-			var govArr=[];govArr.push.apply(govArr,govItm.child);
-			for(var i=0;i<itm.child.length;i++){
-				var cItm=itm.child[i];
-				var find=0;
-				for(var i1=0;i1<govArr.length;i1++){
-					var gItm=govArr[i1];
-					if(cItm.code==gItm.code && cpName(cItm,gItm)){
-						govArr.splice(i1,1);
-						find=1;
-						break;
-					};
-				};
-				if(!find){
-					allow(cItm,"gov");
-				};
-			};
-			for(var i=0;i<govArr.length;i++){
-				allow(govArr[i],"qq");
-			};
-			
 			arr[i0]=govItm;
 			replaceSet.fix=true;
-			console.log(itm.code+":"+itm.name+"和子级已替换成统计局的数据",itm,govItm);
+			console.error(itm.code+":"+itm.name+"和子级已替换成统计局的数据，记得核查数据");
+			console.log("替换原因："+replaceSet.msg);
+			console.log("替换对象，QQ：",itm,"gov：",govItm);
 		};
 		formatQQ(itm.child,level+1);
 	};
@@ -528,6 +595,13 @@ for(var k in fixQQmapReplaceGovBeforeAmp){
 		throw new Error();
 	};
 };
+for(var k in fixQQmapRemoveBeforeAmp){
+	if(!fixQQmapRemoveBeforeAmp[k].fix){
+		console.error("存在未被匹配的预定义fixQQmapRemoveBeforeAmp",k,fixQQmapRemoveBeforeAmp[k]);
+		throw new Error();
+	};
+};
+
 
 
 
@@ -539,7 +613,7 @@ setParent(null,qqMap.cityList);
 console.log("\n【·】对比Amap数据>>>>>>>>>>");
 var qq_amap_QQLost=[],qq_amap_AmapLost=[],qq_amap_Difference=[];
 var compareAmap=function(parent,qqmapArr,amapArrSrc,level){
-	if(level>3&&!amapArrSrc.length)return;
+	if(level>3/*&&!amapArrSrc.length*/)return;
 	var amapArr=[];amapArr.push.apply(amapArr,amapArrSrc);
 	
 	var cpName=function(a,b){
@@ -598,7 +672,18 @@ var compareAmap=function(parent,qqmapArr,amapArrSrc,level){
 				};
 			};
 		};
+		
+		var diffSet=amapDifference[scode];
 		if(!amapItm){
+			if(diffSet&&diffSet.useQQ){
+				if(diffSet.name!=qqItm.name){
+					console.error("amapDifference中useQQ name不一致",diffSet,qqItm);
+					throw new Error();
+				};
+				console.log("使用QQ数据：",diffSet,qqItm);
+				diffSet.hit=true;
+				continue;
+			}
 			if(!qqItm.trust){
 				qq_amap_AmapLost.push({level:level,code:qqItm.code,name:qqItm.name});
 			};
@@ -606,7 +691,6 @@ var compareAmap=function(parent,qqmapArr,amapArrSrc,level){
 		};
 		
 		
-		var diffSet=amapDifference[scode];
 		if(diffSet){
 			if(diffSet.name!=qqItm.name){
 				console.error("amapDifference名称不匹配",diffSet,qqItm);
@@ -721,6 +805,23 @@ setParent(null,qqMap.cityList);
 
 
 console.log("\n【·】格式化QQmap2>>>>>>>>>>");
+function replaceAsFn(itm,replaceSet){
+	$.extend(itm,replaceSet.replaceAs);
+	delete itm.qqPY;
+	var cp=replaceSet.replaceAs.codePrefix;
+	if(cp){
+		itm.code=cp+itm.code.substr(cp.length);
+		for(var i=0;i<itm.child.length;i++){
+			var o=itm.child[i];
+			if(o.child.length){
+				console.error("子级的子级不为空",replaceSet,itm);
+				throw new Error();
+			};
+			o.code=cp+o.code.substr(cp.length);
+		};
+	};
+	console.log(itm.code+":"+itm.name+"修正自身和子级",replaceSet,itm);
+};
 var formatQQ=function(arr,level){
 	for(var i0=0;i0<arr.length;i0++){
 		var itm=arr[i0];
@@ -733,21 +834,7 @@ var formatQQ=function(arr,level){
 			};
 			replaceSet.fix=true;
 			if(replaceSet.replaceAs){
-				$.extend(itm,replaceSet.replaceAs);
-				delete itm.qqPY;
-				var cp=replaceSet.replaceAs.codePrefix;
-				if(cp){
-					itm.code=cp+itm.code.substr(cp.length);
-					for(var i=0;i<itm.child.length;i++){
-						var o=itm.child[i];
-						if(o.child.length){
-							console.error("子级的子级不为空",replaceSet,itm);
-							throw new Error();
-						};
-						o.code=cp+o.code.substr(cp.length);
-					};
-				};
-				console.log(itm.code+":"+itm.name+"修正自身和子级",replaceSet,itm);
+				replaceAsFn(itm,replaceSet);
 			}else{
 				console.error("不支持的fixQQmapReplaceFillAfterAmap",replaceSet);
 				throw new Error();

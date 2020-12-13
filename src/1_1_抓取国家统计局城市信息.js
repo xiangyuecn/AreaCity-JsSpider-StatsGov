@@ -14,7 +14,7 @@ if (oSession.HostnameIs("www.stats.gov.cn")){
 ```
 */
 (function(){
-var Year=2019;
+var Year=2020;
 var LoadMaxLevel=4;//采集几层
 var SaveName="Step1_1_StatsGov";
 var Level={
@@ -137,6 +137,7 @@ function load_x_childs(itm, next){
 	};
 	ajax(city.url,function(text){
 		if(!/统计用区划代码<\/td>/.test(text)){//保证中文和没有要输入验证码
+			console.error("内容未匹配",city.url);
 			city.load=Load_Max_Try;
 			next();
 			return;

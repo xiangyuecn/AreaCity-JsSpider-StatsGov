@@ -1,0 +1,704 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<link rel="shortcut icon" type="image/png" href="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/icon.png">
+
+<title>ECharts Map四级下钻在线测试和预览+代码生成</title>
+
+<script>
+/*
+界面显示创意来自：
+	https://github.com/TangSY/echarts-map-demo
+	https://www.jianshu.com/p/028525cbd080
+*/
+</script>
+
+<script src="geo-echarts.js"></script>
+<script src="https://jiebian.life/static/bjc/web/jiebian/www/lib_pc.js"></script>
+<script src="https://xiangyuecn.gitee.io/recorder/assets/ztest-codemirror.min.5.48.4.js"></script>
+
+<script src="geo-echarts-data-cache-0.js"></script>
+</head>
+
+<body>
+<div class="lowB">本工具未支持low b浏览器，换个吧&#x1f644;</div><script>document.querySelector(".lowB").innerHTML=``;</script>
+
+<style class="defaultViewCss">
+body{
+	word-wrap: break-word;
+	background:#f5f5f5 center top no-repeat;
+	background-size: auto 680px;
+	
+	font-size:16px;
+}
+
+.main{
+	margin:0 auto;
+	padding:0 50px 80px;
+}
+</style>
+<style>
+pre{
+	white-space:pre-wrap;
+}
+a{
+	text-decoration: none;
+	color:#06c;
+}
+a:hover{
+	color:#f00;
+}
+p{
+	text-indent: 32px;
+}
+img{
+	max-width:90%;
+}
+
+.Center{
+	text-align: center;
+}
+
+
+.mainBox{
+	margin-top:12px;
+	padding: 12px;
+	border-radius: 6px;
+	background: #fff;
+	--border: 1px solid #f60;
+	box-shadow: 2px 2px 3px #aaa;
+}
+
+.lb{
+	display:inline-block;
+	vertical-align: middle;
+	background:#00940e;
+	color:#fff;
+	font-size:14px;
+	padding:2px 8px;
+	border-radius: 99px;
+}
+
+.pd{
+	padding:0 0 6px 0;
+}
+.del{
+	text-decoration: line-through;
+}
+.b{
+	font-weight: bold;
+	font-style: normal;
+}
+.i{
+	padding: 2px 4px;
+	background-color: #f6f6f6;
+	vertical-align: middle;
+	color: #c7254e;
+	font-size: 12px;
+	white-space: pre-wrap;
+	border-radius: 3px;
+	font-style: normal;
+}
+</style>
+<script>
+var IsWidget=GetArgs("widget");
+if(IsWidget){
+	$(".defaultViewCss").remove();
+	$("body").append(`
+<style>
+body{
+	margin:0
+}
+body::-webkit-scrollbar{
+	width: 6px;
+}
+body::-webkit-scrollbar-thumb{
+	border-radius: 5px;
+	background-color: rgba(144, 146, 152, 0.3);
+}
+</style>`);
+}else if(GeoECharts.IsMobile){
+	$("body").append(`
+<style>
+.main{
+	padding:0 5px 80px;
+}
+</style>`);
+}
+</script>
+
+
+
+
+<div class="main">
+	<div class="mainBox" style2="display:none">
+		<span style="font-size:32px;color:#0B0;">ECharts Map四级下钻在线测试和预览+代码生成</span>
+		<a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov">GitHub >></a>
+	</div>
+	<div style="display:none" style2="text-align: center;">
+		<span style="font-size:18px;color:#fff;">坐标边界范围在线测试预览</span>
+		<a href="geo-echarts.html" target="_blank">[全屏]</a>
+	</div>
+	
+	<div class="mainBox" class2="">
+		<div class="FlexBox" class3="">
+			<div class="FlexItem" class2="Hide2">
+				<div class="mapView"></div>
+			</div>
+			<div class="FlexItem" style="border:1px solid #ddd" style2="">
+				<div class="echartsView"></div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="mainBox" class2="" style2="color:#fff">
+		<div class="statusView" style="text-align:right" style2=""></div>
+		
+		<div style="text-align:right" style2="">
+			<span class="ILB pd" style="margin-right:10px">
+				<span class="lb">边界采样数 :</span>
+				最多<input class="polygonPointsMax" style="text-align:center;width:60px">个坐标点
+			</span>
+			
+			<span class="ILB pd" style="margin-right:10px">
+				<span class="lb">配置参数 :</span>
+				<label><input type="checkbox" class="polygon4603View">显示三沙市</label>
+			</span>
+			
+			<span class="ILB pd">
+				<span class="Btn" onclick="updateSet()">确定</span>
+			</span>
+		</div>
+		
+		<div style="padding-top:15px;">
+			因为api接口返回的边界数据已经过了重新采样抽稀处理（为了节省流量），最高的从5万个坐标点变成1200个坐标点，两个边界之间放大后会明显感受到不够精细；自己使用时可以调高采样数或者直接返回原始数据，就没有这个问题了。
+		</div>
+	</div>
+	
+	<div class="mainBox">
+		<div class="pd">
+			<span style="font-weight:bold;color:#0b0;">诸位大佬高抬贵手，</span>
+			<span style="font-weight:bold;color:#fa0;font-size:30px">请勿采集本页面接口数据</span>（服务器小水管不经揍），所有数据均已提供完整版下载，并且下载的csv文件可使用转换工具转成 shp、geojson、sql、导入数据、坐标系转换 等强大支持，请直接下载数据不要采集：
+		</div>
+		
+		<div class="pd">
+			省市区三级的数据是开源的，<span style="font-weight:bold;color:#0b0;">
+			<a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov" target="_blank">可以到 GitHub 下载</a>
+			ok_geo.csv 数据文件，里面包含了全部坐标边界数据</span>。
+		</div>
+		
+		<div class="pd" style="font-size:18px;padding-top:20px">
+			<span style="color:red;">
+			乡镇这级的数据是付费数据，此页面接口返回的数据仅有最后一个乡镇是最高80个采样数的粗略边界，其他的乡镇均为边界外接矩形（4个坐标点），</span>
+			<br><span style="font-weight:bold;color:#fa0;font-size:30px">采之无用！谢谢！！</span>
+			完整乡镇数据文件下载：
+		</div>
+		
+		<div style="font-size:22px;font-weight:bold;color:#0b0;">
+			乡镇第4级坐标+边界范围数据
+			<a href="geo-level4.html" target="_blank">可以到此下载</a>
+			，压缩包内 ok_geo4_*.csv 文件含了全部的乡镇数据，为付费数据，下载的压缩包里面提供了部分免费数据供测试，欢迎下载体验；如需购买请先加QQ群： 484560085（口令:areacity），联系群主（即作者）购买数据密钥。
+		</div>
+	</div>
+	
+	<div class="mainBox">
+		<div class="FlexBox" class2="" class3="">
+			<div class="FlexItem">
+				<div style="font-size:26px;font-weight:bold;padding-bottom:10px">
+					ECharts Map四级下钻核心源码（前端）
+				</div>
+				<div style="border:1px solid #ddd">
+					<textarea class="codeEditJs" style="width:98%;height:300px"></textarea>
+				</div>
+			</div>
+			
+			<div style="width:40px" style2=""></div>
+			<div style="width:460px" style2="">
+				<div style="font-size:26px;font-weight:bold;padding-bottom:10px">
+					Geo WKT数据拉取接口（后端 C#）
+				</div>
+				<div style="border:1px solid #ddd">
+					<textarea class="codeEditCs" style="width:98%;height:300px"></textarea>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</div>
+
+
+<script>
+var Review=function(){
+	var s,c;
+	if(IsWidget){
+		s="style2";
+		c="class2";
+	}else if(GeoECharts.IsMobile){
+		s="style3";
+		c="class3";
+	};
+	if(s){
+		var ls=$("["+s+"]");
+		for(var i=0;i<ls.length;i++){
+			var el=$(ls[i]);
+			el.attr("style", el.attr(s));
+		}
+		var ls=$("["+c+"]");
+		for(var i=0;i<ls.length;i++){
+			var el=$(ls[i]);
+			el.attr("class", el.attr(c));
+		}
+	}
+};
+Review();
+
+$(function(){
+	var elem=$(".codeEditJs");
+	var w=elem.width();
+	var edit=CodeMirror.fromTextArea(elem[0],{
+			mode:"javascript"
+			,lineNumbers:true
+			,lineWrapping:true
+		});
+	window.CodeEditJs=edit;
+	edit.setSize(w+"px","auto");
+
+	edit.setValue(GeoECharts.GeoEChartsLib.toString());
+	edit.refresh();
+	
+	elem=$(".codeEditCs");
+	var w=elem.width();
+	var edit=CodeMirror.fromTextArea(elem[0],{
+			mode:"javascript"
+			,lineNumbers:true
+			,lineWrapping:true
+		});
+	window.CodeEditJs=edit;
+	edit.setSize(w+"px","auto");
+
+	edit.setValue($(".CS_Code").html().trim());
+	edit.refresh();
+});
+</script>
+
+
+
+
+<script>
+var geoEChartsLib=GeoECharts.GeoEChartsLib();
+
+$(".mapView,.echartsView").css({height:IsWidget?200:$(window).height()-130+"px"});
+var map=0;
+if(!IsWidget){
+	LoadJs("https://webapi.amap.com/maps?v=1.4.15",function(){
+		map=new AMap.Map($(".mapView")[0]);
+
+		AMap.plugin([ 'AMap.ToolBar', 'AMap.Scale', 'AMap.MapType' ], function(){
+			map.addControl(new AMap.ToolBar());
+			map.addControl(new AMap.Scale());
+			map.addControl(new AMap.MapType({defaultType:0, showRoad:true}));
+		});
+	});
+};
+
+
+var levels=[];
+var geoECharts=geoEChartsLib.Create({
+	elem:".echartsView"
+	,api:"https://jiebian.life/api/extend/h5/github/areacity_geo"
+	,reqPost:function(url,args,True,False){
+		LoadData(url,args,function(data){
+			True(data.list?data:data.v);
+		},False,false);
+	}
+	,onLoadBefore:function(args,loadProcess){
+		PageModule.maskLoad();
+		
+		//0级数据，默认使用js缓存文件，不走接口，大幅减少api服务器流量
+		if(args.id==0 && window.DataCache0){
+			loadProcess(function(next){
+				console.log("Geo DataCache0: "+FormatDate(DataCache0.T));
+				next(DataCache0.v);
+			});
+			return;
+		};
+	}
+	,onLoadEnd:function(err,apiData,mapDatas,geojson,dataProcess){
+		PageModule.closeMask();
+		if(err){
+			PageModule.toast(err);
+			return;
+		};
+		var cur=geoECharts.current;
+		
+		//0级时，控制一下缩放
+		geoECharts.set.zoom=1;
+		if(cur.id==0 && IsWidget){
+			geoECharts.set.zoom=2;
+		};
+		
+		//echarts内容控制
+		if(!mapDatas.length){
+			PageModule.toast("无任何子级数据");
+		};
+		for(var i=0;i<mapDatas.length;i++){
+			var o=mapDatas[i];
+			//提示信息替换
+			o.tips+='<br>追加：'+unescape('%uD83D%uDCAA');
+		};
+		
+		//显示路径
+		levels.length=cur.level;
+		levels.push(cur);
+		
+		var html=[];
+		for(var i=0;i<levels.length;i++){
+			var o=levels[i];
+			html.push('<a onclick="goLevel('+i+')">'+o.name+'</a>');
+		};
+		var tips="路径："+html.join(" > ");
+		
+		if(cur.level==3 && !/^(8|4420|4403)/.test(cur.id)){
+			var msg='当前为乡镇级别边界（付费数据），只有是最后一个乡镇【'+mapDatas[mapDatas.length-1].name+'】是最高80个采样数的粗略边界，其他的乡镇均为边界外接矩形（4个坐标点），仅供测试（深圳、中山、香港、澳门无此限制）';
+			PageModule.toast(msg);
+			
+			tips+='<div style="color:#fa0">'+msg+'，如需完整的乡镇边界数据，<a href="geo-level4.html" target="_blank">可以到此下载和购买</a>。</div>';
+		}
+		$(".statusView").html(tips);
+		
+		
+		//绘制到地图中
+		if(map){
+		
+			map.clearMap();
+			//https://developer.amap.com/demo/javascript-api/example/overlayers/geojson
+			var texts={};
+			var mapGeo = new AMap.GeoJSON({
+				geoJSON: geojson
+				,getPolygon: function(json, lnglats) {
+					var pol=new AMap.Polygon({
+						path: lnglats,
+						strokeWeight: 1,
+						strokeColor: '#0091ea',
+						fillColor: '#80d8ff',
+						fillOpacity: 0.3
+					});
+					
+					var prop=json.properties;
+					prop=prop._parentProperities||prop;
+					var obj=texts[prop.id]||{pols:[]};
+					obj.name=prop.name;
+					obj.data=prop;
+					obj.pols.push({
+						pos:pol.getBounds().getCenter()
+						,size:pol.getArea()
+					});
+					texts[prop.id]=obj;
+					
+					return pol;
+				}
+			});
+			mapGeo.setMap(map);
+			
+			//显示名称
+			for(var k in texts){
+				var o=texts[k];
+				o.pols.sort(function(a,b){return b.size-a.size});
+				var txt=new AMap.Text({
+					map:map
+					,text:o.name
+					,position:o.pols[0].pos
+					,style:{
+						color:"#06c"
+						,border:"none"
+						,background:"none"
+						,fontSize:"14px"
+					}
+					,extData:o.data
+				});
+				txt.on("click",function(e){
+					var o=e.target.getExtData();
+					geoECharts.load(o);
+				});
+			}
+			
+			map.setFitView();
+		}
+	}
+});
+
+var goLevel=function(idx){
+	geoECharts.load(levels[idx]);
+};
+
+var updateSet=function(){
+	geoEChartsLib.Polygon4603Hide=!$(".polygon4603View")[0].checked;
+	
+	var pmax=+$(".polygonPointsMax").val()||600;
+	$(".polygonPointsMax").val(pmax);
+	if(pmax>1200){
+		pmax=1200;
+		$(".polygonPointsMax").val(pmax);
+		
+		PageModule.toast("错误：由于测试服务器带宽太小，边界采样数限制最高1200，如需体验原版边界数据效果，请自行提供接口测试");
+		return;
+	}
+	geoECharts.set.polygonPointsMax=pmax;
+	
+	geoECharts.reload();
+};
+updateSet();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script class="CS_Code" type="text/template">
+/*************************
+这个源码就是本页面用到的api接口源码（C#），贴出来主要是方便大家借鉴，直接copy是无法使用的。
+
+【禁】 > 源码都让你看了，请不要搞我的服务器哦~ <
+
+
+【WKT】mysql、sqlserver直接查询出来的 polygon 一般是二进制格式，需要使用数据库内置的 ST_AsText 方法转换成 WKT 文本；sql查询语句：
+[MySQL] select id,ext_path,ST_AsText(polygon) as polygon from AreaCity_Geo where id=11
+[MSSQL] select id,ext_path,polygon.STAsText() as polygon from AreaCity_Geo where id=11
+
+
+【采样抽稀】省市区三级边界数据，一半以上边界的坐标点超过1000个点，超过1万个坐标点边界有80个，超过3万个坐标点的边界有11个；内蒙的边界坐标点数最多（5万个点），转成文本后超过1MB大小，重采样成600个点后变成16KB大小；在大部分ECharts显示场合，重采样抽稀后边界外观基本上是一致的，但数据量已经大幅减少。
+*************************/
+
+
+
+	/// <summary>
+	/// GitHub测试页面 ECharts Map四级下钻需要用到的边界拉取接口
+	/// AreaCity-JsSpider-StatsGov
+	/// </summary>
+	public class areacity_geo {
+
+		static private readonly Dictionary<string, Dictionary<string, object>> Cache = new Dictionary<string, Dictionary<string, object>>();
+
+		static public void main() {
+			var ctx = ServiceContext.Current;
+			var req = RequestContext.Current;
+
+			string refHost = "";
+			if (req.Context.RequestReferrer != null) {
+				refHost = req.Context.RequestReferrer.Host;
+			}
+			if (Exp_Host.IsMatch(refHost)) {
+				req.Context.ResponseHead("Access-Control-Allow-Origin", "*");
+			} else {
+				ctx.error("当前页面不可以调用本接口");
+				return;
+			}
+
+
+
+			var rtvData = new Dictionary<string, object>();
+			ctx.Value = rtvData;
+
+			var pid = req.getInt("id");
+			var level = req.getInt("level");
+			var polygonPointsMax = req.getInt("polygonPointsMax");
+
+			polygonPointsMax = Math.Max(polygonPointsMax, 100);
+			if (polygonPointsMax > 1200) {
+				ctx.error("边界采样数超过限制");
+				return;
+			}
+
+
+			var useCache = polygonPointsMax == 600;
+			if (level == 3) {
+				polygonPointsMax = 80;
+				useCache = true;
+			}
+			rtvData["_PolygonPointsMax"] = polygonPointsMax;
+			rtvData["_Pid"] = pid;
+
+			if (useCache) {
+				var cache = Cache.getOrNull(pid + "");
+				if (cache != null) {
+					long time = cache.getLong("time");
+					if (Unit.GetMS() - time < 24 * 60 * 60 * 1000) {
+						rtvData["list"] = cache.getOrNull("list");
+						rtvData["_Cache"] = time;
+						return;
+					}
+				}
+			}
+
+
+
+			List<Dictionary<string, object>> dbList;
+			if (level == 0 || level == 1 || level == 2) {
+
+				//省市区边界
+				FieldRead FR = DBTable.AreaCityGeo.FRReadOrWrite();
+				FR.AddInt("id");
+				FR.AddString("ext_path");
+				FR.AddString("polygon", "polygon.STAsText()", "", true);
+				dbList = FR.QueryAll(new SQL().Cmd("pid=").Int(pid));
+
+			} else if (level == 3) {
+
+				//乡镇边界，最高80个点，数据库中只有最后一个是有边界数据，其他的都是外接矩形框
+				FieldRead FR = DBTable.AreaCityGeo4.FRReadOrWrite();
+				FR.AddInt("id", "unique_id");
+				FR.AddString("ext_path");
+				FR.AddString("polygon", "polygon.STAsText()", "", true);
+				dbList = FR.QueryAll(new SQL().Cmd("pid=").Int(pid));
+
+			} else {
+				ctx.error("level值" + level + "无效");
+				return;
+			}
+
+			List<Dictionary<string, object>> list = new List<Dictionary<string, object>>();
+			rtvData["list"] = list;
+			foreach (var item in dbList) {
+				Dictionary<string, object> obj = new Dictionary<string, object>();
+				list.Add(obj);
+
+				obj["id"] = item.getOrNull("id");
+				obj["ext_path"] = item.getOrNull("ext_path");
+				obj["polygon"] = FormatPolygon(item.getString("polygon"), polygonPointsMax);
+			}
+
+			if (useCache) {
+				Dictionary<string, object> cache = new Dictionary<string, object>();
+				cache["time"] = Unit.GetMS();
+				cache["list"] = list;
+				Cache[pid + ""] = cache;
+			}
+		}
+
+
+		static private string FormatPolygon(string wkt, int pointsMax) {
+			string[] wkts;
+			if (wkt.Contains("EMPTY")) {
+				return wkt;
+			} else if (wkt.StartsWith("POLYGON")) {
+				wkt = Exp_1.Replace(wkt, "");
+				wkts = new string[] { wkt };
+			} else if (wkt.StartsWith("MULTIPOLYGON")) {
+				wkt = Exp_2.Replace(wkt, "");
+				wkts = Exp_3.Split(wkt);
+			} else {
+				return "POLYGON EMPTY";
+			}
+
+			var multiArr = new List<List<List<string>>>();
+			var allPs = new List<List<string>>();
+			foreach (var pl in wkts) {
+				var pls = Exp_4.Split(pl);
+				var plArr = new List<List<string>>();
+				multiArr.Add(plArr);
+
+				foreach (var line in pls) {
+					var ps = new List<string>(Exp_5.Split(line));
+					plArr.Add(ps);
+					allPs.Add(ps);
+				}
+			}
+			allPs.Sort((a, b) => {
+				return b.Count - a.Count;
+			});
+
+			int count3j = 0;
+			for (int i = 3; i < allPs.Count; i++) {
+				count3j += allPs[i].Count;
+			}
+			for (int i = 0; i < allPs.Count; i++) {
+				List<string> arr = allPs[i];
+				int max = pointsMax;
+				if (i == 0) {//首个环使用最大点数
+							 //NOOP
+				} else if (i == 1 || i == 2) {//后两个环各使用1/3点数
+					max = pointsMax / 3;
+				} else {//后续的共享1/3点数，但最大可以有8个点
+					max = pointsMax / 3 * arr.Count / count3j;
+					max = Math.Max(max, 8);
+				}
+				if (arr.Count <= max) {
+					continue;//无需处理
+				}
+
+				//抽样处理
+				double c = 1d * max / arr.Count;//采样率
+				double pos = 0;
+				int cur = -1;
+				List<string> arr2 = new List<string>();
+				for (int j = 0; j < arr.Count - 1; j++) {
+					pos += c;
+					if (cur != (int)pos) {
+						arr2.Add(arr[j]);
+						cur = (int)pos;
+					}
+				}
+				arr.Clear();
+				arr.AddRange(arr2);
+			}
+
+			//还原成wkt文本
+			StringBuilder str = new StringBuilder();
+			if (multiArr.Count > 1) {
+				str.Append("MULTIPOLYGON(");
+			} else {
+				str.Append("POLYGON");
+			}
+			for (int i = 0; i < multiArr.Count; i++) {
+				var plArr = multiArr[i];
+				if (i > 0) {
+					str.Append(",");
+				}
+				str.Append("((");
+				for (var j = 0; j < plArr.Count; j++) {
+					var ps = plArr[j];
+					if (j > 0) {
+						str.Append("),(");
+					}
+					for (var n = 0; n < ps.Count; n++) {
+						if (n > 0) {
+							str.Append(",");
+						}
+						str.Append(ps[n]);
+					}
+
+					str.Append(",");
+					str.Append(ps[0]);//闭环
+				}
+				str.Append("))");
+			}
+			if (multiArr.Count > 1) {
+				str.Append(")");
+			}
+			return str.ToString();
+		}
+		static private readonly Regex
+			Exp_1 = new Regex(@"^POLYGON\s*\(\(|\)\)$")
+			, Exp_2 = new Regex(@"^MULTIPOLYGON\s*\(\(\(|\)\)\)$")
+			, Exp_3 = new Regex(@"\)\)\s*,\s*\(\(")
+			, Exp_4 = new Regex(@"\)\s*,\s*\(")
+			, Exp_5 = new Regex(@"\s*,\s*")
+
+			, Exp_Host = new Regex(@"(?:\.(?:gitee|github)\.io)(?:\:\d+)?$")
+			;
+	}
+</script>
+
+</body>
+</html>

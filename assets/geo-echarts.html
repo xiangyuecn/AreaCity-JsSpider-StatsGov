@@ -340,8 +340,8 @@ var geoECharts=geoEChartsLib.Create({
 		};
 		
 		//echarts内容控制
-		if(!mapDatas.length){
-			PageModule.toast("无任何子级数据");
+		if(geoEChartsLib.IsEmptyGeoJSON(geojson)){
+			PageModule.toast("无任何子级边界");
 		};
 		for(var i=0;i<mapDatas.length;i++){
 			var o=mapDatas[i];
@@ -386,16 +386,18 @@ var geoECharts=geoEChartsLib.Create({
 						fillOpacity: 0.3
 					});
 					
-					var prop=json.properties;
-					prop=prop._parentProperities||prop;
-					var obj=texts[prop.id]||{pols:[]};
-					obj.name=prop.name;
-					obj.data=prop;
-					obj.pols.push({
-						pos:pol.getBounds().getCenter()
-						,size:pol.getArea()
-					});
-					texts[prop.id]=obj;
+					if(lnglats.length){
+						var prop=json.properties;
+						prop=prop._parentProperities||prop;
+						var obj=texts[prop.id]||{pols:[]};
+						obj.name=prop.name;
+						obj.data=prop;
+						obj.pols.push({
+							pos:pol.getBounds().getCenter()
+							,size:pol.getArea()
+						});
+						texts[prop.id]=obj;
+					}
 					
 					return pol;
 				}

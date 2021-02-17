@@ -391,6 +391,26 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 	
 	/*是否隐藏三沙市*/
 	lib.Polygon4603Hide=false;
+	
+	
+	
+	
+	/*判断geojson是否是空的*/
+	lib.IsEmptyGeoJSON=function(featureCollection){
+		var arr=featureCollection&&featureCollection.features||[];
+		if(!arr.length){
+			return true;
+		}
+		for(var i=0;i<arr.length;i++){
+			if(arr[i].geometry.coordinates.length){
+				return false;
+			}
+		}
+		return true;
+	};
+	
+	
+	
 	/*将wkt列表转成geojson FeatureCollection对象
 		wktList:[
 			{

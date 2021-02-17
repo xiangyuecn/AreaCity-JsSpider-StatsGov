@@ -324,6 +324,10 @@ var geoECharts=geoEChartsLib.Create({
 			});
 			return;
 		};
+		
+		//非0的发一个流量统计
+		var img=new Image();
+		img.src="https://ia.51.la/go1?id=20807127&pvFlag=1&cu="+encodeURIComponent(/(.+?:\/\/.+?\/)/.exec(location.href)[1]+"click-geo-echarts-"+args.id);
 	}
 	,onLoadEnd:function(err,apiData,mapDatas,geojson,dataProcess){
 		PageModule.closeMask();
@@ -701,6 +705,11 @@ updateSet();
 			;
 	}
 </script>
+
+
+<div style="width:0;height:0;overflow:hidden;">
+	<img src="https://ia.51.la/go1?id=20807127&pvFlag=1">
+</div>
 
 </body>
 </html>

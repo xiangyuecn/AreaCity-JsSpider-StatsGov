@@ -13,11 +13,11 @@ GitHub: https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov
 ECharts Map四级下钻核心源码，仅供参考
 
 【使用步骤一：获取lib对象】
-var libObj=GeoEChartsLib(echarts);//如果不提供echarts参数，将会自动加载geoEChartsLib.path对应的js到全局中
+var libObj=GeoEChartsLib(echarts);//如果不提供echarts对象参数，将会自动加载 libObj.path对应的js到全局中
 
 【使用步骤二：显示ECharts】
 var geoECharts=libObj.Create({
-	elem:".echart_view_div" //显示到这个div
+	elem:".echarts_view_div" //显示到这个div
 	,api:"你的接口地址" //Geo WKT数据拉取接口地址，由后端提供，可参考demo页面中显示的后端源码
 });
 geoECharts.load(); //开始加载数据，加载成功后会显示图形

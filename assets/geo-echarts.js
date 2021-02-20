@@ -127,7 +127,7 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 					echarts.registerMap('City'+cur.id, geojson);
 					
 					var end=function(){
-						console.log("GeoECharts draw", mapDatas);
+						console.log("GeoECharts draw", mapDatas, geojson);
 						This.draw(cur.id, mapDatas);
 					};
 					var hasProcess=false;
@@ -408,6 +408,22 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 		}
 		return true;
 	};
+	/*获取一个图形的信息{point:123 总坐标点数, polygon:123 图形数}*/
+	lib.FeaturePolygonInfo=function(featureItem){
+		var point=0,polygon=0;
+		var arr=featureItem.geometry.coordinates;
+		if(featureItem.geometry.type=="Polygon"){
+			arr=[arr];
+		};
+		for(var i=0;i<arr.length;i++){
+			var a2=arr[i];
+			for(var j=0;j<a2.length;j++){
+				polygon++;
+				point+=a2[j].length;
+			};
+		};
+		return {point:point, polygon:polygon}
+	};
 	
 	
 	
@@ -476,19 +492,213 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 		return feature;
 	};
 	var parsePolygon=function(polygon){
+		var isZip=polygon.substr(0,2)=="Z:";//GeoZip压缩过
 		var arr = polygon.split(/\)\s*,\s*\(/g);
 		var vals = [];
 		for (var i = 0, l = arr.length; i < l; i++) {
-			var ps = arr[i].split(/\s*,\s*/g);
-			var pos = [];
-			for (var j = 0, jl = ps.length; j < jl; j++) {
-				var v=ps[j].split(" ");
-				pos.push([+v[0], +v[1]]);
+			if(isZip){
+				//压缩过，解压即可
+				vals.push(lib.GeoUnZip(arr[i]));
+			}else{
+				//普通的wkt
+				var ps = arr[i].split(/\s*,\s*/g);
+				var pos = [];
+				for (var j = 0, jl = ps.length; j < jl; j++) {
+					var v=ps[j].split(" ");
+					pos.push([+v[0], +v[1]]);
+				}
+				vals.push(pos);
 			}
-			vals.push(pos);
 		}
 		return vals;
 	};
+	
+	
+	
+	
+	/**************自定义边界坐标压缩、解压算法****************/
+	/*6位小数精度下可压缩到 1/3 - 1/5 大小
+		【前提：数值压缩原理】
+		1. 状态字节：用1个字节的2位来存储一个数的状态值：符号、溢出（数值是否超过0xff）；这个字节可以存储4个数的状态，等于2个坐标。额外将2位存储到状态字节的好处就是一个很小的数可以直接存储成0xff，且两个坐标的差值很大可能是小于0xff的；不然使用ZigZag算法符号位将占据数值的一个位变成0x7f，将会导致很多数值不能用1个字节来存储。
+		2. 状态字节后面连续放4个数字，一个数字占用1-4个字节，相当于一个坐标最少只需2.5个字节，最多要8.5个字节来存储。
+		3. 一个数不超过0xff大小，直接存储这个数字即可，状态字节中标记这个数字未溢出。
+		4. 一个数超过0xff大小，必须使用2个以上字节来存储，第一个字节只使用低6位来存储数值，高2位存储超出了2个字节几个字节，取值0-2（3为5个字节，但js 40位的位运算太复杂，不折腾，3留着以后也许就升级支持5个字节了），数值按小端存储到这些字节的位里面。
+		
+		【连续边界坐标的压缩】
+		1. 连续的两个坐标的差值不会太大，6位小数转成整数后（*1000000）的差值大概率小于0xff；
+		2. 给定一个坐标的x或y值，后一个坐标的x或y就可以根据两个坐标的差值来得到，又因为差值一般很小，甚至可以存储成1个字节。
+		3. 连续边界边界只需给出起始的第一个坐标，后续坐标都可以只存储和前一个的差值，即可完成大幅压缩。
+		
+		【数据存储结构】
+			[起始坐标值x0][起始坐标值y0]
+			[状态] [x1-x0][y1-y0] [x2-x1][y2-y1]
+			[状态] [x3-x2][y3-y2] [x4-x3][y4-y3]
+	*/
+	
+	//var lib={} //独立copy出来时，给个lib变量就不用改源码了
+	var Zip_Scale=1000000;//最大支持6位小数精度（32位以上的js位运算太折腾，懒得支持4个字节以上） 最大值：1073.741823=parseInt('00111111'+'11111111'+'11111111'+'11111111',2)
+	
+	/*边界坐标压缩，返回base64字符串*/
+	lib.GeoZip=function(points){
+		var bytes=lib.GeoZipBytes(points);
+		return "Z:"+btoa(bytes);
+	};
+	/*边界坐标解压，返回坐标数组*/
+	lib.GeoUnZip=function(base64){
+		var bytes=atob(base64.substr(2));
+		return lib.GeoUnZipBytes(bytes);
+	};
+	
+	
+	/*边界坐标压缩，返回二进制（ASCII字符串）*/
+	lib.GeoZipBytes=function(points){
+		if(points.length<1){
+			return "";
+		};
+		
+		//起始坐标点，这个必须直接存起来才能解码后面的数字
+		var x=Math.ceil(points[0][0]*Zip_Scale);
+		var y=Math.ceil(points[0][1]*Zip_Scale);
+		
+		var rtv=[x+" "+y+":"],markPos=0,markLen=4;
+		for(var i=1;i<points.length;i++){
+			if(markLen==4){
+				markLen=0;
+				markPos=rtv.length;
+				rtv.push(String.fromCharCode(0));
+			};
+			var point=points[i];
+			x=_GeoZip(rtv,point[0],x,markPos,markLen++);
+			y=_GeoZip(rtv,point[1],y,markPos,markLen++);
+		};
+		
+		rtv=rtv.join("");
+		if(true){//测试一下压缩的精度
+			var un=lib.GeoUnZipBytes(rtv);
+			if(un.length!=points.length){
+				throw new Error("压缩结果还原长度不一致");
+			}
+			for(var i=0;i<un.length;i++){
+				var p1=un[i],p2=points[i];
+				if(Math.abs(p1[0]-p2[0])>0.000002 || Math.abs(p1[1]-p2[1])>0.000002){
+					console.log(p1,p2);
+					throw new Error("压缩结果还原精度不足");
+				}
+			};
+		};
+		return rtv;
+	};
+	var _GeoZip=function(rtv,cur,prev,markPos,markLen){
+		cur=Math.ceil(cur*Zip_Scale);
+		var val=cur-prev;
+		var mark0=val<0?1:0;//符号位
+		val=Math.abs(val);
+		var mark1=val>0xff?1:0;//单字节是否溢出
+		
+		if(mark1){//溢出了，用多个字节来存储，2字节+
+			if(val>1073741823){//parseInt('00111111'+'11111111'+'11111111'+'11111111',2)
+				throw new Error("差值超过支持范围");
+			};
+			//4个字节对应的byte
+			var v1=val&0b00111111
+				,v2=(val>>6)&0xff
+				,v3=(val>>(6+8))&0xff
+				,v4=(val>>(6+16))&0xff;
+			//实际多用了几个字节
+			var more=0;//0就是2字节来存
+			if(v4>0){
+				more=2;//2+2=4字节来存
+			}else if(v3>0){
+				more=1;
+			};
+			//写入字节数
+			v1=v1|(more<<6);
+			
+			rtv.push(String.fromCharCode(v1));
+			rtv.push(String.fromCharCode(v2));
+			if(more>0)rtv.push(String.fromCharCode(v3));
+			if(more>1)rtv.push(String.fromCharCode(v4));
+		}else{//没有溢出，直接存
+			rtv.push(String.fromCharCode(val));
+		}
+		
+		//写入符号位和溢出位标识
+		var mark=rtv[markPos].charCodeAt(0);
+		mark|=(mark0|(mark1<<1))<<(markLen*2);
+		rtv[markPos]=String.fromCharCode(mark);
+		
+		return cur;
+	};
+	
+	
+	
+	/*二进制（ASCII字符串）边界坐标解压，返回坐标数组*/
+	lib.GeoUnZipBytes=function(bytes){
+		var rtv=[];
+		if(!bytes){
+			return rtv;
+		}
+		
+		//先提取出第一个坐标
+		var x="",y="",isY=0;
+		for(var i=0;i<bytes.length;i++){
+			var chr=bytes.charAt(i);
+			if(chr==':'){
+				i++;break;
+			}if(chr==" "){
+				isY=1;
+			}else if(isY){
+				y+=chr;
+			}else{
+				x+=chr;
+			};
+		};
+		x=+x;
+		y=+y;
+		rtv.push([x/Zip_Scale, y/Zip_Scale]);
+		
+		//继续，连续解码
+		var markLen=4,mark=0;
+		var refOut=[bytes,0];//有些语言字符串传参会复制新字符串
+		for(;i<bytes.length;i++){
+			if(markLen==4){//提取出符号+溢出标识字节
+				markLen=0;
+				mark=bytes.charCodeAt(i);
+				continue;
+			};
+			refOut[1]=i;
+			x=_GeoUnZip(refOut,x,mark,markLen++);
+			y=_GeoUnZip(refOut,y,mark,markLen++);
+			i=refOut[1]-1;
+			
+			rtv.push([x/Zip_Scale, y/Zip_Scale]);
+		};
+		return rtv;
+	};
+	var _GeoUnZip=function(refOut,prev,mark,markLen){
+		var i=refOut[1];
+		mark=mark>>(markLen*2);
+		var mark0=mark&0b1;//符号位
+		var mark1=(mark&0b10)>>1;//单字节是否溢出
+		
+		var val=refOut[0].charCodeAt(i++);
+		if(mark1){//已溢出，需要读取比2字节多用了几个字节0-3
+			var more=(val&0b11000000)>>6;
+			val&=0b111111;
+			val|=refOut[0].charCodeAt(i++)<<6;
+			if(more>0)val|=refOut[0].charCodeAt(i++)<<(6+8);
+			if(more>1)val|=refOut[0].charCodeAt(i++)<<(6+16);
+		};
+		if(mark0){//负数
+			val=-val;
+		};
+		
+		refOut[1]=i;
+		return val+prev;
+	};
+	
+	
+	
 	
 	
 	/************Indexdb缓存数据库，边界数据量太大，缓存到Indexdb无限制*************/

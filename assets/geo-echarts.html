@@ -347,11 +347,33 @@ var geoECharts=geoEChartsLib.Create({
 		if(geoEChartsLib.IsEmptyGeoJSON(geojson)){
 			PageModule.toast("无任何子级边界");
 		};
+		var zipSize=0,rawSize=0;
 		for(var i=0;i<mapDatas.length;i++){
-			var o=mapDatas[i];
+			var o=mapDatas[i],isZip=o.polygon.indexOf("Z:")+1;
 			//提示信息替换
-			o.tips+='<br>追加：'+unescape('%uD83D%uDCAA');
+			o.tips+="<br>【自定义】:";
+			for(var j=0;j<geojson.features.length;j++){
+				var f=geojson.features[j],fp=f.properties,fg=f.geometry;
+				if(fp.id==o.id){
+					var fi=geoEChartsLib.FeaturePolygonInfo(f);
+					o.tips+="<br>类型: "+fg.type;
+					o.tips+="<br>环数: "+fi.polygon;
+					o.tips+="<br>坐标数: "+fi.point;
+					o.tips+='<br>采样数: '+apiData._PolygonPointsMax;
+					
+					o.tips+='<br>'+(isZip?'GeoZip':'')+'大小: '+(o.polygon.length/1024).toFixed(2)+" KB";
+					zipSize+=o.polygon.length;
+					if(isZip){
+						o.tips+="<br>解压大小≈ "+(fi.point*21/1024).toFixed(2)+" KB";
+						rawSize+=fi.point*21;
+					}
+				}
+			}
 		};
+		if(isZip){
+			console.log("zipSize: "+(zipSize/1024).toFixed(2)+" KB");
+		}
+		console.log("rawSize≈ "+((rawSize||zipSize)/1024).toFixed(2)+" KB");
 		
 		//显示路径
 		levels.length=cur.level;
@@ -677,15 +699,23 @@ updateSet();
 					if (j > 0) {
 						str.Append("),(");
 					}
-					for (var n = 0; n < ps.Count; n++) {
-						if (n > 0) {
-							str.Append(",");
-						}
-						str.Append(ps[n]);
-					}
 
-					str.Append(",");
-					str.Append(ps[0]);//闭环
+					if (true) {
+						//返回压缩后的边界数据，大幅减少流量
+						ps.Add(ps[0]);//闭环
+						str.Append(GeoZip(ps));
+					} else { 
+						//返回原始wkt数据
+						for (var n = 0; n < ps.Count; n++) {
+							if (n > 0) {
+								str.Append(",");
+							}
+							str.Append(ps[n]);
+						}
+
+						str.Append(",");
+						str.Append(ps[0]);//闭环
+					}
 				}
 				str.Append("))");
 			}
@@ -703,6 +733,185 @@ updateSet();
 
 			, Exp_Host = new Regex(@"(?:\.(?:gitee|github)\.io)(?:\:\d+)?$")
 			;
+
+
+
+		static private long Zip_Scale = 1000000;//最大支持6位小数精度
+		/// <summary>
+		/// 边界坐标压缩，返回base64字符串
+		/// </summary>
+		static public string GeoZip(List<string> points) {
+			var bytes = GeoZipBytes(points);
+			return "Z:" + Convert.ToBase64String(bytes);
+		}
+		/// <summary>
+		/// 边界坐标解压，返回坐标数组
+		/// </summary>
+		static public List<string> GeoUnZip(string base64) {
+			if (string.IsNullOrEmpty(base64) || base64.Length<3) {
+				return new List<string>();
+			}
+			var bytes = Convert.FromBase64String(base64.Substring(2));
+			return GeoUnZipBytes(bytes);
+		}
+		/// <summary>
+		/// 边界坐标压缩，返回二进制
+		/// </summary>
+		static public byte[] GeoZipBytes(List<string> points) {
+			if (points == null || points.Count < 1) {
+				return new byte[0];
+			}
+
+			var point0 = points[0].Split(' ');
+			var x = (long)Math.Ceiling(double.Parse(point0[0]) * Zip_Scale);
+			var y = (long)Math.Ceiling(double.Parse(point0[1]) * Zip_Scale);
+
+			var rtv = new MemoryStream();
+			rtv.write(x + " " + y + ":");
+			int markPos = 0, markLen = 4;
+			for (var i = 1; i < points.Count; i++) {
+				if (markLen == 4) {
+					markLen = 0;
+					markPos = (int)rtv.Length;
+					rtv.WriteByte(0);
+				}
+				var point = points[i].Split(' ');
+				x = _GeoZip(rtv, double.Parse(point[0]), x, markPos, markLen++);
+				y = _GeoZip(rtv, double.Parse(point[1]), y, markPos, markLen++);
+			}
+
+			byte[] rtv2 = rtv.ToArray();
+			if (true) {//测试一下压缩的精度
+				var un = GeoUnZipBytes(rtv2);
+				if (un.Count != points.Count) {
+					throw new Exception("压缩结果还原长度不一致");
+				}
+				for (var i = 0; i < un.Count; i++) {
+					string[] p1 = un[i].Split(' '), p2 = points[i].Split(' ');
+					if (Math.Abs(double.Parse(p1[0]) - double.Parse(p2[0])) > 0.000002 || Math.Abs(double.Parse(p1[1]) - double.Parse(p2[1])) > 0.000002) {
+						throw new Exception("压缩结果还原精度不足"+ un[i]+" - "+ points[i]);
+					}
+				};
+			};
+			return rtv2;
+		}
+		static private long _GeoZip(MemoryStream rtv, double cur_, long prev, int markPos, int markLen) {
+			long cur = (long)Math.Ceiling(cur_ * Zip_Scale);
+			long val = cur - prev;
+			var mark0 = val < 0 ? 1 : 0;//符号位
+			val = Math.Abs(val);
+			var mark1 = val > 0xff ? 1 : 0;//单字节是否溢出
+
+			if (mark1>0) {//溢出了，用多个字节来存储，2字节+
+				if (val > 1073741823) {//parseInt('00111111'+'11111111'+'11111111'+'11111111',2)
+					throw new Exception("差值超过支持范围");
+				}
+				//4个字节对应的byte，ps：java byte是有符号的
+				byte v1 = (byte)(val & 0b00111111)
+					, v2 = (byte)((val >> 6) & 0xff)
+					, v3 = (byte)((val >> (6 + 8)) & 0xff)
+					, v4 = (byte)((val >> (6 + 16)) & 0xff);
+				//实际多用了几个字节
+				var more = 0;//0就是2字节来存
+				if (v4 > 0) {
+					more = 2;//2+2=4字节来存
+				} else if (v3 > 0) {
+					more = 1;
+				};
+				//写入字节数
+				v1 = (byte)(v1 | (more << 6));
+
+				rtv.WriteByte(v1);
+				rtv.WriteByte(v2);
+				if (more > 0) rtv.WriteByte(v3);
+				if (more > 1) rtv.WriteByte(v4);
+			} else {//没有溢出，直接存
+				rtv.WriteByte((byte)val);
+			}
+
+			//写入符号位和溢出位标识
+			var bakPos = rtv.Position;
+			rtv.Position = markPos;
+			var mark = rtv.ReadByte();
+			mark |= (mark0 | (mark1 << 1)) << (markLen * 2);
+
+			rtv.Position = markPos;
+			rtv.WriteByte((byte)mark);
+			rtv.Position = bakPos;
+
+			return cur;
+		}
+
+		/// <summary>
+		/// 二进制边界坐标解压，返回坐标数组
+		/// </summary>
+		static public List<string> GeoUnZipBytes(byte[] bytes) {
+			List<string> rtv = new List<string>();
+			if (bytes==null || bytes.Length<1) {
+				return rtv;
+			}
+
+			//先提取出第一个坐标
+			string xS = "", yS = "";
+			bool isY = false;
+			var i = 0;
+			for (; i < bytes.Length; i++) {
+				var chr = bytes[i];
+				if (chr == ':') {
+					i++; break;
+				}
+				if (chr == ' ') {
+					isY = true;
+				} else if (isY) {
+					yS += (char)chr;
+				} else {
+					xS += (char)chr;
+				}
+			};
+			long x = long.Parse(xS);
+			long y = long.Parse(yS);
+			rtv.Add((1d * x / Zip_Scale).ToString("f6") + " "+ (1d * y / Zip_Scale).ToString("f6"));
+
+			//继续，连续解码
+			int markLen = 4;byte mark = 0;
+			int[] refOut = new int[] { -1, 0 };
+			for (; i < bytes.Length; i++) {
+				if (markLen == 4) {//提取出符号+溢出标识字节
+					markLen = 0;
+					mark = bytes[i];
+					continue;
+				};
+				refOut[1] = i;
+				x = _GeoUnZip(bytes, refOut, x, mark, markLen++);
+				y = _GeoUnZip(bytes, refOut, y, mark, markLen++);
+				i = refOut[1] - 1;
+
+				rtv.Add((1d * x / Zip_Scale).ToString("f6") + " " + (1d * y / Zip_Scale).ToString("f6"));
+			}
+			return rtv;
+		}
+		static private long _GeoUnZip(byte[] bytes, int[] refOut, long prev, byte mark, int markLen) {
+			var i = refOut[1];
+			mark = (byte)(mark >> (markLen * 2));
+			var mark0 = mark & 0b1;//符号位
+			var mark1 = (mark & 0b10) >> 1;//单字节是否溢出
+
+			var val = (int)bytes[i++];
+			if (mark1>0) {//已溢出，需要读取比2字节多用了几个字节0-3
+				var more = (val & 0b11000000) >> 6;
+				val &= 0b111111;
+				val |= bytes[i++] << 6;
+				if (more > 0) val |= bytes[i++] << (6 + 8);
+				if (more > 1) val |= bytes[i++] << (6 + 16);
+			};
+			if (mark0>0) {//负数
+				val = -val;
+			};
+
+			refOut[1] = i;
+			return val + prev;
+		}
+
 	}
 </script>
 

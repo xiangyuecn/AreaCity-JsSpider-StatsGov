@@ -23,6 +23,15 @@ var geoECharts=libObj.Create({
 geoECharts.load(); //开始加载数据，加载成功后会显示图形
 
 更多高级用法请参考下面源码中的set对象；如需绘制图形到高德地图，可以自行参考demo页面html源码。
+
+
+【可剥离的库：WKT转GeoJSON】短小粗暴，将数据库ST_AsText返回的文本转成GeoJSON
+	libObj.WKTList2GeoJSON
+	libObj.WKT2Feature
+
+【可剥离的库：GeoZip压缩、解压】短小粗暴，强力压缩连续的坐标点
+	libObj.GeoZip
+	libObj.GeoUnZip
 *************************/
 	var lib={
 		//echarts js路径，如果不提供echarts将从这个地方加载js文件
@@ -517,7 +526,7 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 	
 	
 	/**************自定义边界坐标压缩、解压算法****************/
-	/*6位小数精度下可压缩到 1/3 - 1/5 大小
+	/*6位小数精度下可压缩到 1/3 - 1/5 大小。压缩代码参考自echarts（ZigZag算法）：https://github.com/apache/echarts/blob/8eeb7e5abe207d0536c62ce1f4ddecc6adfdf85e/src/util/mapData/rawData/encode.js
 		【前提：数值压缩原理】
 		1. 状态字节：用1个字节的2位来存储一个数的状态值：符号、溢出（数值是否超过0xff）；这个字节可以存储4个数的状态，等于2个坐标。额外将2位存储到状态字节的好处就是一个很小的数可以直接存储成0xff，且两个坐标的差值很大可能是小于0xff的；不然使用ZigZag算法符号位将占据数值的一个位变成0x7f，将会导致很多数值不能用1个字节来存储。
 		2. 状态字节后面连续放4个数字，一个数字占用1-4个字节，相当于一个坐标最少只需2.5个字节，最多要8.5个字节来存储。

@@ -307,7 +307,7 @@ if(!IsWidget){
 var levels=[];
 var geoECharts=geoEChartsLib.Create({
 	elem:".echartsView"
-	,api:"https://jiebian.life/api/extend/h5/github/areacity_geo"
+	,api:localStorage["Page_GeoECharts_api"]||"https://jiebian.life/api/extend/h5/github/areacity_geo"
 	,reqPost:function(url,args,True,False){
 		LoadData(url,args,function(data){
 			True(data.list?data:data.v);
@@ -505,7 +505,7 @@ updateSet();
 [MSSQL] select id,ext_path,polygon.STAsText() as polygon from AreaCity_Geo where id=11
 
 
-【采样抽稀】省市区三级边界数据，一半以上边界的坐标点超过1000个点，超过1万个坐标点边界有80个，超过3万个坐标点的边界有11个；内蒙的边界坐标点数最多（5万个点），转成文本后超过1MB大小，重采样成600个点后变成16KB大小；在大部分ECharts显示场合，重采样抽稀后边界外观基本上是一致的，但数据量已经大幅减少。
+【采样抽稀】省市区三级边界数据，一半以上边界的坐标点超过1000个点，超过1万个坐标点边界有80个，超过3万个坐标点的边界有11个；内蒙的边界坐标点数最多（5万个点），转成文本后超过1MB大小，重采样成600个点后变成16KB大小；在大部分ECharts显示场合，重采样抽稀后边界外观基本上是一致的（下面源码中有一段边界质量优化的代码对超大的边界进行了增强处理），数据量已经大幅减少。
 
 【GeoZip压缩、解压】本代码内实现了一套压缩解压的代码，6位小数精度下可压缩到 1/3 - 1/5 大小。压缩代码参考自echarts（ZigZag算法）：https://github.com/apache/echarts/blob/8eeb7e5abe207d0536c62ce1f4ddecc6adfdf85e/src/util/mapData/rawData/encode.js
 *************************/
@@ -631,17 +631,24 @@ updateSet();
 				return "POLYGON EMPTY";
 			}
 
-			var multiArr = new List<List<List<string>>>();
-			var allPs = new List<List<string>>();
+			var multiArr = new List<List<List<double[]>>>();
+			var allPs = new List<List<double[]>>();
 			foreach (var pl in wkts) {
 				var pls = Exp_4.Split(pl);
-				var plArr = new List<List<string>>();
+				var plArr = new List<List<double[]>>();
 				multiArr.Add(plArr);
 
 				foreach (var line in pls) {
 					var ps = new List<string>(Exp_5.Split(line));
-					plArr.Add(ps);
-					allPs.Add(ps);
+					var ps2 = new List<double[]>(ps.Count);
+					plArr.Add(ps2);
+					allPs.Add(ps2);
+					foreach (var p in ps) {
+						var p2 = p.Split(' ');
+						var x = double.Parse(p2[0]);
+						var y = double.Parse(p2[1]);
+						ps2.Add(new double[] { x, y });
+					}
 				}
 			}
 			allPs.Sort((a, b) => {
@@ -653,10 +660,10 @@ updateSet();
 				count3j += allPs[i].Count;
 			}
 			for (int i = 0; i < allPs.Count; i++) {
-				List<string> arr = allPs[i];
+				List<double[]> arr = allPs[i];
 				int max = pointsMax;
 				if (i == 0) {//首个环使用最大点数
-							 //NOOP
+					//NOOP
 				} else if (i == 1 || i == 2) {//后两个环各使用1/3点数
 					max = pointsMax / 3;
 				} else {//后续的共享1/3点数，但最大可以有8个点
@@ -667,16 +674,66 @@ updateSet();
 					continue;//无需处理
 				}
 
-				//抽样处理
-				double c = 1d * max / arr.Count;//采样率
-				double pos = 0;
-				int cur = -1;
-				List<string> arr2 = new List<string>();
-				for (int j = 0; j < arr.Count - 1; j++) {
-					pos += c;
-					if (cur != (int)pos) {
-						arr2.Add(arr[j]);
-						cur = (int)pos;
+				//如果是第一个环，并且点数非常多，将进行质量控制，间距过大的点优先保留，间距低的点优先删除
+				bool quality = i == 0 && arr.Count > max * 10;
+
+				double lineTotal = 0;//粗略计算边界长度
+				if (quality) {
+					double[] prev = null;
+					for (var i2 = 0; i2 < arr.Count; i2++) {
+						var cur = arr[i2];
+						if (prev != null) {
+							lineTotal += (Math.Abs(prev[0] - cur[0]) + Math.Abs(prev[1] - cur[1]));
+						}
+						prev = cur;
+					}
+				}
+				double widthBase = lineTotal / max; //均分长度
+
+
+				List<double[]> arr2 = null;
+				for (var i2 = 1; i2 <= 2; i2++) {//质量处理 或者 放弃
+					bool useQuality = quality && i2 != 2;//最后一次将放弃
+					double widthMax = widthBase * 2;//超过这个间距的点全部保留
+					double widthMin = widthBase * (0.1 * i2);//低于这个间距的点全部删除
+
+					arr2 = new List<double[]>();
+
+					//抽样处理
+					double c = 1d * max / arr.Count;//采样率
+					double pos = 0;
+					int posCur = -1;
+					double[] cur, prev = null;
+					for (int j = 0; j < arr.Count - 1; j++) {
+						cur = arr[j];
+						if (useQuality && prev != null) {
+							//质量控制，粗略计算间距
+							var jl = (Math.Abs(prev[0] - cur[0]) + Math.Abs(prev[1] - cur[1]));
+							if (jl > widthMax) {
+								//间距过大的全部保留
+								prev = cur;
+								arr2.Add(cur);
+								pos = 0;
+								posCur = 0;
+								continue;
+							}
+							if (jl < widthMin) {
+								//间距过低的全部不要
+								continue;
+							}
+						}
+
+						pos += c;
+						if (posCur != (int)pos) {
+							prev = cur;
+							arr2.Add(cur);
+							posCur = (int)pos;
+						}
+					}
+
+					if (!useQuality || arr2.Count < max * 1.5) {
+						//基本达标，不用再抽了
+						break;
 					}
 				}
 				arr.Clear();
@@ -712,11 +769,11 @@ updateSet();
 							if (n > 0) {
 								str.Append(",");
 							}
-							str.Append(ps[n]);
+							str.Append(ps[n][0] + " " + ps[n][1]);
 						}
 
 						str.Append(",");
-						str.Append(ps[0]);//闭环
+						str.Append(ps[0][0] + " " + ps[0][1]);//闭环
 					}
 				}
 				str.Append("))");
@@ -742,16 +799,16 @@ updateSet();
 		/// <summary>
 		/// 边界坐标压缩，返回base64字符串
 		/// </summary>
-		static public string GeoZip(List<string> points) {
+		static public string GeoZip(List<double[]> points) {
 			var bytes = GeoZipBytes(points);
 			return "Z:" + Convert.ToBase64String(bytes);
 		}
 		/// <summary>
 		/// 边界坐标解压，返回坐标数组
 		/// </summary>
-		static public List<string> GeoUnZip(string base64) {
+		static public List<double[]> GeoUnZip(string base64) {
 			if (string.IsNullOrEmpty(base64) || base64.Length<3) {
-				return new List<string>();
+				return new List<double[]>();
 			}
 			var bytes = Convert.FromBase64String(base64.Substring(2));
 			return GeoUnZipBytes(bytes);
@@ -759,14 +816,14 @@ updateSet();
 		/// <summary>
 		/// 边界坐标压缩，返回二进制
 		/// </summary>
-		static public byte[] GeoZipBytes(List<string> points) {
+		static public byte[] GeoZipBytes(List<double[]> points) {
 			if (points == null || points.Count < 1) {
 				return new byte[0];
 			}
 
-			var point0 = points[0].Split(' ');
-			var x = (long)Math.Ceiling(double.Parse(point0[0]) * Zip_Scale);
-			var y = (long)Math.Ceiling(double.Parse(point0[1]) * Zip_Scale);
+			var point0 = points[0];
+			var x = (long)Math.Ceiling(point0[0] * Zip_Scale);
+			var y = (long)Math.Ceiling(point0[1] * Zip_Scale);
 
 			var rtv = new MemoryStream();
 			rtv.write(x + " " + y + ":");
@@ -777,9 +834,9 @@ updateSet();
 					markPos = (int)rtv.Length;
 					rtv.WriteByte(0);
 				}
-				var point = points[i].Split(' ');
-				x = _GeoZip(rtv, double.Parse(point[0]), x, markPos, markLen++);
-				y = _GeoZip(rtv, double.Parse(point[1]), y, markPos, markLen++);
+				var point = points[i];
+				x = _GeoZip(rtv, point[0], x, markPos, markLen++);
+				y = _GeoZip(rtv, point[1], y, markPos, markLen++);
 			}
 
 			byte[] rtv2 = rtv.ToArray();
@@ -789,8 +846,8 @@ updateSet();
 					throw new Exception("压缩结果还原长度不一致");
 				}
 				for (var i = 0; i < un.Count; i++) {
-					string[] p1 = un[i].Split(' '), p2 = points[i].Split(' ');
-					if (Math.Abs(double.Parse(p1[0]) - double.Parse(p2[0])) > 0.000002 || Math.Abs(double.Parse(p1[1]) - double.Parse(p2[1])) > 0.000002) {
+					double[] p1 = un[i], p2 = points[i];
+					if (Math.Abs(p1[0] - p2[0]) > 0.000002 || Math.Abs(p1[1] - p2[1]) > 0.000002) {
 						throw new Exception("压缩结果还原精度不足"+ un[i]+" - "+ points[i]);
 					}
 				};
@@ -847,8 +904,8 @@ updateSet();
 		/// <summary>
 		/// 二进制边界坐标解压，返回坐标数组
 		/// </summary>
-		static public List<string> GeoUnZipBytes(byte[] bytes) {
-			List<string> rtv = new List<string>();
+		static public List<double[]> GeoUnZipBytes(byte[] bytes) {
+			List<double[]> rtv = new List<double[]>();
 			if (bytes==null || bytes.Length<1) {
 				return rtv;
 			}
@@ -872,7 +929,7 @@ updateSet();
 			};
 			long x = long.Parse(xS);
 			long y = long.Parse(yS);
-			rtv.Add((1d * x / Zip_Scale).ToString("f6") + " "+ (1d * y / Zip_Scale).ToString("f6"));
+			rtv.Add(new double[] { 1d * x / Zip_Scale, 1d * y / Zip_Scale });
 
 			//继续，连续解码
 			int markLen = 4;byte mark = 0;
@@ -888,7 +945,7 @@ updateSet();
 				y = _GeoUnZip(bytes, refOut, y, mark, markLen++);
 				i = refOut[1] - 1;
 
-				rtv.Add((1d * x / Zip_Scale).ToString("f6") + " " + (1d * y / Zip_Scale).ToString("f6"));
+				rtv.Add(new double[] { 1d * x / Zip_Scale, 1d * y / Zip_Scale });
 			}
 			return rtv;
 		}

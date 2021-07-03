@@ -3,6 +3,8 @@
 只需一次性获得省市区三级即可，乡镇这一级高德没有给出编码，因此放弃全使用高德数据，仅用来验证。
 
 在以下页面执行
+https://developer.amap.com
+
 https://lbs.amap.com/api/webservice/guide/api/district
 */
 "use strict";
@@ -10,7 +12,7 @@ https://lbs.amap.com/api/webservice/guide/api/district
 var SaveName="Step1_3_Amap";
 
 $.ajax({
-	url:"https://lbs.amap.com/dev/api?keywords=中国&subdistrict=3&extensions=base"
+	url:"https://developer.amap.com/service/api/restapi?keywords=中国&subdistrict=3&extensions=base"
 	,method:"POST"
 	,data:{type:"config/district",version:"v3"}
 	,dataType:"json"

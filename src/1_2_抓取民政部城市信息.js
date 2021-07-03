@@ -73,9 +73,10 @@ var fixParent={
 	,4690:{name:"省直辖县级行政区划"}//海南省
 	,6590:{name:"自治区直辖县级行政区划"}//新疆
 };
-//人工修正数据，mca新数据已撤销的市，统计局滞后
+//人工修正数据，移除统计局或者mca的数据，mca新数据已撤销的市，统计局滞后
 var fixRemove={
-	//659010:{name:"胡杨河市"} //暂时阻止添加新的区
+	340203:{name:"弋江区"}, //统计局老的id移除掉，新id为340209
+	320602:{name:"崇川区"}, //统计局老的id移除掉，新id为320613
 	
 	//移除单独的港澳台，mca这些没有下级并且统计局没有这些
 	71:{name:"台湾省"}
@@ -158,6 +159,9 @@ function merge(arr1,arr2,deep){
 				};
 			};
 			if(oi.name==oj.name && oiCode!=oj.code){
+				if(fixRemove[oiCode] || fixRemove[oj.code]){
+					continue;//是要移除的
+				}
 				console.error("编号不同",oi,oj);
 				throw new Error();
 			};

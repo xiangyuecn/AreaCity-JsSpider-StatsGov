@@ -2,7 +2,28 @@
 
 # :open_book:省市区数据采集并标注拼音、坐标和边界范围
 
-[省市区镇四级数据在线测试和预览](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/)（支持转换成JSON、多级联动js）；导入数据库或坐标、边界范围转换：[AreaCity-Geo格式转换工具软件下载](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html)（支持转成`sql`、导入数据库，转成`shp`、`geojson`）；当前最新版为 **src文件夹** 内的数据，此数据发布于`统计局2020-11-06`、`民政部2020-11-20`、`腾讯地图行政区划2020-08-14`、`高德地图行政区划采集当天`。
+- [【在线测试和预览】省市区镇四级数据](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/)：支持在线生成JSON、多级联动js；
+- [【在线测试和预览】ECharts Map四级下钻在线测试和预览+代码生成](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-echarts.html)：坐标边界范围在线测试和预览；
+- [【转换工具】AreaCity-Geo格式转换工具软件](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html)：csv文件导入数据库，坐标、边界范围转换（支持转成`sql`、`shp`、`geojson`）。
+
+
+## 数据下载
+
+当前最新版数据在 **src文件夹** 内，此数据发布于`统计局2020-11-06`、`民政部2021-05-10`、`腾讯地图行政区划2021-03-29`、`高德地图行政区划采集当天`。
+
+可在 [GitHub Releases](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases) 中下载最新发布数据文件，也可直接打开 `src/采集到的数据` 文件夹内的文件来使用。
+
+如果无法打开GitHub或者下载缓慢可以通过 [Gitee Pages外链](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/download.html) 来下载：
+- [【下载】省市区 三级数据](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_data_level3.csv) ： /src/采集到的数据/ok_data_level3.csv ；
+-  [【下载】省市区镇 四级数据](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_data_level4.csv) ： /src/采集到的数据/ok_data_level4.csv (3M+大小) ；
+- [【下载】【GEO三级】省市区 坐标和边界 数据下载](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_geo.csv.7z) ： /src/采集到的数据/ok_geo.csv.7z (解压后130M+) ；
+- [【下载】【GEO四级】乡镇 坐标和边界 数据下载](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-level4.html) [AD]： 乡镇第4级坐标边界数据 ok_geo4_*.csv，为付费数据 （广告、闭源） 。
+
+> csv纯文本文件可以非常方便解析成其他格式；如果在使用csv文件过程中出现乱码、错乱等情况，需自行调对utf-8（带BOM）编码，文本限定符为`"`。
+> 
+> 通过本库提供的 [AreaCity-Geo格式转换工具](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html) 可快速方便的将省市区、坐标、边界范围csv文件导入数据库，并且提供格式转换功能（shp、geojson、sql），欢迎下载使用。
+
+
 
 
 <p align="center"><a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov"><img width="100" src="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/assets/icon.png" alt="AreaCity logo"></a></p>
@@ -16,21 +37,6 @@
 </p>
 
 
-在 [Releases](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases) 中下载最新发布数据文件，也可直接打开 `src/采集到的数据` 文件夹内的文件来使用；如果下载缓慢可以通过[Gitee Pages外链](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/download.html)来下载：
-- [【三级】省市区 数据下载](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_data_level3.csv) ： /src/采集到的数据/ok_data_level3.csv
--  [【四级】省市区镇 数据下载](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_data_level4.csv) ： /src/采集到的数据/ok_data_level4.csv (3M+大小)
-- [【GEO三级】省市区 坐标和边界 数据下载](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_geo.csv.7z) ： /src/采集到的数据/ok_geo.csv.7z (解压后130M+)
-- [AD][【GEO四级】乡镇 坐标和边界 数据下载](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-level4.html) ： 乡镇第4级坐标边界数据 ok_geo4_*.csv，为付费数据 （广告、闭源）
-
-> csv格式非常方便解析成其他格式，算是比较通用；如果在使用csv文件过程中出现乱码、错乱等情况，需自行调对utf-8（带BOM）编码（或者使用文本编辑器 `如 notepad++` 把文件转成需要的编码），文本限定符为`"`。
-> 
-> 通过[AreaCity-Geo格式转换工具](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html)可快速方便的将省市区、坐标、边界范围导入数据库，并且提供格式转换功能。
-> 
-> 手动导入csv文件到数据库如果接触的比较多应该能很快能完成导入，省市区数据参考[导入教程](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/src/3_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)、坐标和边界参考[导入教程](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/src/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)，教程在代码开头注释中，是SQL Server的导入流程和SQL语句。
-> 
-> **温馨建议**：不要在没有动态更新机制的情况下把数据嵌入到Android、IOS、等安装包内；缓存数据应定期从服务器拉取更新。
-
-注：本库最高采集省市区镇4级数据、省市区3级边界范围；如需乡镇级别的坐标边界[请到此下载](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-level4.html)，如果需要街道5级数据，请参考底下的`其他资源`。
 
 ## 如何clone: Gitee镜像库加速
 由于历史记录数据异常庞大，几乎每次commit都有40M+的新采集数据，所以你直接clone会很慢的，加上`--depth 1`提取最新版的数据即可。
@@ -64,6 +70,7 @@ chrome 控制台，`Chrome 41`这版本蛮好，win7能用，`Chrome 46`这版�
 
 ## 采集深度
 
+- 2020.210510.0329版(2021)采集了4层，省、市、区、镇，来源：[统计局2020版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2020/index.html)；省市区3级合并了[民政部2021-05-10数据](http://www.mca.gov.cn/article/sj/xzqh/1980/202105/20210500033655.shtml)、[高德地图行政区域](https://lbs.amap.com/api/webservice/guide/api/district)、[腾讯地图行政区划v20210329](https://lbs.qq.com/webservice_v1/guide-region.html)数据；镇级采用腾讯地图行政区划作为主要数据，综合高德和统计局的镇级。采集高德省市区三级坐标和行政区域边界范围。
 - 2020.201120.0814版(2020)采集了4层，省、市、区、镇，来源：[统计局2020版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2020/index.html)；省市区3级合并了[民政部2020-11-20数据](http://www.mca.gov.cn/article/sj/xzqh/2020/202011/20201100030582.shtml)、[高德地图行政区域](https://lbs.amap.com/api/webservice/guide/api/district)、[腾讯地图行政区划v20200814](https://lbs.qq.com/webservice_v1/guide-region.html)数据；镇级采用腾讯地图行政区划作为主要数据，综合高德和统计局的镇级。采集高德省市区三级坐标和行政区域边界范围。
 - 2019.200925.0814版(2020)采集了4层，省、市、区、镇，来源：[统计局2019版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2019/index.html)；省市区3级合并了[民政部2020-09-25数据](http://www.mca.gov.cn/article/sj/xzqh/2020/2020/2020092500801.html)、[高德地图行政区域](https://lbs.amap.com/api/webservice/guide/api/district)、[腾讯地图行政区划v20200814](https://lbs.qq.com/webservice_v1/guide-region.html)数据；镇级采用腾讯地图行政区划作为主要数据，综合高德和统计局的镇级。采集高德省市区三级坐标和行政区域边界范围。
 - 2018版(2019)采集了4层，省、市、区、镇，来源：[统计局2018版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2018/index.html)；省市区3级额外合并了[民政部2019-08-27数据](http://www.mca.gov.cn/article/sj/xzqh/2019/201908/201908271607.html)。采集高德省市区三级坐标和行政区域边界范围。
@@ -82,7 +89,7 @@ chrome 控制台，`Chrome 41`这版本蛮好，win7能用，`Chrome 46`这版�
 直筒子等这种为什么不直接把下级往上提一级来做区级，采用补齐填充的方式来对齐数据的原因，请参考[issue#9](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/issues/9)。
 
 ## 【字段】ok_data表
-省市区镇数据表。
+省市区镇数据表，可使用 [AreaCity-Geo格式转换工具软件](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html) 直接导入数据库。
 
 字段|类型|描述
 :--:|:--:|--
@@ -96,13 +103,19 @@ ext_id|long|数据源原始的编号；如果是添加的数据，此编号为0
 ext_name|string|数据源原始的名称，为未精简的名称
 
 ## 【字段】ok_geo表
-此表为坐标和行政区域边界范围数据表，含省市区三级不含第四级，如需乡镇坐标边界数据[请到此下载](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-level4.html)；因为数据文件过大（130M+），所以分开存储。由于边界数据的解析比较复杂，请参考[src/map_geo_格式化.js](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/src/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)内的SQL Server的解析语句，或者直接使用[AreaCity-Geo格式转换工具软件](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html)进行转换成`shp`、`geojson`、`sql`格式或直接导入数据库。
+此表为坐标和行政区域边界范围数据表，含省市区三级不含第四级，如需乡镇坐标边界数据[请到此下载](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-level4.html)；因为数据文件过大（130M+），所以分开存储。
+
+由于边界数据的解析比较复杂，请参考[src/map_geo_格式化.js](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/src/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)内的SQL Server的解析语句，或者使用 [AreaCity-Geo格式转换工具软件](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html) 直接导入数据库，或者转换成`shp`、`geojson`、`sql`格式。
 
 字段|类型|描述
 :--:|:--:|--
 id|int|和`ok_data`表中的`ID`相同，通过这个`ID`关联到省市区具体数据，`map_geo_格式化.js`中有数据合并SQL语句
+pid|int|上级ID
+deep|int|层级深度；0：省，1：市，2：区
+name|string|城市完整名称
+ext_path|string|如：“广东省 深圳市 罗湖区”，为省市区三级完整名称，中间用空格分隔
 geo|string|城市中心坐标，高德地图`GCJ-02`火星坐标系。格式："lng lat" or "EMPTY"，少量的EMPTY（仅台湾的城市、国外）代表此城市没有抓取到坐标信息
-polygon|string|行政区域边界，高德地图`GCJ-02`火星坐标系。格式："lng lat,...;lng lat,..." or "EMPTY"，少量的EMPTY（仅台湾的城市、国外）代表此城市没有抓取到边界信息；存在多个地块(如飞地)时用`;`分隔，每个地块的坐标点用`,`分隔，特别要注意：多个地块组合在一起可能是[MULTIPOLYGON](https://docs.microsoft.com/zh-cn/sql/relational-databases/spatial/multipolygon?view=sql-server-2014)或者[POLYGON](https://docs.microsoft.com/zh-cn/sql/relational-databases/spatial/polygon?view=sql-server-2014)，需用工具进行计算和对数据进行验证
+polygon|string|行政区域边界，高德地图`GCJ-02`火星坐标系。格式："lng lat,...;lng lat,..." or "EMPTY"，少量的EMPTY（仅台湾的城市、国外）代表此城市没有抓取到边界信息；存在多个地块(如海岛、飞地)时用`;`分隔，每个地块的坐标点用`,`分隔，特别要注意：多个地块组合在一起可能是[MULTIPOLYGON](https://docs.microsoft.com/zh-cn/sql/relational-databases/spatial/multipolygon?view=sql-server-2014)或者[POLYGON](https://docs.microsoft.com/zh-cn/sql/relational-databases/spatial/polygon?view=sql-server-2014)，需用工具进行计算和对数据进行验证
 
 
 ## 【QQ群】交流与支持
@@ -166,11 +179,15 @@ polygon|string|行政区域边界，高德地图`GCJ-02`火星坐标系。格式
 ## 数据源
 使用高德接口采集的，本来想采百度地图的，但经过使用发现百度地图数据~~有严重问题(百度已更新，不能复现了)~~：
 
-参考 `肃宁县（右下方向那块飞地）`、`路南区（唐山科技职业技术学院那里一段诡异的边界）` 边界，~~百度数据大量线段交叉的无效`polygon`(百度已更新，不能复现了)~~（[百度地图测试](http://lbsyun.baidu.com/jsdemo.htm#c1_10)），没有人工无法修正，高德没有这个问题（[高德地图测试](https://lbs.amap.com/api/javascript-api/example/district-search/draw-district-boundaries)）；
+参考 `肃宁县（右下方向那块飞地）`、`路南区（唐山科技职业技术学院那里一段诡异的边界）` 边界，~~百度数据大量线段交叉的无效`polygon`(百度已更新，不能复现了)~~（[百度地图测试](http://lbsyun.baidu.com/jsdemo.htm#c1_10)），没有人工无法修[​](?FixGitee_Block)正，高德没有这个问题（[高德地图测试](https://lbs.amap.com/api/javascript-api/example/district-search/draw-district-boundaries)）；
 
 并且高德对镂空性质的地块处理比百度强，参考`天津市`对`唐山`大块飞地的处理，高德数据只需要`Union`操作就能生成`polygon`，百度既有`Union`操作又有`Difference`操作，极其复杂数据还无效。
 
 所以放弃使用百度地图数据。
+
+
+## 在线测试和预览
+坐标边界范围在线测试预览地址：[ECharts Map四级下钻在线测试和预览+代码生成](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-echarts.html)
 
 
 ## 如何使用坐标和边界数据
@@ -209,7 +226,7 @@ polygon|string|行政区域边界，高德地图`GCJ-02`火星坐标系。格式
 
 2. `东莞`、`中山`、`儋州`等不设区的直筒子市没有第三级区级，自动添加同名的一级作为区级，以保证整个数据结构的一致性，添加的城区编号以上级的ID结尾加两个0作为新ID，此结构ID兼容性还不错，比如：东莞（4419）下级只有一个区 东莞（441900），*但结尾加00后会导致精简过的ID如果要恢复成指定的位数时需要将这些添加的区域进行特殊处理，否则`4419`扩充到6位后会变成`441900`和下级产生冲突*。
 
-3. 省直辖县级市（河南济源、湖北潜江、海南五指山、新疆昆玉等）根据编号来看本来只能放到区级，但为了便于用户选择，所有直辖市自动添加一个同名的市级，比如：`湖北-直辖市-仙桃-*镇` 调整后为 `湖北-仙桃-仙桃-*镇`，新添加数据的编号规则和第二条规则相同。
+3. 省直辖县级市（河南济源、湖北潜江、海南五指山、新[​](?FixGitee_Block)疆昆玉等）根据编号来看本来只能放到区级，但为了便于用户选择，所有直辖市自动添加一个同名的市级，比如：`湖北-直辖市-仙桃-*镇` 调整后为 `湖北-仙桃-仙桃-*镇`，新添加数据的编号规则和第二条规则相同。
 
 4. 如果市、区没有下级，自动添加同名的一个城镇作为下级，编号规则和上一条规则相同，以保证数据层次的一致性（任何一个数据都能满足省市区镇4级结构，没有孤立的）；比如：`福建-泉州-金门`没有镇，调整后为`福建-泉州-金门-金门`；另外从民政部等数据源中补全的新增城市也会缺失下级，照此规则自动补齐。
 
@@ -234,11 +251,11 @@ polygon|string|行政区域边界，高德地图`GCJ-02`火星坐标系。格式
 4. 其他平台的数据在感官上显得都[不够完美](https://v2ex.com/t/607306)，综合一下舒畅多了。
 
 
-## 修正数据
+## 修[​](?FixGitee_Block)正数据
 
-- [issues/2](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/issues/2) `乐亭县` 的 `乐`读`lào` ，此县下面的`乐亭`读音均已修正。
+- [issues/2](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/issues/2) `乐亭县` 的 `乐`读`lào` ，此县下面的`乐亭`读音均已修[​](?FixGitee_Block)正。
 - [2020-8-23] QQ:85005150反馈 `宕昌县` 的 `宕` 读 `tàn`。
-- 关于`苏州工业园区`：[issues/15](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/issues/15)，这个是唯一一个特殊处理的园区数据，本来应该不会出现园区这种数据的，但为了简化后续数据的处理，保留了统计局中的这个数据。
+- [2021-2-21] QQ:85005150反馈 `洪洞县` 的 `洞` 读 `tong`，`lve` 改成 `lue`，和其他一些已知读音问题。
 
 
 

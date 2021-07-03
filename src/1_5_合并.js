@@ -36,76 +36,33 @@ var fixQQmapSplit={
 };
 //和高德数据对比前移除qq的数据
 var fixQQmapRemoveBeforeAmp={
-	130502:{
-		name:"桥东区",level:3,msg:"改名襄都区并调整了范围"
+	350402:{
+		name:"梅列区",level:3,msg:"合并到了三明市三元区，简单移除，不管下级"
 	}
-	,130503:{
-		name:"桥西区",level:3,msg:"改名信都区并调整了范围"
-	}
-	,130526:{
-		name:"任县",level:3,msg:"新设任泽区"
-	}
-	,130527:{
-		name:"南和县",level:3,msg:"新设南和区"
-	}
-	,220381:{
-		name:"公主岭市",level:3,msg:"公主岭市从四平市代管改为由长春市代管"
-	}
-	,320611:{
-		name:"港闸区",level:3,msg:"撤销南通市崇川区、港闸区，设立新的南通市崇川区"
-		,childMoveTo:320602
-	}
-	,340208:{
-		name:"三山区",level:3,msg:"撤销芜湖市三山区、弋江区，设立新的芜湖市弋江区"
-		,childMoveTo:340203
-	}
-	,360727:{
-		name:"龙南县",level:3,msg:"新设龙南市"
-	}
-	,370634:{
-		name:"长岛县",level:3,msg:"新设蓬莱区"
-	}
-	,370684:{
-		name:"蓬莱市",level:3,msg:"新设蓬莱区"
-	}
-	,510132:{
-		name:"新津县",level:3,msg:"新数据为新津区，id: 510118"
-	}
+	
+	,320602:{name: "崇川区",level:3}//新调整的区划 qq滞后直接删除，使用高德的
+	,320684:{name: "海门区",level:3}//新调整的区划 qq滞后直接删除，使用高德的
+	,330103:{name: "下城区",level:3}//新调整的区划 qq滞后直接删除，使用高德的
+	,330104:{name: "江干区",level:3}//新调整的区划 qq滞后直接删除，使用高德的
+	,340211:{name: "繁昌区",level:3}//新调整的区划 qq滞后直接删除，使用高德的
+	,410322:{name: "孟津县",level:3}//新调整的区划 qq滞后直接删除，使用高德的
+	,410306:{name: "吉利区",level:3}//新调整的区划 qq滞后直接删除，使用高德的
+	,421023:{name: "监利市",level:3}//新调整的区划 qq滞后直接删除，使用高德的
+	,520221:{name: "水城区",level:3}//新调整的区划 qq滞后直接删除，使用高德的
 };
 //和高德数据对比前qq添加统计局的数据
 var fixQQmapAddGovBeforeAmp={
-	130502:{
+	/*130502:{
 		name:"襄都区",pid:1305
-	}
-	,130503:{
-		name:"信都区",pid:1305
-	}
-	,130505:{
-		name:"任泽区",pid:1305
-	}
-	,130506:{
-		name:"南和区",pid:1305
-	}
-	,220184:{
-		name:"公主岭市",pid:2201
-	}
-	,360783:{
-		name:"龙南市",pid:3607
-	}
-	,370614:{
-		name:"蓬莱区",pid:3706
-	}
-	,510118:{
-		name:"新津区",pid:5101
-	}
+	}*/
 };
 //和高德数据对比前qq替换统计局数据，就是这些id对应的数据都采用统计局的数据
 var fixQQmapReplaceGovBeforeAmp={
-	3205:{
+	/*3205:{
 		name:"苏州市",level:2
 		,msg:"统计局、高德都有一个工业园（高德里面全国唯一一个，百度地图也有），并且边界也是独立出来的，qq缺少了并且子级在分散在各城区"
-	}
-	,6328:{
+	},*/
+	6328:{
 		name:"海西",level:2,msg:"qq的大柴旦不正常，整个都用统计局的"
 	}
 };
@@ -117,7 +74,9 @@ var fixQQmapReplaceFill={
 	,460499:{name:"儋州市",childReplace:true}
 	,620299:{name:"嘉峪关市",childReplace:true} //统计局嘉峪关还有一个市辖区，上面三个没有
 	
-	,632321:{name:"同仁县",level:3,replaceAs:{codePrefix:"632301",name:"同仁市"}}
+	,340203:{name:"弋江区",level:3,replaceAs:{codePrefix:"340209",name:"弋江区"}}
+	,340221:{name:"湾沚区",level:3,replaceAs:{codePrefix:"340210",name:"湾沚区"}}
+	,340222:{name:"繁昌区",level:3,replaceAs:{codePrefix:"340211",name:"繁昌区"}}
 		
 	
 	//添加明确缺失的子级
@@ -137,13 +96,11 @@ var fixQQmapReplaceFill={
 	,130230:{name:"芦台区",childMove:"130202000000"}
 	
 	//新改名的，qq未及时更新，需更新为新名称
-	,320684:{name:"海门市",newName:"海门区"}
-	,340221:{name:"芜湖县",newName:"湾沚区"}
-	,340222:{name:"繁昌县",newName:"繁昌区"}
-	,421023:{name:"监利县",newName:"监利市"}
+	//同名保持住，mca是老的，配置上会打标识
+	,350681:{name:"龙海市",newName:"龙海区"}
+	,410381:{name:"偃师市",newName:"偃师区"}
 	
 	//移除已废弃的
-	,130521:{name:"邢台县",remove:true}//被撤销，瓜分到了襄都区、信都区
 	,460321:{name:"西沙群岛",remove:true}
 	,460322:{name:"南沙群岛",remove:true}
 	,460323:{name:"中沙群岛的岛礁及其海域",remove:true}
@@ -166,6 +123,15 @@ var amapDifference={
 	,632825:{lostName:"海西蒙古族藏族自治州直辖"}//qq统计局为632857大柴旦行政委员会
 	,460301:{lostName:"西沙区",lostAdd:true}//新设区
 	,460302:{lostName:"南沙区",lostAdd:true}//新设区
+	
+	,320613: {lostName: "崇川区",lostAdd:true}//新调整的区划 qq滞后，使用高德的
+	,320614: {lostName: "海门区",lostAdd:true}//新调整的区划 qq滞后，使用高德的
+	,330113: {lostName: "钱塘区",lostAdd:true}//新调整的区划 qq滞后，使用高德的
+	,330114: {lostName: "临平区",lostAdd:true}//新调整的区划 qq滞后，使用高德的
+	,340212: {lostName: "繁昌区",lostAdd:true}//新调整的区划 qq滞后，使用高德的
+	,410306: {lostName: "孟津区",lostAdd:true}//新调整的区划 qq滞后，使用高德的
+	,421088: {lostName: "监利市",lostAdd:true}//新调整的区划 qq滞后，使用高德的
+	,520204: {lostName: "水城区",lostAdd:true}//新调整的区划 qq滞后，使用高德的
 };
 
 
@@ -194,6 +160,15 @@ var gov3Difference={
 	,320611:{lostName:"港闸区"} //已被合并到其他新区
 	,340208:{lostName:"三山区"} 
 	,632321:{lostName:"同仁县"} 
+	,340221:{lostName:"芜湖县"} 
+	,340222:{lostName:"繁昌县"} 
+	,350402:{lostName:"梅列区"} 
+	,320684:{lostName: "海门市"}
+	,330103:{lostName: "下城区"}
+	,330104:{lostName: "江干区"}
+	,410322:{lostName: "孟津县"}
+	,421023:{lostName: "监利县"}
+	,520221:{lostName: "水城县"}
 	
 	,460321:{lostName:"西沙群岛"} //下面新出的导致丢失
 	,460322:{lostName:"南沙群岛"}
@@ -207,6 +182,8 @@ var gov3Difference={
 	//MAC没有的，但是是新出的
 	,460301:{name:"西沙区",keep:true}
 	,460302:{name:"南沙区",keep:true}
+	,330113:{name:"钱塘区",keep:true}
+	,330114:{name:"临平区",keep:true}
 };
 
 
@@ -754,7 +731,7 @@ var compareAmap=function(parent,qqmapArr,amapArrSrc,level){
 				throw new Error();
 			};
 			if(diffSet.lostAdd){
-				var addItm={name:itm.name,code:itm.code,child:[]};
+				var addItm={name:itm.name,code:itm.code,child:[],keepName:true};
 				qqmapArr.push(addItm);
 				console.log(addItm.code+":"+addItm.name+", 添加QQ没有的",addItm);
 			};
@@ -928,7 +905,7 @@ var compareGov3=function(parent,qqmapArr,govArrSrc,level){
 		if(!qqItm.keepName){
 			if(qqItm.name!=govItm.name){
 				delete qqItm.qqPY;
-				console.warn("QQ和MCA名称不同，以MCA为准:"+qqItm.name+"->"+govItm.name);
+				console.warn("QQ和MCA名称不同，以MCA为准:"+qqItm.code+" "+qqItm.name+"->"+govItm.name);
 			};
 			qqItm.name=govItm.name;
 		};

@@ -69,6 +69,9 @@ var pinyinList=window[PinyinWebApiSaveName].cityList;
 
 
 //人工fix数据
+var newNames={
+	//450127:{name:"横州市"}
+};
 var fixNames=function(itm){
 	var tag=itm.id+":"+itm.fullPath.join(" ")+"：";
 	
@@ -205,9 +208,17 @@ function load(itm, next, _try){
 				//对id,名称进行匹配验证
 				var testName=_try?paths:itm.name;
 				var testCode=itm.deep*2;
-				if(find.name.indexOf(testName.substr(0,testName.length==3?2:3))==0
-					&& find.adcode.substr(0,testCode)==(_tryfixNameCode||itm.id+"").substr(0,testCode)
-				){
+				
+				var nameHit=find.name.indexOf(testName.substr(0,testName.length==3?2:3))==0;
+				if(!nameHit){
+					var newName=newNames[itm.id];
+					if(newName && find.name.indexOf(newName.name.substr(0,newName.name.length==3?2:3))==0){
+						console.log("newName",newName,itm);
+						nameHit=true;
+					};
+				}
+				var codeHit=find.adcode.substr(0,testCode)==(_tryfixNameCode||itm.id+"").substr(0,testCode);
+				if(nameHit && codeHit){
 					if(match!=null){
 						match=0;//重复符合条件项 就是没有匹配项
 					}else{
@@ -307,6 +318,9 @@ function endload(){
 		
 		list.push({
 			id:o.id
+			,pid:o.pid
+			,deep:o.deep
+			,name:o.name
 			,ext_path:o.fullPath.join(" ")
 			,geo:o.geo
 			,polygon:o.polygon

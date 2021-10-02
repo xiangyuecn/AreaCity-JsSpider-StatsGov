@@ -36,19 +36,7 @@ var fixQQmapSplit={
 };
 //和高德数据对比前移除qq的数据
 var fixQQmapRemoveBeforeAmp={
-	350402:{
-		name:"梅列区",level:3,msg:"合并到了三明市三元区，简单移除，不管下级"
-	}
-	
-	,320602:{name: "崇川区",level:3}//新调整的区划 qq滞后直接删除，使用高德的
-	,320684:{name: "海门区",level:3}//新调整的区划 qq滞后直接删除，使用高德的
-	,330103:{name: "下城区",level:3}//新调整的区划 qq滞后直接删除，使用高德的
-	,330104:{name: "江干区",level:3}//新调整的区划 qq滞后直接删除，使用高德的
-	,340211:{name: "繁昌区",level:3}//新调整的区划 qq滞后直接删除，使用高德的
-	,410322:{name: "孟津县",level:3}//新调整的区划 qq滞后直接删除，使用高德的
-	,410306:{name: "吉利区",level:3}//新调整的区划 qq滞后直接删除，使用高德的
-	,421023:{name: "监利市",level:3}//新调整的区划 qq滞后直接删除，使用高德的
-	,520221:{name: "水城区",level:3}//新调整的区划 qq滞后直接删除，使用高德的
+	350605:{name: "长泰区",level:3}//新调整的区划 qq滞后直接删除，使用高德的
 };
 //和高德数据对比前qq添加统计局的数据
 var fixQQmapAddGovBeforeAmp={
@@ -74,9 +62,9 @@ var fixQQmapReplaceFill={
 	,460499:{name:"儋州市",childReplace:true}
 	,620299:{name:"嘉峪关市",childReplace:true} //统计局嘉峪关还有一个市辖区，上面三个没有
 	
-	,340203:{name:"弋江区",level:3,replaceAs:{codePrefix:"340209",name:"弋江区"}}
-	,340221:{name:"湾沚区",level:3,replaceAs:{codePrefix:"340210",name:"湾沚区"}}
-	,340222:{name:"繁昌区",level:3,replaceAs:{codePrefix:"340211",name:"繁昌区"}}
+	//,340203:{name:"弋江区",level:3,replaceAs:{codePrefix:"340209",name:"弋江区"}}
+	//,340221:{name:"湾沚区",level:3,replaceAs:{codePrefix:"340210",name:"湾沚区"}}
+	//,340222:{name:"繁昌区",level:3,replaceAs:{codePrefix:"340211",name:"繁昌区"}}
 		
 	
 	//添加明确缺失的子级
@@ -97,8 +85,8 @@ var fixQQmapReplaceFill={
 	
 	//新改名的，qq未及时更新，需更新为新名称
 	//同名保持住，mca是老的，配置上会打标识
-	,350681:{name:"龙海市",newName:"龙海区"}
-	,410381:{name:"偃师市",newName:"偃师区"}
+	//,350681:{name:"龙海市",newName:"龙海区"}
+	//,410381:{name:"偃师市",newName:"偃师区"}
 	
 	//移除已废弃的
 	,460321:{name:"西沙群岛",remove:true}
@@ -124,14 +112,8 @@ var amapDifference={
 	,460301:{lostName:"西沙区",lostAdd:true}//新设区
 	,460302:{lostName:"南沙区",lostAdd:true}//新设区
 	
-	,320613: {lostName: "崇川区",lostAdd:true}//新调整的区划 qq滞后，使用高德的
-	,320614: {lostName: "海门区",lostAdd:true}//新调整的区划 qq滞后，使用高德的
-	,330113: {lostName: "钱塘区",lostAdd:true}//新调整的区划 qq滞后，使用高德的
-	,330114: {lostName: "临平区",lostAdd:true}//新调整的区划 qq滞后，使用高德的
-	,340212: {lostName: "繁昌区",lostAdd:true}//新调整的区划 qq滞后，使用高德的
-	,410306: {lostName: "孟津区",lostAdd:true}//新调整的区划 qq滞后，使用高德的
-	,421088: {lostName: "监利市",lostAdd:true}//新调整的区划 qq滞后，使用高德的
-	,520204: {lostName: "水城区",lostAdd:true}//新调整的区划 qq滞后，使用高德的
+	//,320613: {lostName: "崇川区",lostAdd:true}//新调整的区划 qq滞后，使用高德的
+	,350625:{lostName:"长泰区",lostAdd:true}//新调整的区划 qq滞后，使用高德的
 };
 
 
@@ -178,12 +160,25 @@ var gov3Difference={
 	//MCA和qq名称称相同但id不同的，但qq和高德相同，暂采用qq和高德的便于数据处理
 	//,0:{name:"",asID:00}
 	
+	//MCA和qq id相同，但名称不同的，这里明确取qq的名称
+	,350681:{name:"龙海区",useQQ:true}
+	,410306:{name:"孟津区",useQQ:true}
+	,410381:{name:"偃师区",useQQ:true}
+	,431121:{name:"祁阳市",useQQ:true}
+	,450127:{name:"横州市",useQQ:true}
+	,513425:{name:"会理市",useQQ:true}
+	,520522:{name:"黔西市",useQQ:true}
+	,532331:{name:"禄丰市",useQQ:true}
+	,610322:{name:"凤翔区",useQQ:true}
+	,610928:{name:"旬阳市",useQQ:true}
+	,654223:{name:"沙湾市",useQQ:true}
+	
 	
 	//MAC没有的，但是是新出的
 	,460301:{name:"西沙区",keep:true}
 	,460302:{name:"南沙区",keep:true}
-	,330113:{name:"钱塘区",keep:true}
-	,330114:{name:"临平区",keep:true}
+	,330113:{name:"临平区",keep:true}
+	,330114:{name:"钱塘区",keep:true}
 };
 
 
@@ -896,13 +891,16 @@ var compareGov3=function(parent,qqmapArr,govArrSrc,level){
 				//部分县结尾，QQ是精简过的，前缀是相同的
 			}else if(qqItm.keepName){
 				//已经改过名的
+			}else if(diffSet && diffSet.useQQ){
+				diffSet.hit=true;
+				//明确使用qq的名称
 			}else{
 				qq_gov3_Difference.push({level:level,code:qqItm.code,qq:qqItm.name,gov:govItm.name});
 			};
 		};
 		
 		//前三级用gov的名称
-		if(!qqItm.keepName){
+		if(!qqItm.keepName && (!diffSet || !diffSet.useQQ)){
 			if(qqItm.name!=govItm.name){
 				delete qqItm.qqPY;
 				console.warn("QQ和MCA名称不同，以MCA为准:"+qqItm.code+" "+qqItm.name+"->"+govItm.name);
@@ -921,8 +919,8 @@ var compareGov3=function(parent,qqmapArr,govArrSrc,level){
 		var scode=SCode(itm);
 		var diffSet=gov3Difference[scode];
 		if(diffSet){
-			diffSet.hit=true;
 			if(diffSet.add){
+				diffSet.hit=true;
 				qqmapArr.push($.extend({},itm,{
 					child:[]
 					,trust:true
@@ -933,6 +931,7 @@ var compareGov3=function(parent,qqmapArr,govArrSrc,level){
 				throw new Error();
 			};
 			if(!diffSet.keep){
+				diffSet.hit=true;
 				qq_gov3_QQLostIgnore.push(lost);
 			};
 			continue;

@@ -130,7 +130,9 @@ img{
 <div class="main">
 	<div class="mainBox">
 		<span style="font-size:32px;color:#0B0;">乡镇第4级坐标+边界范围付费数据</span>
-		<a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov">GitHub >></a>
+		<a href="..">首页</a> |
+		<a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov">GitHub >></a> |
+		<a href="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov">Gitee >></a>
 	</div>
 	
 	<div class="mainBox">
@@ -144,7 +146,7 @@ img{
 		</ul>
 		
 		<p>
-			本数据为乡镇第4级的坐标边界数据，下载到的数据在购买数据密钥后可通过《<a href="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html">AreaCity Geo格式转换工具</a>》转成其他格式，比如：<i class="i">shp</i>、<i class="i">geojson</i>、<i class="i">sql</i>；
+			本数据为乡镇第4级的坐标边界数据（压缩包内也有省市区前三级免费开源数据），下载到的数据在购买数据密钥后可通过《<a href="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html" target="_blank">AreaCity Geo格式转换工具</a>》转成其他格式，比如：<i class="i">shp</i>、<i class="i">geojson</i>、<i class="i">sql</i>；
 			
 			或者直接导入数据库：<i class="i">SQL Server</i>、<i class="i">MySQL</i>。
 		</p>
@@ -184,16 +186,16 @@ img{
 		<div class="h2">数据介绍<a name="gn"></a></div>
 		<div class="content">
 			<ul class="c_ul" style="list-style-type: square;">
-				<li style="color:green">本数据使用csv格式纯文本文件提供，一个文件内包含了所有矢量数据，此文件可以通过下文中的下载链接下载，并且提供了转换工具可以很方便的转换成
+				<li style="color:green">本数据使用csv格式纯文本文件提供（ok_geo4_*.csv），一个文件内包含了全国所有乡镇级的矢量数据，此文件可以通过下文中的下载链接下载，并且提供了转换工具可以很方便的转换成
 				<i class="i">shp</i>、<i class="i">geojson</i>、<i class="i">sql</i>
 				格式、或者导入
 				<i class="i">SQL Server</i>、<i class="i">MySQL</i>
-				数据库，转换工具支持坐标系转换。</li>
+				数据库，转换工具支持坐标系转换；另外：省市区前三级的数据是免费开源的（ok_geo.csv），下载的压缩包内也有提供。</li>
 				
 				<li style="color:green">本数据的易用性很高，一次性即可获得全部数据；假如你是将数据用在echarts map中显示，使用本数据+转换工具可以大幅缩短你的开发时间：前端可以参考在 <a href="geo-echarts.html" target="_blank">线预览中的源码</a> 快速实现echarts map下钻至乡镇级；后端可以使用转换工具几分钟即可将数据导入到数据库，然后根据在线预览中的后端开发建议快速实现边界拉取接口。采用本数据预计半天开发工期即可实现一个echarts map多级下钻功能；如果采用别家的方案，可能拉取全部数据需要1天+，导入数据库要自己解析和编写sql又要1天+，然后前端对接处理转换geojson又需要摸索1天+，综合起来3天+时间；因此选订使用本数据将是一个明智的选择。</li>
 				
 				<li>乡镇这级坐标边界数据免费数据源很难寻找，有些地区官方有提供，但整合很困难。</li>
-				<li>有第三方地图数据公司提供乡镇这级坐标和边界数据，比如：<a rel="nofollow" href="http://www.bigemap.com/">bigemap</a>、<a rel="nofollow" href="http://www.rivermap.cn/">rivermap</a>、<a rel="nofollow" href="http://www.91weitu.com/">91weitu</a>，一分钱一分货，均比较贵，并不清楚他们的数据完整性和准确性如何。</li>
+				<li>有第三方地图数据公司提供乡镇这级坐标和边界数据，比如：<a rel="nofollow" href="http://www.bigemap.com/" target="_blank">bigemap</a>、<a rel="nofollow" href="http://www.rivermap.cn/" target="_blank">rivermap</a>、<a rel="nofollow" href="http://www.91weitu.com/" target="_blank">91weitu</a>，一分钱一分货，均比较贵，并不清楚他们的数据完整性和准确性如何。</li>
 				<li>本数据的来源为：部分从第三方购买，部分从公开的数据源采集；出于商业目的，以上数据源更多信息恕不公开。
 				<li style="color:red">少量无数据源的区县使用此区县的整体范围作为唯一的一个四级子级（cid=301）。</li>
 				<li style="color:red">少量有部分乡镇但不全的区县将留空产生空缺区域。</li>
@@ -326,7 +328,7 @@ img{
 					在城市名前缀输入框中可以通过输入指定的城市前缀来只导出某个城市下的所有乡镇，是通过对 <i class="i">ext_path</i> 字段来进行前缀匹配查找，比如输入： <i class="i">湖北</i> 会导出所有湖北下的乡镇，输入 <i class="i">湖北省 武汉</i> 会导出所有武汉市下的乡镇，输入 <i class="i">湖北省 武汉市 武昌</i> 会导出所有武昌区下的乡镇街道。
 				</div>
 				<div style="margin-top:20px">
-					更多设置请阅读《<a href="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html">AreaCity Geo格式转换工具</a>》文档学习了解详细的工具软件使用教程。
+					更多设置请阅读《<a href="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html" target="_blank">AreaCity Geo格式转换工具</a>》文档学习了解详细的工具软件使用教程。
 				</div>
 				<div class="Center" style="margin-top:20px">
 					<img src="geo-level4/z04.png">
@@ -338,6 +340,10 @@ img{
 				<div>
 					参考上面的工具使用教程文档，配置好数据库连接，然后就点击 <i class="i">导入数据库</i> 按钮，耐心等待一会，<i class="i">ok_geo4_ETD*.csv</i> 中的数据就导入到了数据库了。
 				</div>
+				
+				<div style="margin-top:8px;color:#f60;font-size:13px">注意：MySQL 5.* 中进行空间计算查询时，不带ST_打头的函数均为采用Polygon的外接矩形计算，会导致结果不准确，应当使用带ST_打头的方法来进行查询，<a href="AreaCity-Geo-Transform-Tools.html#badmysql" target="_blank">FAQ</a>。</div>
+					
+				<div style="margin-top:8px;color:#f60;font-size:13px">注意：MySQL的空间索引的创建要按<a href="https://dev.mysql.com/doc/refman/8.0/en/spatial-index-optimization.html" target="_blank">官方文档</a>进行创建，否则很可能会索引失效，从而导致空间查询异常缓慢；或者切换成MyISAM引擎，会比InnoDB引擎的空间查询快很多。</div>
 			</div>
 			
 			<div class="h3">【附】导入 ok_geo.csv 到数据库</div>
@@ -381,7 +387,13 @@ img{
 				<i class="b">数据升级：</i><span style="color:red">购买的数据不支持升级</span>，当有新版本数据发布时，需另外购买，因此用户只能购买指定版本（最新版）的数据，<span style="color:#0b1">老用户可享受折扣优惠</span>（折扣以实际为准）。
 			</div>
 			<div style="margin-top:12px">
-				<i class="b">转换工具：</i>《AreaCity Geo格式转换工具》不是免费的，因此请在赠送的有效期内完成数据的导出转换处理，<span style="color:red">赠送的密钥过期后如果还需导出转换数据，需另外单独购买激活密钥（数据密钥）</span>；<span style="color:#0b1">一般情况下购买数据后应第一时间将数据导出，以免产生密钥过期的问题</span>；在密钥有效期内可以使用软件的所有功能，密钥仅限在购买时提供的指定的ID的电脑上使用。
+				<i class="b">省市区前三级：</i><span style="color:#0b1">省市区前三级数据的是免费开源的</span>，压缩包内ok_geo.csv这个文件，可以到开源库里面下载最新版，获得赠送的工具密钥后可以一次性导出全国的所有省市区3级数据。
+			</div>
+			<div style="margin-top:12px">
+				<i class="b">转换工具：</i>乡镇数据（ok_geo4_*.csv）需要使用《<a href="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html" target="_blank">AreaCity Geo格式转换工具</a>》进行转换导出，因此请在赠送的密钥有效期内完成数据的导出转换处理，把数据导出来后数据密钥的用处就不大了，<span style="color:red">数据密钥过期后如果还需导出转换数据，需另外单独购买工具的激活密钥</span>；<span style="color:#0b1">一般情况下购买数据后应第一时间将数据导出，以免产生密钥过期的问题</span>（建议导出一份geojson或sql纯文本方便自己处理）；在密钥有效期内可以使用软件的所有功能，密钥仅限在购买时提供的指定的ID的电脑上使用。
+			</div>
+			<div style="margin-top:12px">
+				<i class="b" style="color:#04f">如何购买：</i>请先加客服QQ 1251654593，联系客服后付款，提供需要购买的省份城市、和打开转换工具软件后底下显示的ID信息，然后客服给你签发数据密钥，使用此密钥就可以导出对应的数据了。<span style="color:red">请勿通过其他途径购买，以免造成损失。</span>
 			</div>
 		
 			<div class="h3" style="margin-top:60px">购买全部数据</div>
@@ -433,19 +445,12 @@ img{
 				</div>
 			</div>
 			
-			<div class="h3" style="margin-top:60px">如何购买</div>
-			<div class="desc">
-				<div>
-					请先加QQ群： 484560085（口令:areacity），联系群主（即作者）后付款，提供需要购买的省份城市、和打开转换工具软件后显示的ID信息，然后群主给你签发数据密钥，使用此密钥就可以导出对应的数据了。<span style="color:red">请勿通过其他途径购买，以免造成损失。</span>
-				</div>
-			</div>
-			
-			<div style="margin-top:50px;color:#0b1;font-size:22px;">
+			<div style="display:none;margin-top:50px;color:#0b1;font-size:22px;">
 				【活动】新年活动：
 				<div style="margin-top:12px">1. 新年购买数据享 7折 优惠，全部数据优惠价：¥1119 <span style="color:#999;font-size:16px">（<del>原价：¥1599</del>）</span>，按省单独购买优惠价：¥48 <span style="color:#999;font-size:16px">（<del>原价：¥68</del>）</span>，活动截止：2021-03-15；</div>
 				<div style="margin-top:12px">2. 于02月15日之前加入QQ群的用户购买数据享受老版本价格 x 9折，全部数据优惠价：¥898，按省单独购买优惠价 ¥35，活动截止：2021-03-31；</div>
-				<div style="margin-top:12px">3. 已购买过数据的老用户，有更劲爆的折扣，欢迎联系群主获得优惠信息；</div>
-				<div style="margin-top:12px">欢迎有数据需求的新老群组成员前来购买；活动期间有任何问题或建议欢迎和群主反馈。<span style="font-size:16px;color:#999">以上活动按市单独购买均不参与。</span></div>
+				<div style="margin-top:12px">3. 已购买过数据的老用户，有更劲爆的折扣，欢迎联系客服获得优惠信息；</div>
+				<div style="margin-top:12px">欢迎有数据需求的新老群组成员前来购买；活动期间有任何问题或建议欢迎和客服反馈。<span style="font-size:16px;color:#999">以上活动按市单独购买均不参与。</span></div>
 			</div>
 			
 		</div>

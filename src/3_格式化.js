@@ -149,7 +149,7 @@ for(var i=0;i<pinyinList.length;i++){
 	var o=pinyinList[i];
 	
 	//fix issues#2
-	if((o.id+"").indexOf("130225")+1 && /乐[亭安]/.test(o.name)){
+	if((o.id+"").indexOf("130225")==0 && /乐[亭安]/.test(o.name)){
 		o.P&&(o.P=o.P.replace(/le([\s\|]+(?:ting|an))/g,"lao$1"));
 		o.P2&&(o.P2=o.P2.replace(/le([\s\|]+(?:ting|an))/g,"lao$1"));
 		
@@ -163,6 +163,27 @@ for(var i=0;i<pinyinList.length;i++){
 		
 		console.log("人工fix数据", "宕:tan", o.name, o);
 	};
+	//fix QQ 85005150 2021-2-21
+	if(o.id==131025 && /大城县/.test(o.name)){
+		o.P&&(o.P=o.P.replace(/dai/g,"da"));
+		o.P2&&(o.P2=o.P2.replace(/dai/g,"da"));
+	};
+	if(o.id==141024 && /洪洞县/.test(o.name)){
+		o.P&&(o.P=o.P.replace(/dong/g,"tong"));
+		o.P2&&(o.P2=o.P2.replace(/dong/g,"tong"));
+	};
+	if((o.id+"").indexOf("540531")==0 && /浪卡子/.test(o.name)){
+		o.P&&(o.P=o.P.replace(/qia/g,"ka"));
+		o.P2&&(o.P2=o.P2.replace(/qia/g,"ka"));
+	};
+	
+	
+	if(/lve/.test(o.P)){
+		o.P&&(o.P=o.P.replace(/lve/g,"lue"));
+	};
+	if(/lve/.test(o.P2)){
+		o.P2&&(o.P2=o.P2.replace(/lve/g,"lue"));
+	};
 };
 
 
@@ -172,7 +193,7 @@ for(var i=0;i<pinyinList.length;i++){
 	
 	
 	var name=o.name;
-	name=name.replace(/(..)(?:(?:各|汉|满|回|藏|苗|彝|壮|侗|瑶|白|傣|黎|佤|畲|水|土|羌|怒|京)族|(蒙古|维吾尔|布依|土家|哈尼|哈萨克|傈僳|高山|拉祜|东乡|纳西|景颇|柯尔克孜|达斡尔|仫佬|布朗|撒拉|毛南|仡佬|锡伯|阿昌|普米|朝鲜|塔吉克|乌孜别克|俄罗斯|鄂温克|德昂|保安|裕固|塔塔尔|独龙|鄂伦春|赫哲|门巴|珞巴|基诺)族?)+(自治[区州县旗]|(?:民族)?[乡镇])$/g,"$1");
+	name=name.replace(/(..)(?:(?:各|汉|满|回|藏|苗|彝|壮|侗|瑶|白|傣|黎|佤|畲|水|土|羌|怒|京)族|(蒙古|维吾尔|布依|土家|哈尼|哈萨克|傈僳|高山|拉祜|东乡|纳西|景颇|柯尔克孜|达斡尔|仫佬|布朗|撒拉|毛南|仡佬|锡伯|阿昌|普米|朝鲜|塔吉克|乌孜别克|俄罗斯|鄂温克|德昂|保安|裕固|塔塔尔|独龙|鄂伦春|赫哲|门巴|珞巴|基诺)族?)+(自治[区州县旗]|(?:民族)?[区县乡镇])$/g,"$1");
 	
 	name=name.replace(/(自治区|特别行政区)$/ig,"");
 	

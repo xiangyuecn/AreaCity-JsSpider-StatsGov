@@ -42,6 +42,7 @@ https://lbs.amap.com/api/javascript-api/example/district-search/draw-district-bo
 通过下列语句生成geometry对象，polygon有可能是POLYGON，也有可能是MULTIPOLYGON，只能通过运算才能知道正确结果
 全局表##tb_polygon中包含所有的数据，通过id来关联到ok_data数据所在的表（比如把数据update过去）
 ```SQL
+--以下代码已过时，新表已增加字段，本代码未更新，仅供参考
 --drop table ##tb_polygon
 create table ##tb_polygon(
 	id int
@@ -124,10 +125,10 @@ print '分解polygon完成，耗时'+cast(datediff(ms,@startTime,getdate()) as v
 --select * into geoTableName from ##tb_polygon
 
 --********计算上下级之间差异超过1平方公里的数据*********
-drop table #tb1,#tb2;select (LEN(name)-LEN(REPLACE(name,' ',''))) as level,* into #tb1 from ##tb_polygon;select polygon.STArea()*10000 as a1,(select sum(t2.polygon.STArea()) from #tb1 as t2 where t2.level=t1.level+1 and CHARINDEX(t1.name, t2.name)=1)*10000 as a2,* into #tb2 from #tb1 as t1; select Round((a1-a2)/a1*100,2) as '%',a1-a2 as loss,* from #tb2 where level<2 and a1-a2>1 order by [%] desc
+--drop table #tb2;select polygon.STArea()*10000 as a1,(select sum(t2.polygon.STArea()) from 【此处改成你的表名】 as t2 where t2.deep=t1.deep+1 and CHARINDEX(t1.ext_path, t2.ext_path)=1)*10000 as a2,* into #tb2 from 【此处改成你的表名】 as t1; select Round((a1-a2)/a1*100,2) as '%',a1-a2 as loss,* from #tb2 where deep<2 and a1-a2>1 order by [%] desc
 
 
-select id,name,geo.STAsText(),polygon from ##tb_polygon where name not like '% %' or name like '%港澳台%'
+--select id,ext_path,geo.STAsText(),polygon from 【此处改成你的表名】 where ext_path not like '% %' or ext_path like '%港澳台%'
 
 --select id,name,geo.STAsText(),polygon from ##tb_polygon where name like '%广东省%'
 --select id,name,polygon from ##tb_polygon where polygon.STIntersects(geometry::STGeomFromText('POINT(114.044346 22.691963)',0))=1
@@ -164,7 +165,7 @@ function CSVName(name){
 	return '"'+FixTrim(name).replace(/"/g,'""')+'"';
 };
 
-var csv=["id,ext_path,geo,polygon"];
+var csv=["id,pid,deep,name,ext_path,geo,polygon"];
 for(var k=0;k<DATA_GEO.length;k++){
 	var o=DATA_GEO[k];
 	console.log(k,o.ext_path);
@@ -198,7 +199,8 @@ for(var k=0;k<DATA_GEO.length;k++){
 		break;
 	};
 	
-	csv.push(o.id+","+CSVName(o.ext_path)
+	csv.push(o.id+","+o.pid+","+o.deep
+		+","+CSVName(o.name)+","+CSVName(o.ext_path)
 		+","+CSVName(o.geo)+","+CSVName(polygon));
 };
 csv.push("");

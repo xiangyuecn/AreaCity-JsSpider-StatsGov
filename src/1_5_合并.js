@@ -36,7 +36,7 @@ var fixQQmapSplit={
 };
 //和高德数据对比前移除qq的数据
 var fixQQmapRemoveBeforeAmp={
-	350605:{name: "长泰区",level:3}//新调整的区划 qq滞后直接删除，使用高德的
+	//350605:{name: "长泰区",level:3}//新调整的区划 qq滞后直接删除，使用高德的
 };
 //和高德数据对比前qq添加统计局的数据
 var fixQQmapAddGovBeforeAmp={
@@ -62,9 +62,13 @@ var fixQQmapReplaceFill={
 	,460499:{name:"儋州市",childReplace:true}
 	,620299:{name:"嘉峪关市",childReplace:true} //统计局嘉峪关还有一个市辖区，上面三个没有
 	
-	//,340203:{name:"弋江区",level:3,replaceAs:{codePrefix:"340209",name:"弋江区"}}
-	//,340221:{name:"湾沚区",level:3,replaceAs:{codePrefix:"340210",name:"湾沚区"}}
-	//,340222:{name:"繁昌区",level:3,replaceAs:{codePrefix:"340211",name:"繁昌区"}}
+	//qq编号名称有问题的，直接替换掉当前级和下级编号，一般新的为高德的
+	,350403:{name:"三元区",level:3,replaceAs:{codePrefix:"350404",name:"三元区"}}
+	,350427:{name:"沙县区",level:3,replaceAs:{codePrefix:"350405",name:"沙县区"}}
+	,350681:{name:"龙海区",level:3,replaceAs:{codePrefix:"350604",name:"龙海区"}}
+	,410306:{name:"孟津区",level:3,replaceAs:{codePrefix:"410308",name:"孟津区"}}
+	,410381:{name:"偃师区",level:3,replaceAs:{codePrefix:"410307",name:"偃师区"}}
+	,520522:{name:"黔西市",level:3,replaceAs:{codePrefix:"520581",name:"黔西市"}}
 		
 	
 	//添加明确缺失的子级
@@ -113,7 +117,7 @@ var amapDifference={
 	,460302:{lostName:"南沙区",lostAdd:true}//新设区
 	
 	//,320613: {lostName: "崇川区",lostAdd:true}//新调整的区划 qq滞后，使用高德的
-	,350625:{lostName:"长泰区",lostAdd:true}//新调整的区划 qq滞后，使用高德的
+	//,350625:{lostName:"长泰区",lostAdd:true}//新调整的区划 qq滞后，使用高德的
 };
 
 
@@ -139,35 +143,38 @@ var gov3Difference={
 	,152571:{lostName:"乌拉盖管委会"} //前三级中唯一的一个管委会，目测是开发区管理区之类的
 	,411471:{lostName:"豫东综合物流产业聚集区"}//目测是开发区管理区之类的
 	
-	,320611:{lostName:"港闸区"} //已被合并到其他新区
-	,340208:{lostName:"三山区"} 
-	,632321:{lostName:"同仁县"} 
-	,340221:{lostName:"芜湖县"} 
-	,340222:{lostName:"繁昌县"} 
-	,350402:{lostName:"梅列区"} 
-	,320684:{lostName: "海门市"}
-	,330103:{lostName: "下城区"}
-	,330104:{lostName: "江干区"}
-	,410322:{lostName: "孟津县"}
-	,421023:{lostName: "监利县"}
-	,520221:{lostName: "水城县"}
-	
 	,460321:{lostName:"西沙群岛"} //下面新出的导致丢失
 	,460322:{lostName:"南沙群岛"}
 	,460323:{lostName:"中沙群岛的岛礁及其海域"}
-		
+	
+	,350403:{lostName:"三元区"} //已被合并到其他新区
+	,320611:{lostName:"港闸区"}
+	,320684:{lostName:"海门市"}
+	,330103:{lostName:"下城区"}
+	,330104:{lostName:"江干区"}
+	,340208:{lostName:"三山区"}
+	,340221:{lostName:"芜湖县"}
+	,340222:{lostName:"繁昌县"}
+	,350402:{lostName:"梅列区"}
+	,350427:{lostName:"沙县"}
+	,350625:{lostName:"长泰县"}
+	,350681:{lostName:"龙海市"}
+	,410306:{lostName:"吉利区"}
+	,410322:{lostName:"孟津县"}
+	,410381:{lostName:"偃师市"}
+	,421023:{lostName:"监利县"}
+	,520221:{lostName:"水城县"}
+	,520522:{lostName:"黔西县"}
+	,632321:{lostName:"同仁县"}
+
 	
 	//MCA和qq名称称相同但id不同的，但qq和高德相同，暂采用qq和高德的便于数据处理
 	//,0:{name:"",asID:00}
 	
 	//MCA和qq id相同，但名称不同的，这里明确取qq的名称
-	,350681:{name:"龙海区",useQQ:true}
-	,410306:{name:"孟津区",useQQ:true}
-	,410381:{name:"偃师区",useQQ:true}
 	,431121:{name:"祁阳市",useQQ:true}
 	,450127:{name:"横州市",useQQ:true}
 	,513425:{name:"会理市",useQQ:true}
-	,520522:{name:"黔西市",useQQ:true}
 	,532331:{name:"禄丰市",useQQ:true}
 	,610322:{name:"凤翔区",useQQ:true}
 	,610928:{name:"旬阳市",useQQ:true}
@@ -175,10 +182,18 @@ var gov3Difference={
 	
 	
 	//MAC没有的，但是是新出的
-	,460301:{name:"西沙区",keep:true}
-	,460302:{name:"南沙区",keep:true}
 	,330113:{name:"临平区",keep:true}
 	,330114:{name:"钱塘区",keep:true}
+	,350404:{name:"三元区",keep:true}
+	,350405:{name:"沙县区",keep:true}
+	,350605:{name:"长泰区",keep:true}
+	,350604:{name:"龙海区",keep:true}
+	,410308:{name:"孟津区",keep:true}
+	,410307:{name:"偃师区",keep:true}
+	,460301:{name:"西沙区",keep:true}
+	,460302:{name:"南沙区",keep:true}
+	,520581:{name:"黔西市",keep:true}
+
 };
 
 
@@ -1095,7 +1110,7 @@ for(var j=0;j<analysis_QQLost.length;j++){
 	for(var i=0;i<analysis_searchMatchs.length;i++){
 		if(analysis_QQLost[j].code==analysis_searchMatchs[i].gov.code){
 			analysis_QQLost.splice(j,1);
-			j--;
+			j--;break;
 		};
 	};
 };

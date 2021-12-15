@@ -2,20 +2,20 @@
 
 # :open_book:省市区数据采集并标注拼音、坐标和边界范围
 
-- [【在线测试和预览】省市区镇四级数据](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/)：支持在线生成JSON、多级联动js；
+- [【在线测试和预览】省市区镇四级行政区划数据](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/)：支持在线生成JSON、多级联动js；
 - [【在线测试和预览】ECharts Map四级下钻在线测试和预览+代码生成](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-echarts.html)：坐标边界范围在线测试和预览；
 - [【转换工具】AreaCity-Geo格式转换工具软件](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html)：csv文件导入数据库，坐标、边界范围转换（支持转成`sql`、`shp`、`geojson`）。
 
 
 ## 数据下载
 
-当前最新版数据在 **src文件夹** 内，此数据发布于`统计局2020-11-06`、`民政部2021-05-10`、`腾讯地图行政区划2021-09-02`、`高德地图行政区划采集当天`。
+当前最新版数据在 **src文件夹** 内，此数据发布于`统计局2020-11-06`、`民政部2021-05-10`、`腾讯地图行政区划2021-11-03`、`高德地图行政区划采集当天`。
 
 可在 [GitHub Releases](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases) 中下载最新发布数据文件，也可直接打开 `src/采集到的数据` 文件夹内的文件来使用。
 
 如果无法打开GitHub或者下载缓慢可以通过 [Gitee Pages外链](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/download.html) 来下载：
-- [【下载】省市区 三级数据](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_data_level3.csv) ： /src/采集到的数据/ok_data_level3.csv ；
--  [【下载】省市区镇 四级数据](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_data_level4.csv) ： /src/采集到的数据/ok_data_level4.csv (3M+大小) ；
+- [【下载】省市区 三级行政区划数据](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_data_level3.csv) ： /src/采集到的数据/ok_data_level3.csv ；
+-  [【下载】省市区镇 四级行政区划数据](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_data_level4.csv) ： /src/采集到的数据/ok_data_level4.csv (3M+大小) ；
 - [【下载】【GEO三级】省市区 坐标和边界 数据下载](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_geo.csv.7z) ： /src/采集到的数据/ok_geo.csv.7z (解压后130M+) ；
 - [【下载】【GEO四级】乡镇 坐标和边界 数据下载](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-level4.html) [AD]： 乡镇第4级坐标边界数据 ok_geo4_*.csv，为付费数据 （广告、闭源） 。
 
@@ -70,7 +70,7 @@ chrome 控制台，`Chrome 41`这版本蛮好，win7能用，`Chrome 46`这版�
 
 ## 采集深度
 
-- 2020.210510.0902版(2021)采集了4层，省、市、区、镇，来源：[统计局2020版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2020/index.html)；省市区3级合并了[民政部2021-05-10数据](http://www.mca.gov.cn/article/sj/xzqh/1980/202105/20210500033655.shtml)、[高德地图行政区域](https://lbs.amap.com/api/webservice/guide/api/district)、[腾讯地图行政区划v20210902](https://lbs.qq.com/webservice_v1/guide-region.html)数据；镇级采用腾讯地图行政区划作为主要数据，综合高德和统计局的镇级。采集高德省市区三级坐标和行政区域边界范围。
+- 2020.210510.1103版(2021)采集了4层，省、市、区、镇，来源：[统计局2020版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2020/index.html)；省市区3级合并了[民政部2021-05-10数据](http://www.mca.gov.cn/article/sj/xzqh/1980/202105/20210500033655.shtml)、[高德地图行政区域](https://lbs.amap.com/api/webservice/guide/api/district)、[腾讯地图行政区划v20211103](https://lbs.qq.com/webservice_v1/guide-region.html)数据；镇级采用腾讯地图行政区划作为主要数据，综合高德和统计局的镇级。采集高德省市区三级坐标和行政区域边界范围。
 - 2020.201120.0814版(2020)采集了4层，省、市、区、镇，来源：[统计局2020版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2020/index.html)；省市区3级合并了[民政部2020-11-20数据](http://www.mca.gov.cn/article/sj/xzqh/2020/202011/20201100030582.shtml)、[高德地图行政区域](https://lbs.amap.com/api/webservice/guide/api/district)、[腾讯地图行政区划v20200814](https://lbs.qq.com/webservice_v1/guide-region.html)数据；镇级采用腾讯地图行政区划作为主要数据，综合高德和统计局的镇级。采集高德省市区三级坐标和行政区域边界范围。
 - 2019.200925.0814版(2020)采集了4层，省、市、区、镇，来源：[统计局2019版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2019/index.html)；省市区3级合并了[民政部2020-09-25数据](http://www.mca.gov.cn/article/sj/xzqh/2020/2020/2020092500801.html)、[高德地图行政区域](https://lbs.amap.com/api/webservice/guide/api/district)、[腾讯地图行政区划v20200814](https://lbs.qq.com/webservice_v1/guide-region.html)数据；镇级采用腾讯地图行政区划作为主要数据，综合高德和统计局的镇级。采集高德省市区三级坐标和行政区域边界范围。
 - 2018版(2019)采集了4层，省、市、区、镇，来源：[统计局2018版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2018/index.html)；省市区3级额外合并了[民政部2019-08-27数据](http://www.mca.gov.cn/article/sj/xzqh/2019/201908/201908271607.html)。采集高德省市区三级坐标和行政区域边界范围。
@@ -244,13 +244,15 @@ polygon|string|行政区域边界，高德地图`GCJ-02`火星坐标系。格式
 
 9. 省市区三级的坐标和行政区域边界范围数据从高德采集，省市区总计3300+条数据，少部分城市未采集到数据（仅台湾的城市、国外）。关于未获取到坐标或边界的城市，本采集方案采取不处理策略，空着就空着，覆盖主要城市和主要人群，未覆盖区域实际使用过程中应该进行降级等处理。比如：尽最大可能的根据用户坐标来确定用户所在城市，因为存在没有边界信息的区域，未匹配到的应使用ip等城市识别方法。得到的【坐标和边界】 = 【高德地图数据】。
 
-10. 参考链接：[统计用区划代码和城乡划分代码编制规则](http://www.stats.gov.cn/tjsj/tjbz/200911/t20091125_8667.html)，[民政部发布的行政区划代码](http://www.mca.gov.cn/article/sj/xzqh/)。
+10. 数据中不包含大部分[行政管理区](https://baike.baidu.com/item/%E8%A1%8C%E6%94%BF%E7%AE%A1%E7%90%86%E5%8C%BA/17184852)，比如：雄安新区、天府新区、苏州工业园区等。
+
+11. 参考链接：[行政区划](https://baike.baidu.com/item/%E8%A1%8C%E6%94%BF%E5%8C%BA%E5%88%92/4655526)，[统计用区划代码和城乡划分代码编制规则](http://www.stats.gov.cn/tjsj/tjbz/200911/t20091125_8667.html)，[民政部发布的行政区划代码](http://www.mca.gov.cn/article/sj/xzqh/)。
 
 
 ## 为什么不直接用统计局的数据
 
 1. 存在滞后，更新没有民政部和其他数据源频繁，新采集却是老数据，并且明知道存在新数据，强迫症又要犯了。
-2. 统计局的数据比较齐全但是比较杂，靠一个人来分开整理几乎不可能；比如：统计局数据包含了160多个经济区、开发区，这种区划应该算专门的区域，一般由多个城市的区域组成，在区级内算是重复的区域，因此需要剔除，但剔除后这些区域下面的镇级需要划分到实际的归属城市下面，这就很困难了，因为量太大了，一个个去查归属地几乎不可能。
+2. 统计局的数据比较齐全但是比较杂，靠一个人来分开整理几乎不可能；比如：统计局数据包含了160多个经济区、开发区，这种区划应该算专门的区域（[行政管理区](https://baike.baidu.com/item/%E8%A1%8C%E6%94%BF%E7%AE%A1%E7%90%86%E5%8C%BA/17184852)），一般由多个城市的区域组成，在区级内算是重复的区域，因此需要剔除，但剔除后这些区域下面的镇级需要划分到实际的归属城市下面，这就很困难了，因为量太大了，一个个去查归属地几乎不可能。
 3. 统计局的数据也存在缺失数据，如：港澳台、昆玉市、双河市。
 4. 其他平台的数据在感官上显得都[不够完美](https://v2ex.com/t/607306)，综合一下舒畅多了。
 

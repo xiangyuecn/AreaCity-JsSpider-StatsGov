@@ -150,8 +150,12 @@ img{
 					<li><a href="#sy-db">ok_geo.csv坐标边界 导入数据库</a></li>
 					
 					<li style="margin-top:8px">
-						<a href="#sy-city-sql">ok_data_level*.csv省市区镇 转成sql文件</a></li>
-					<li><a href="#sy-city-db">ok_data_level*.csv省市区镇 导入数据库</a></li>
+						<a href="#sy-city-sql">行政区划 ok_data_level*.csv省市区镇 转成sql文件</a></li>
+					<li><a href="#sy-city-db">行政区划 ok_data_level*.csv省市区镇 导入数据库</a></li>
+					
+					<li style="margin-top:8px">
+						<a href="#sy-geojson-split">GeoJSON 按省市区将下级拆分到多个文件</a></li>
+					<li><a href="#sy-geojson-merge">GeoJSON 多个文件合并成一个文件</a></li>
 					
 					<li style="margin-top:8px">
 						<a href="#sy-user-var">用户自定义控制参数</a></li>
@@ -171,11 +175,11 @@ img{
 			
 			或者直接导入数据库：<i class="i">SQL Server</i>、<i class="i">MySQL</i>。
 			
-			支持处理<a href="#xz-csv">ok_geo4_*.csv</a>乡镇第四级数据（付费数据）；
+			支持处理<a href="#xz-csv">ok_geo4_*.csv</a>乡镇第四级坐标边界数据（付费数据）；
 			
 			也提供将
 			<a href="#xz-csv">ok_data_level*.csv</a>
-			3级或4级 省市区镇 数据导入数据库功能。
+			3级或4级 省市区镇 行政区划数据导入数据库功能。
 		</p>
 		<div class="Center">
 			<img src="AGT-Images/a0.png">
@@ -192,11 +196,13 @@ img{
 				<li>将 ok_geo.csv坐标边界 转成 SQL (<i class="i">.sql</i>) 文件，支持SQL Server、MySQL数据库格式。</li>
 				<li>将 ok_geo.csv坐标边界 导入 SQL Server 2008+ 数据库。</li>
 				<li>将 ok_geo.csv坐标边界 导入 MySQL 5.0+ 数据库。</li>
-				<li>支持将 ok_data_level*.csv省市区镇 转成 SQL 文件、导入 数据库；可同时将坐标、边界范围附加到同一表中。</li>
+				<li>支持将 ok_data_level*.csv省市区镇行政区划 转成 SQL 文件、导入 数据库；可同时将坐标、边界范围附加到同一表中。</li>
 				<li>支持限定导出数据级别，比如只导出全国所有市级数据，默认导出全部级别数据。</li>
 				<li>支持限定导出指定城市的数据，比如只导出湖北的所有城市，默认导出全国所有数据。</li>
 				<li>支持限定导出数据内容，比如可以只导出坐标或边界范围，默认两个都导出。</li>
+				<li>支持坐标系转换，ok_geo默认为GCJ-02火星坐标系，支持转换成：BD-09、WGS-84 GPS、CGCS2000。</li>
 				<li>自动校验坐标和边界矢量数据的有效性。</li>
+				<li>可执行自定义 JavaScript 脚本，可扩展出丰富功能。</li>
 				<li>转换精度高，速度快，内存占用小，3-5分钟左右可转换完所有数据。</li>
 				<li>支持Win10、Win8、Win7，32位、64位系统使用（其他系统装虚拟机可用）。</li>
 			</ul>
@@ -210,13 +216,12 @@ img{
 				<div>
 					<i class="b">已带GDAL组件</i> (15MB+)：
 						[ <a href="#xzqq">QQ群内下载</a> ]
-						、[ <a href="https://pan.baidu.com/s/14LsvF_PuPOEiOXgGAWI20w" target="_blank">百度网盘下载</a> 提取码: b6ct]
+						、[ <a href="https://pan.baidu.com/s/14LsvF_PuPOEiOXgGAWI20w?pwd=b6ct" target="_blank">百度网盘下载</a> 提取码: b6ct]
 				</div>
 				<div style="margin-top:20px">
 					<i class="b">不带GDAL组件</i> (700KB+)：
 						[ <a href="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/AreaCity-Geo格式转换工具.zip" target="_blank">前往GitHub下载</a> ]
-						、[ <a href="#xzqq">QQ群内下载</a> ]
-						、[ <a href="https://pan.baidu.com/s/14LsvF_PuPOEiOXgGAWI20w" target="_blank">百度网盘下载</a> 提取码: b6ct]
+						、[ <a href="https://pan.baidu.com/s/14LsvF_PuPOEiOXgGAWI20w?pwd=b6ct" target="_blank">百度网盘下载</a> 提取码: b6ct]
 					<div style="color:#f60;font-size:12px">由于GDAL组件偏大，影响GitHub存放和下载，因此此包删除了此组件，启动时会提示你到 GISInternals 下载GDAL组件，参考下面安装教程。</div>
 				</div>
 			</div>
@@ -226,8 +231,8 @@ img{
 				
 				<div>
 					<i class="b"><span style="color:#fa0">[付费]【GEO四级】</span>乡镇 坐标+边界范围</i>
-					(ok_geo4_*.csv，140MB+压缩包 含数据350M+)：[ <a href="#xzqq">QQ群内下载</a> ]
-					、[ <a href="https://pan.baidu.com/s/14LsvF_PuPOEiOXgGAWI20w" target="_blank">百度网盘下载</a> 提取码: b6ct 进入到 <i class="i">AreaCity Geo格式转换工具/乡镇第4级坐标边界数据</i> 目录内下载]
+					(ok_geo4_*.csv，90MB+压缩包 导出后300M+)：[ <a href="#xzqq">QQ群内下载</a> ]
+					、[ <a href="https://pan.baidu.com/s/14LsvF_PuPOEiOXgGAWI20w?pwd=b6ct" target="_blank">百度网盘下载</a> 提取码: b6ct 进入到 <i class="i">AreaCity Geo格式转换工具/乡镇第4级坐标边界数据</i> 目录内下载]
 					<span style="color:#fa0">乡镇第4级坐标边界数据为付费数据，压缩包内提供了部分数据供免费体验，其他乡镇第4级坐标边界数据需 [ <a href="geo-level4.html" target="_blank">付费购买</a> ] 。</span>
 					小提示：压缩包内已包含下面三个免费数据。
 				</div>
@@ -238,15 +243,22 @@ img{
 				</div>
 				
 				<div style="margin-top:20px">
-					<i class="b"><span style="color:#0b1">[免费]【四级】</span>省市区镇  4级数据</i>
+					<i class="b"><span style="color:#0b1">[免费]【四级】</span>省市区镇  4级行政区划数据</i>
 					(ok_data_level4.csv，3MB+)：[ <a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases" target="_blank">前往GitHub下载</a> ] 请下载 Releases 页面最新版本中的 <i class="i">ok_data_level4.csv</i> 文件 。
 				</div>
 				
 				<div style="margin-top:20px">
-					<i class="b"><span style="color:#0b1">[免费]【三级】</span>省市区 3级数据</i>
+					<i class="b"><span style="color:#0b1">[免费]【三级】</span>省市区 3级行政区划数据</i>
 					(ok_data_level3.csv，200KB+)：[ <a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases" target="_blank">前往GitHub下载</a> ] 请下载 Releases 页面最新版本中的 <i class="i">ok_data_level3.csv</i> 文件 。
 				</div>
 				
+			</div>
+			
+			<div class="h3" style="margin-top:60px">数据版本</div>
+			<div class="desc">
+				<div class="geoVerDateView"></div>
+				<script src="csv-ver-date.js"></script>
+				<script>document.querySelector(".geoVerDateView").innerHTML=CsvPubDate.TableHTML({level4:true,geo:true,geo4:true});</script>
 			</div>
 		</div>
 		
@@ -340,7 +352,7 @@ img{
 						</div>
 						
 						<div style="margin-top:20px">
-							4. 不出意外，操作完成后 ArcMap 内已显示出边界图形和坐标
+							4. 不出意外，操作完成后 ArcMap 内已显示出边界图形和坐标；提示：polygon图层数据中额外会包含geo_wkt字段，为中心坐标的wkt格式文本（存在：POINT(123.45 45.678)、POINT EMPTY 两种），坐标值和geo图层中的值一致
 						</div>
 					</div>
 					
@@ -373,7 +385,7 @@ img{
 							2. 点击左上角的“Open”，点击“File”，分两次选择刚才转换生成的两个文件（注意你导出的数据量不应太大，比如只导出某个城市下面的区，这样文件就比较小方便浏览器上查看测试）
 						</div>
 						<div style="margin-top:20px">
-							3. 不出意外，选择完成后地图上已经显示出边界图形和坐标
+							3. 不出意外，选择完成后地图上已经显示出边界图形和坐标；提示：Polygon文件数据中额外会包含geo_wkt字段，为中心坐标的wkt格式文本（存在：POINT(123.45 45.678)、POINT EMPTY 两种），坐标值和Geo文件中的值一致
 						</div>
 					</div>
 					
@@ -471,11 +483,11 @@ select id,ext_path,polygon from 【此处改成你的表名】 where where ST_In
 			</div>
 			
 			
-			<div class="h3">ok_data_level*.csv省市区镇 转成sql文件<a name="sy-city-sql"></a></div>
+			<div class="h3">行政区划 ok_data_level*.csv省市区镇 转成sql文件<a name="sy-city-sql"></a></div>
 			<div class="desc">
 				<div>
 					<i class="b">步骤一、</i>
-					点击“高级>>”按钮展开高级自定义脚本，在内置脚本下拉框中选择“省市区镇 转成sql”。
+					点击“高级>>”按钮展开高级自定义脚本，在内置脚本下拉框中选择“ok_data_level*.csv 省市区镇转sql”，然后点击应用。
 					
 					<p>点击上方的“通用-选择文件”按钮选择 <a href="#xz-csv">ok_data_level3.csv</a> 或 <a href="#xz-csv">ok_data_level4.csv</a> 文件；如果你还没有准备此文件，请到GitHub Releases 页面中下载然后解压，参考上面的数据下载。</p>
 				</div>
@@ -501,7 +513,7 @@ select id,ext_path,polygon from 【此处改成你的表名】 where where ST_In
 			</div>
 			
 			
-			<div class="h3">ok_data_level*.csv省市区镇 导入数据库<a name="sy-city-db"></a></div>
+			<div class="h3">行政区划 ok_data_level*.csv省市区镇 导入数据库<a name="sy-city-db"></a></div>
 			<div class="desc">
 				<div>
 					<i class="b">步骤一、步骤二、</i>
@@ -518,6 +530,57 @@ select id,ext_path,polygon from 【此处改成你的表名】 where where ST_In
 			</div>
 			
 			
+			<div class="h3">GeoJSON 按省市区将下级拆分到多个文件<a name="sy-geojson-split"></a></div>
+			<div class="desc">
+				<p>本拆分功能用于将一个大的 geojson 文件，根据pid、ext_path字段自动拆分成单独的小文件，子级数据默认会放在父级id命名的文件夹内。</p>
+				<p>全部数据将会拆分出：一个仅包含所有省份的文件；每个省份各一个文件，内容为此省份所有的市；每个市各一个文件，内容为此市所有的区县；每个区县各一个文件，内容为此区县所有的乡镇。</p>
+				
+				<div>
+					<i class="b">步骤一、</i>
+					点击“高级>>”按钮展开高级自定义脚本，在内置脚本下拉框中选择“GeoJSON 按省市区将下级拆分到多个文件”，然后点击应用。
+				</div>
+				<div style="margin-top:20px">
+					<i class="b">步骤二、</i>
+					点击上方的“通用-选择文件”按钮，选择待拆分的geojson文件。
+				</div>
+				<div style="margin-top:20px">
+					<i class="b">步骤三、</i>
+					点击高级自定义脚本界面中的“开始拆分”按钮，耐心等待拆分完成，拆分完成后，生成的文件保存在选择的文件同一目录内的新建文件夹中。
+					
+					<div class="Center">
+						<img src="AGT-Images/sy-7.png">
+					</div>
+				</div>
+			</div>
+			
+			
+			<div class="h3">GeoJSON 多个文件合并成一个文件<a name="sy-geojson-merge"></a></div>
+			<div class="desc">
+				<p>本合并功能用于将多个小的geojson 文件合并成一个大的，比如将多个城市零散的小geojson文件合并成一个大的文件。</p>
+				
+				<div>
+					<i class="b">步骤一、</i>
+					点击“高级>>”按钮展开高级自定义脚本，在内置脚本下拉框中选择“GeoJSON 多个文件合并成一个文件”，然后点击应用。
+				</div>
+				<div style="margin-top:20px">
+					<i class="b">步骤二、</i>
+					将待合并的多个GeoJSON文件放到一个文件夹内，允许有子目录。
+				</div>
+				<div style="margin-top:20px">
+					<i class="b">步骤三、</i>
+					点击上方的“通用-选择文件夹”按钮，选择上一步这个文件夹。
+				</div>
+				<div style="margin-top:20px">
+					<i class="b">步骤四、</i>
+					点击高级自定义脚本界面中的“开始合并”按钮，耐心等待合并完成，合并完成后，生成的文件和选择的文件夹在同一目录。
+					
+					<div class="Center">
+						<img src="AGT-Images/sy-8.png">
+					</div>
+				</div>
+			</div>
+			
+			
 			<div class="h3">用户自定义控制参数<a name="sy-user-var"></a></div>
 			<div class="desc">
 				<p>用户自定义控制参数用来改变软件的某些运行行为，可通过修改storage.json（需重启软件）、高级自定义脚本中的AppCmds.setConfig(key,value)（大部分设置立即生效）两个手段来定义参数，可用参数参考以下列表。</p>
@@ -526,7 +589,7 @@ select id,ext_path,polygon from 【此处改成你的表名】 where where ST_In
 					<li><i class="b">User_WebviewSettingsUrl</i>：更换“高级自定义脚本”启动时打开的页面地址，需重启软件生效，默认地址为github.io|gitee.io地址，如果你的网络访问github|gitee缓慢，可以切换到其他可用源（如：github clone后的本地文件路径：<i class="i">file:///你路径/assets/AGT/WebviewSettings.html</i>）。</li>
 					
 					<li><i class="b">User_Spatial_GeogCS_WKT</i>：设置shp、geojson文件内的坐标系信息wkt格式，默认值为WGS84坐标系：<i class="i">GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433],AUTHORITY["EPSG",4326]]</i>，比如你要shp文件内的坐标系为CGCS2000，可以设置为此值：<i class="i">GEOGCS["GCS_China_Geodetic_Coordinate_System_2000",DATUM["D_China_2000",SPHEROID["CGCS2000",6378137.0,298.257222101]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433],AUTHORITY["EPSG",4490]]</i>；
-					更多坐标系的wkt值可自行搜索，或用ArcMap中的 Layers右键属性 -> Coordinate System点开后查看列表，找到需要的坐标系然后右键另存为即可得到wkt文本；注意：修改此值并不会转换ok_geo.csv的GCJ-02坐标到指定的坐标系，需要自行通过高级自定义脚本转换坐标的坐标系。</li>
+					更多坐标系的wkt值可自行搜索，或用ArcMap中的 Layers右键属性 -> Coordinate System点开后查看列表，找到需要的坐标系然后右键另存为即可得到wkt文本，或用SQL Server查询<i class="i">select * from sys.spatial_reference_systems</i>的well_known_text字段；注意：修改此值并不会转换ok_geo.csv的GCJ-02坐标到指定的坐标系，需要自行通过高级自定义脚本转换坐标的坐标系。</li>
 				</ul>
 			</div>
 			
@@ -611,7 +674,7 @@ select id,ext_path,polygon from 【此处改成你的表名】 where where ST_In
 						<td class="right">价格</td>
 						<td style="color:#999;">免费</td>
 						<td style="font-size:32px;color:#04f;">¥29</td>
-						<td style="font-size:32px;color:#04f;">¥289</td>
+						<td style="font-size:32px;color:#04f;">¥298</td>
 						<td style="color:#999;">不售</td>
 					</tr>
 					<tr>
@@ -631,10 +694,10 @@ select id,ext_path,polygon from 【此处改成你的表名】 where where ST_In
 				<div style="margin-top:6px">[3] 批量许可签发的密钥有效期为30天，许可有效期内可联系客服续签新密钥，新密钥拥有老密钥同等效力。</div>
 				<div style="margin-top:6px">[4] 技术指导为一对一指导，单次服务最长时间为1小时；服务期间可提供软件功能范围内的：软件使用教学、数据导出配置方案；软件功能范围外的需求：如功能定制、特殊数据处理，根据需求复杂度和需要花费的预估时间，协商解决，如果需要的时间超出总的指导机会时间，需另付费。</div>
 				
-				<div style="display:none;margin-top:50px;color:#0b1;font-size:22px;">
+				<div style="margin-top:50px;color:#0b1;font-size:22px;">
 					【活动】新年活动：
-					<div style="margin-top:12px">1. QQ群内提供一套批量许可密钥，许可有效期到：2021-02-28，有效期内无限制使用，有格式转换需求的新老群组成员欢迎体验；</div>
-					<div style="margin-top:12px">2. 购买单机许可激活密钥享 7折 优惠，活动优惠价：¥199 <span style="color:#999;font-size:16px">（<del>原价：¥289</del>）</span>，活动截止：2021-03-15；</div>
+					<div style="margin-top:12px">1. QQ群内提供一套批量许可密钥，许可有效期到：2022-02-28，有效期内无限制使用，有格式转换需求的新老群组成员欢迎体验；</div>
+					<div style="margin-top:12px">2. 购买单机许可激活密钥享 7折 优惠，活动优惠价：¥199 <span style="color:#999;font-size:16px">（<del>原价：¥298</del>）</span>，活动截止：2022-03-31；</div>
 					<div style="margin-top:12px">活动期间有任何问题或建议欢迎和客服反馈。</div>
 				</div>
 			</div>

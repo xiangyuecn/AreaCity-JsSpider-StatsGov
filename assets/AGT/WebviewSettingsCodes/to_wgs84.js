@@ -1,5 +1,5 @@
 /******************
-《【插件】GCJ-02 转成 WGS-84 GPS 谷歌地图坐标【误差约10米内】》
+《【插件】GCJ-02 转成 WGS-84 GPS 谷歌地图坐标（≈CGCS2000 天地图）【误差约10米内】》
 作者：高坚果
 时间：2020-05-30 23:39:53
 
@@ -9,6 +9,8 @@ ok_geo.csv中的数据是GCJ-02坐标系坐标，GCJ-02(火星坐标)是在WGS-8
 
 转换算法来自 https://www.oschina.net/code/snippet_260395_39205
 
+注：CGCS2000坐标系和GPS坐标之间的误差小到可以忽略，因此转成GPS坐标后（误差已经是米级）直接当成CGCS2000坐标来使用也是可行的，参考：https://www.zhihu.com/question/35775670。
+
 注：上面这个来源是我早年搜索到并采用的一个转换方法，编写本代码时，重新找了一遍看看是否有更准确的算法，但翻阅了多篇博客、GitHub库(coordtransform)，虽然有各种语言，但说不上大同小异，是完全一样，囧。
 
 为什么GCJ-02反解出WGS-84很困难？这就是“SM模组”(“保密插件”)72行代码设计精巧之处，参考下方的transformLat、transformLon加偏算法这两个很长的多项式，就算已知加偏算法公式，求它的反函数是非常困难的，目前只能通过二分法来逼近求解，参考：https://www.zhihu.com/question/29806566
@@ -17,7 +19,7 @@ ok_geo.csv中的数据是GCJ-02坐标系坐标，GCJ-02(火星坐标)是在WGS-8
 
 /*********实现转换接口给软件调用*********/
 Runtime.AppCalls.translateGeoEnable=function(){
-	return "【插件】GCJ-02 转成 WGS-84 GPS 谷歌地图坐标【误差约10米内】";
+	return "【插件】GCJ-02 转成 WGS-84 GPS 谷歌地图坐标（≈CGCS2000 天地图）【误差约10米内】";
 };
 Runtime.AppCalls.translateGeos=function(geosStr){
 	var points=geosStr.split(",");
@@ -121,6 +123,22 @@ Runtime.Ctrls([
 ]);
 
 window.wgs84Test=function(){
+	//https://github.com/Artoria2e5/PRCoords/blob/master/js/PRCoords.js 另一种算法
+	/*test_translateGeos.randomTest(3,10000,function(lng,lat){
+		var o=PRCoords.wgs_gcj({lon: lng,lat:lat});
+		return {lng:o.lon,lat:o.lat}
+	},function(lng,lat){
+		var o=PRCoords.gcj_wgs({lon: lng,lat:lat});
+		return {lng:o.lon,lat:o.lat}
+	});*/
+	test_translateGeos.randomTest(3,10000,function(lng,lat){
+		var o=gcj_encrypt(lat,lng);
+		return {lng:o.lon,lat:o.lat}
+	},function(lng,lat){
+		var o=gcj_decrypt(lng,lat);
+		return {lng:o.lon,lat:o.lat}
+	});
+	
 	test_translateGeos("WGS84");
 };
 

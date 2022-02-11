@@ -567,6 +567,7 @@ function log(html,err){
 	el(".AreaFormatResult").innerHTML=`<div style="${err?'color:red':''}">`+html+'</div>';
 };
 window.FormatLog=log;
+var isIndex=window.PageIsRootIndex;
 
 var bodyHtml=`
 <style>
@@ -588,10 +589,11 @@ body{
 	margin:8px 0;
 }
 a{text-decoration: none;}
-.GitHub a{color:#fff}
+.AreaFormatA a{color:#fb0}
+.AreaFormatA a:hover{color:#f00}
 
 .AreaFormat_Title{
-	line-height: 80px;
+	padding: 40px 0 10px;
 	font-size: 40px;
 	text-align: center;
 }
@@ -603,12 +605,13 @@ a{text-decoration: none;}
 	font-size:18px;
 }
 </style>
-<div class="AreaFormat">
-	<div class="GitHub" style="position: absolute;left:30px; top:20px;">
-		<a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov">返回 GitHub</a>
-	</div>
+<div class="AreaFormat ${isIndex?'mainBox" style="padding:0':''}">
 	<div class="AreaFormat_Title">
-		测试和WEB数据格式转换工具
+		四级行政区划数据预览 + Web数据格式在线转换工具
+	</div>
+	<div class="AreaFormatA" style="width:1030px;margin:0 auto;padding-bottom:30px">
+		小提示 : 
+		本工具是用来转换省市区镇四级行政区划数据为js支持的格式的，不支持导入数据库，也不支持处理坐标和城市边界范围书记，如果你要导入数据库、或转换坐标和城市边界范围数据（如shp、geojson、sql），<a href="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html" target="_blank">请点此处</a>下载《AreaCity-Geo格式转换工具软件》轻松处理。
 	</div>
 	<div style="display: flex;">
 		<div style="flex: 1;"></div>
@@ -662,7 +665,7 @@ a{text-decoration: none;}
 			
 			<hr/>
 			<input class="AreaFormat_Btn" type="button" value="导出为自定义" exec="FormatClick,user">
-			<div>
+			<div class="AreaFormatA">
 				自行修改源码实现UserFormat方法，导出自己想要的格式。<a href="https://xiangyuecn.gitee.io/recorder/assets/%E5%B7%A5%E5%85%B7-%E4%BB%A3%E7%A0%81%E8%BF%90%E8%A1%8C%E5%92%8C%E9%9D%99%E6%80%81%E5%88%86%E5%8F%91Runtime.html#sha1=6233F3820CD26E477DE2721DB0D2F31374D58645&shareCode=v1_LypAUnVudGltZSBNZXRhQCoqIOOAikFyZWFDaXR55a-85Ye65Li66Ieq5a6a5LmJ56S65L6L44CLCkDmupDnoIHmoIfpopgoVGl0bGUp77yaQXJlYUNpdHnlr7zlh7rkuLroh6rlrprkuYnnpLrkvosKQOS9nOiAhShBdXRob3Ip77ya6auY5Z2a5p6cCkDniYjmnKwoVmVyKe-8mjEuMQpA5pe26Ze077yaMjAyMC8xMC8xIOS4i-WNiDg6NDY6NTAKQOaPj-i_sChEZXNjKe-8mmBgYCLkvr_kuo7lv6vpgJ_kuIrmiYvlr7zlh7pBcmVhQ2l0eS1Kc1NwaWRlci1TdGF0c0dvduW6k-eahOaVsOaNruS4uuiHquW3semcgOimgeeahOagvOW8j--8jOi_meS4quekuuS-i-WvvOWHuuagvOW8j-S4uu-8mlt7aWQ6IiIsbmFtZToiIizmiYDmnInlrZfmrrUuLi4sY2hpbGRzOlsuLi5dfSwuLi5dImBgYAotLS0tLS0tLS0tLQpA5YWs6ZKl5oyH5pWwKFJTQV9QdWJsaWNfRXhwb25lbnQp77yaQVFBQgpA5qih5pWwKFJTQV9Nb2R1bHVzKe-8mnBpbXZER2JBZnhwUGZ4ZytOU0x3UjdVdnY5SEFCWkFBUU8rNDhqUWhhbS9DOXRHL0xvMnI0OHFGcnNhMGhDSXVrNVQ3MDJaRVM1di9OVFI0Rm5XKzhkaXIzZGd5WjJSQzNXSUhydEFmOU5PS1ZYMFlvdTFLb1JrcXZhZG5EaGZscUJRNVdQT1pZV1ltaDBYQURwMkp2UzliSDRpRVlja0xncUVaMHlsVlAwVT0KQOiupOivgeS_oeaBryhSU0FfVHJ1c3Qp77yaYGBgInsiVmVyIjoiMS4wIiwiVGltZSI6IjE1Njg0NjQxOTg2NTgiLCJSb290IjoiRzAxIiwiTmFtZSI6IumrmOWdmuaenCIsIlRydXN0IjoicUx6cVF5OS9EVEtsZWhPVldJdFFhZEFZRDlpRTBMU3NHcGM5N0d1SWg5WE1reHdSRTQvdTYraWVrUE1SSHAxclZIOExsNS9tb3ZOYjJWeWFPU2FUM0hCWldhNWFqQWw3UlV1c2tKRE9maXBDZGVVYTVjNUs0TGJzMjk0SWRSV0tzaVF2Mm01YXFxNzI3VTh0Z1BxQUIvY0pXN2l0djlLa2tqczVyaWhLckdzPSJ9ImBgYApA562-5ZCNKFJTQV9TaWduKe-8mk80Tmt2RlgrYndTZVpHdlM4V1FHYmRPRzlXOHRBQXNTYlBMaUcyaVNCUVhzZE5tTlhZTHFyekN5YmxVdEZwNWQ3bkJraUlkejNpRm9ySzVaUVdnT1dreTlaNnlNdGxOMVJGWFRHcituSEJ3ajNKdUh5WTJHbEkyUFBBSXVlTnJPWnkwZkk4SDh0c1VNSGp5L2JPTzA1YXhaOWJEZWg2a3BadDhkRUFlTnowVT0KKipAUnVudGltZUAqLwoKCi8qKioq5a-85Ye655qEanNvbiBrZXnphY3nva4qKioqLwp2YXIgU2V0dGluZ3M9ewoJSUQ6ImlkIgoJLElETWluTGVuOjIgLy9pZOacgOWwkeimgei_meS5iOmVv--8jOWPluWAvDLvvIw077yMNu-8jOWwvemHj-S4jeimgeiwg-aVtO-8jOWboOS4uumDqOWIhuWfjuW4guayoeacieS4i-e6p--8jOaVsOaNruS4rea3u-WKoOS6hjAw57uT5bC-55qESUTkvZzkuLrkuIvnuqfvvIzlm6DmraTmgaLlpI025L2N5pe25bCx5Lya5Yay56qB44CC5aaC6L-H6LCD5pW077yM55Sf5oiQ55qE5pWw5o2u6ZyA6KaB6Ieq6KGM5aSE55CG5Yay56qBSUQKCQoJLy_lpoLmnpzorr7kuLrnqbrvvIzkvJrlsIbmiYDmnInln47luILlsZXlvIDliLDmlbDnu4TlhoXvvIzkuI3ov5vooYzkuIrkuIvnuqfltYzlpZcKCSxDaGlsZHM6ImNoaWxkcyIKCQoJLy_ku6XkuIvlrZfmrrXlpoLmnpzorr7kuLrnqbrvvIzlr7nlupTlrZfmrrXlsLHkuI3mt7vliqDliLDnu5PmnpzkuK0KCSxwaWQ6InBpZCIKCSxkZWVwOiJkZWVwIgoJLG5hbWU6Im5hbWUiCgkscGlueWluOiJwaW55aW4iCgkscGlueWluX3ByZWZpeDoicGlueWluX3ByZWZpeCIKCSxleHRfaWQ6ImV4dF9pZCIKCSxleHRfbmFtZToiZXh0X25hbWUiCn07CgovKioqKioqVXNlckZvcm1hdOWHveaVsOWunueOsCoqKioqKi8KdmFyIHVzZXJGb3JtYXQ9ZnVuY3Rpb24obGlzdCxtYXBwaW5nKXsKCS8vbGlzdOS4uuaJgOacieWfjuW4guW5s-mTuuWIl-ihqO-8jFt7aWQscGlkLGRlZXAsbmFtZSxwaW55aW5fcHJlZml4LHBpbnlpbixleHRfaWQsZXh0X25hbWUsY2hpbGQ6W119LC4uLl0KCS8vbWFwcGluZ-S4umlk5Z-O5biC5pig5bCE77yMMOe0ouW8leeahOaYr-ecgee6pzA6e2NoaWxkOltdfe-8jOWFtuS7luS4umlk77yae2lkLHBpZCxkZWVwLG5hbWUscGlueWluX3ByZWZpeCxwaW55aW4sZXh0X2lkLGV4dF9uYW1lLGNoaWxkOltdfQoJCgl2YXIgZXhlYz1mdW5jdGlvbihvYmosZGlzdCl7CgkJaWYoIW9iai5jaGlsZHMubGVuZ3RoKXsKCQkJcmV0dXJuOwoJCX07CgkJZm9yKHZhciBpPTA7aTxvYmouY2hpbGRzLmxlbmd0aDtpKyspewoJCQl2YXIgaXRtPW9iai5jaGlsZHNbaV07CgkJCXZhciBvPXt9OwoJCQlkaXN0LnB1c2gobyk7CgkJCQoJCQl2YXIgaWQ9KGl0bS5pZCsiIikucmVwbGFjZSgvKDAwMHwwMDAwMDB8MDAwMDAwMDB8MDAwMDAwMDAwMCkkLywiIik7CgkJCW9bU2V0dGluZ3MuSURdPWlkLmxlbmd0aDxTZXR0aW5ncy5JRE1pbkxlbj8oaWQrIjAwMDAwMDAwMDAwMCIpLnN1YnN0cigwLFNldHRpbmdzLklETWluTGVuKTppZDsKCQkJCgkJCXZhciBhZGQ9ZnVuY3Rpb24oa2V5KXsKCQkJCXZhciBzZXRLZXk9U2V0dGluZ3Nba2V5XTsKCQkJCWlmKHNldEtleSl7CgkJCQkJb1tzZXRLZXldPWl0bVtrZXldOwoJCQkJfTsKCQkJfTsKCQkJYWRkKCJwaWQiKTsKCQkJYWRkKCJkZWVwIik7CgkJCWFkZCgibmFtZSIpOwoJCQlhZGQoInBpbnlpbiIpOwoJCQlhZGQoInBpbnlpbl9wcmVmaXgiKTsKCQkJYWRkKCJleHRfaWQiKTsKCQkJYWRkKCJleHRfbmFtZSIpOwoJCQkKCQkJaWYoU2V0dGluZ3MuQ2hpbGRzKXsKCQkJCXZhciBjPWV4ZWMoaXRtLFtdKTsKCQkJCWlmKGMpewoJCQkJCW9bU2V0dGluZ3MuQ2hpbGRzXT1jOwoJCQkJfTsKCQkJfWVsc2V7CgkJCQlleGVjKGl0bSxkaXN0KTsKCQkJfTsKCQl9OwoJCXJldHVybiBkaXN0OwoJfTsKCXZhciBkYXRhPWV4ZWMobWFwcGluZ1swXSxbXSk7CgkKCXZhciBjb2RlPUpTT04uc3RyaW5naWZ5KGRhdGEsbnVsbCwiXHQiKTsKCXZhciBjb2RlTGVuPW5ldyBCbG9iKFtjb2RlXSx7InR5cGUiOiJ0ZXh0L3BsYWluIn0pLnNpemUrMzsKCQoJcmV0dXJuIHNjb3BlV2luLlJlc3VsdCgiIixjb2RlLCJhcmVhX2Zvcm1hdF91c2VyLmpzb24iLGAke2NvZGVMZW595a2X6IqCYCk7Cn07CgoKLyoqKioqKueVjOmdouazqOWFpSoqKioqKi8KJCgiLmFyZWFDaXR5IikucmVtb3ZlKCk7ClJ1bnRpbWUuTG9nKCc8aWZyYW1lIGNsYXNzPSJhcmVhQ2l0eSIgc3R5bGU9IndpZHRoOjEwMDBweDtoZWlnaHQ6NTAwcHgiIHNyYz0iaHR0cHM6Ly94aWFuZ3l1ZWNuLmdpdGVlLmlvL2FyZWFjaXR5LWpzc3BpZGVyLXN0YXRzZ292LyI-PC9pZnJhbWU-Jyk7CnZhciBzY29wZVdpbjsKJCgiLmFyZWFDaXR5IikuYmluZCgibG9hZCIsZnVuY3Rpb24oKXsKCXNjb3BlV2luPSQoIi5hcmVhQ2l0eSIpWzBdLmNvbnRlbnRXaW5kb3c7CglzY29wZVdpbi5Vc2VyRm9ybWF0PXVzZXJGb3JtYXQ7CglSdW50aW1lLkxvZygiVXNlckZvcm1hdOW3suazqOWFpe-8jOWPr-S7peeCueWHu-WvvOWHuuS4uuiHquWumuS5ieaMiemSruS6hiIsMik7Cn0pOw.." target="_blank">在线编辑UserFormat源码>></a>
 			</div>
 		</div>
@@ -682,7 +685,7 @@ while(true){
 };
 var elem=document.createElement("div");
 elem.innerHTML=bodyHtml;
-document.body.appendChild(elem);
+(window.AreaFormatBoxElem||document.body).appendChild(elem);
 document.body.scrollTop=0;
 document.documentElement.scrollTop=0;
 

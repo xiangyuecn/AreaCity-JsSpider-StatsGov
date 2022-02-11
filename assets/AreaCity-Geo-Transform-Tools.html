@@ -443,7 +443,7 @@ select id,ext_path,geo.STAsText(),polygon from 【此处改成你的表名】 wh
 select id,ext_path,polygon from 【此处改成你的表名】 where polygon.STIntersects(geometry::STGeomFromText('POINT(114.044346 22.691963)',0))=1
 
 -- 反解一个坐标对应的城市 MySQL版
-select id,ext_path,polygon from 【此处改成你的表名】 where where ST_Intersects(polygon,ST_GeomFromText('POINT(114.044346 22.691963)',0))=1
+select id,ext_path,polygon from 【此处改成你的表名】 where ST_Intersects(polygon,ST_GeomFromText('POINT(114.044346 22.691963)',0))=1
 </textarea>
 						</div>
 					</div>

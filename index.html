@@ -105,7 +105,11 @@ img{
 		<div style="font-size: 24px;font-weight: bold;padding-bottom:10px">数据版本</div>
 		<div class="geoVerDateView"></div>
 		<script src="assets/csv-ver-date.js"></script>
-		<script>document.querySelector(".geoVerDateView").innerHTML=CsvPubDate.TableHTML({level4:true,geo:true,geo4:true});</script>
+		<script>
+			document.querySelector(".geoVerDateView").innerHTML=CsvPubDate.TableHTML({level4:true,geo:true,geo4:true});
+			document.querySelector(".GeoPubDate_Level4_Row1").innerHTML='<div style="color:#0b0">在本页面底下可以进行三级、四级联动测试，往下拖拖看</div>';
+			document.querySelector(".GeoPubDate_Geo_Row1").innerHTML='<div style="color:#0b0">右下角可直接体验，单击地图进入下一级(可到乡镇)</div>';
+		</script>
 	</div>
 
 	

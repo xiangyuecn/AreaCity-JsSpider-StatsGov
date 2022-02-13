@@ -34,8 +34,9 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 	libObj.GeoUnZip
 *************************/
 	var lib={
-		//echarts js路径，如果不提供echarts将从这个地方加载js文件
-		path:"https://cdn.jsdelivr.net/npm/echarts@4.9.0/dist/echarts.min.js"
+		//echarts js路径，如果不提供echarts将从这个地方加载js文件，path_try为备用线路
+		path:"echarts.4.9.0.min.js" //改成你自己的路径
+		,path_try:"https://cdn.jsdelivr.net/npm/echarts@4.9.0/dist/echarts.min.js"
 	};
 	var NOOP=function(){};
 	
@@ -109,6 +110,12 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 				var cacheKey=set.polygonPointsMax+"_"+cur.id;
 				
 				var next=function(data){
+					setTimeout(function(){//保证异步，让动画能正常显示
+						__next(data);
+					},Math.max(0, 300-(Date.now()-nextStart)));
+				}
+				var nextStart=Date.now();
+				var __next=function(data){
 					if(This.current.id!=cur.id){
 						console.warn("结果被丢弃");
 						return;
@@ -125,6 +132,7 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 							,level:cur.level+1
 							,name:name
 							,ext_path:obj.ext_path
+							,last_time:obj.last_time
 							,polygon:obj.polygon
 							,tips:"id: "+obj.id+"<br>name: "+name
 						};
@@ -228,21 +236,28 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 				echarts=window.echarts;
 			};
 			if(!echarts){
-				var elem=document.createElement("script");
-				elem.setAttribute("type","text/javascript");
-				elem.setAttribute("src",lib.path);
-				elem.onload=function(){
-					if(window.echarts){
-						This.initStatus=0;
-						This.init();//重新干它就完了
-					}else{
-						endCall("加载echarts.js失败:无echarts全局变量");
+				var loadPath=function(src,isTry){
+					var elem=document.createElement("script");
+					elem.setAttribute("type","text/javascript");
+					elem.setAttribute("src",src);
+					elem.onload=function(){
+						if(window.echarts){
+							This.initStatus=0;
+							This.init();//重新干它就完了
+						}else{
+							elem.onerror(new Error("无echarts全局变量"));
+						};
 					};
+					elem.onerror=function(e){
+						if(!isTry && lib.path_try){//备用线路
+							loadPath(lib.path_try, true);
+							return;
+						}
+						endCall("加载echarts.js失败:"+(e.message||"-"));
+					};
+					document.body.appendChild(elem);
 				};
-				elem.onerror=function(e){
-					endCall("加载echarts.js失败:"+(e.message||"-"));
-				};
-				document.body.appendChild(elem);
+				loadPath(lib.path);
 				return;
 			};
 			
@@ -850,6 +865,7 @@ if(/(.+)\/assets\//.test(Root)){
 }else{
 	Root=/(.+?)(\/[^\/]*)?$/.exec(Root)[1];
 };
+GeoECharts.RootFolder=Root;
 
 
 //悬浮挂件
@@ -886,7 +902,7 @@ GeoECharts.CreateWidget=function(set){
 	
 	GeoECharts.WidgetShow(localStorage["GeoEChartsWidget_SetShow"]!="0");
 };
-GeoECharts.WidgetShow=function(show){
+GeoECharts.WidgetShow=function(show,wClick){
 	localStorage["GeoEChartsWidget_SetShow"]=show?1:0;
 	
 	var ls=document.querySelectorAll(".GeoEChartsWidget2");
@@ -898,10 +914,22 @@ GeoECharts.WidgetShow=function(show){
 	if(!el)return;
 	el.style.display=show?'block':'none';
 	
-	if(!show){
+	if(show){
+		if(wClick){
+			setTimeout(function(){
+				try{
+					var win=el.querySelector("iframe").contentWindow;
+					win&&win.reviewLevel&&win.reviewLevel();
+				}catch(e){
+					console.error("iframe reviewLevel fail");
+					console.error(e);
+				};
+			},300);
+		}
+	}else{
 		var fixedElem=document.createElement("div");
 		fixedElem.innerHTML='\
-<div onclick="GeoECharts.WidgetShow(1)" class="GeoEChartsWidget2" style="z-index:'+getZIndex()+';position: fixed;display:flex;align-items:center;justify-content:center;bottom:10px;right:5px">\
+<div onclick="GeoECharts.WidgetShow(1,1)" class="GeoEChartsWidget2" style="z-index:'+getZIndex()+';position: fixed;display:flex;align-items:center;justify-content:center;bottom:10px;right:5px">\
 	<div style="padding: 12px 18px;border-radius: 12px;background: linear-gradient(160deg, rgba(0,179,255,.7) 20%, rgba(177,0,255,.7) 80%); font-size:12px;color:#fff;cursor: pointer;">边界<br>预览</div>\
 </div>';
 		document.body.appendChild(fixedElem);

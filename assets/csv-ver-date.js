@@ -19,7 +19,7 @@ var GeoTips='使用'+Url("转换工具软件",UrlTool)+'可以导入数据库、
 var CsvPubDate=window.CsvPubDate={
 	Level4:{
 		name:"省市区镇四级行政区划数据"
-		,desc:'['+Url("下载",UrlRoot+"assets/download.html")+']['+Url("在线预览",UrlRoot,"#tools")+'][<span style="color:#0a0">免费开源</span>] 包含字段：城市id、城市name、上级pid、拼音；支持'+Url("在线转换",UrlRoot,"#tools")+'成三级、四级联动JavaScript代码，使用'+Url("转换工具软件",UrlTool)+'可以导入数据库。本数据源自： 统计局、民政部、腾讯地图行政区划、高德地图行政区划，从这四大平台整合。'
+		,desc:'['+Url("下载",UrlRoot+"assets/download.html")+']['+Url("在线预览",UrlRoot,"#tools")+'][<span style="color:#0a0">免费开源</span>] 包含字段：城市id、城市name、上级pid、拼音；支持'+Url("在线转换",UrlRoot,"#tools")+'成三级、四级联动JavaScript代码，使用'+Url("转换工具软件",UrlTool)+'可以导入数据库、转换成sql。本数据源自： 统计局、民政部、腾讯地图行政区划、高德地图行政区划，从这四大平台整合。'
 		,file:"ok_data_level4.csv"
 		,version:OpenVer
 		,date:OpenDate
@@ -34,7 +34,7 @@ var CsvPubDate=window.CsvPubDate={
 	
 	,Geo4:{
 		name:"乡镇第4级坐标边界数据"
-		,desc:'['+Url("下载",UrlRoot+"assets/geo-level4.html")+']['+Url("在线预览",UrlEcharts)+'][<span style="color:#fa0">付费数据</span>] 包含字段：矢量边界polygon、中心坐标centroid_geo、编号id、上级区县pid、乡镇名称name；'+GeoTips+'。本数据源自：第三方购买、公开数据源采集。'
+		,desc:'['+Url("下载",UrlRoot+"assets/geo-level4.html")+']['+Url("在线预览",UrlEcharts)+'][<span style="color:#fa0">付费数据</span>] 包含字段：矢量边界polygon、中心坐标centroid_geo、编号id、上级区县pid、乡镇名称name；'+GeoTips+'。本数据源自：第三方购买 + 公开数据源整合；部分省份由于没有最新的数据源，但上级区县变更往往会囊括原有的乡镇，乡镇边界一般少有大的变化，所以乡镇边界与压缩包内最新版的省市区行政区划、边界均可进行关联匹配。'
 		,file:"ok_geo4_ETD220206.csv"
 		,version:"ETD220206"
 		,dates:{//年-月 A排序年.月
@@ -94,10 +94,10 @@ if(set.level4){
 	+'</div></td></tr>\
 	<tr><td class="GeoPubDateTitle3">省份名称</td>\
 		<td class="GeoPubDateName">全国所有省</td>\
-		<td colspan="6"></td></tr>\
+		<td colspan="6"><div class="GeoPubDate_Level4_Row1"></div></td></tr>\
 	<tr><td class="GeoPubDateTitle3">更新时间</td>\
 		<td>'+Level4.date+'</td>\
-		<td colspan="6"></td></tr>'
+		<td colspan="6"><div class="GeoPubDate_Level4_Row2"></div></td></tr>'
 	);
 }
 if(set.geo){
@@ -114,10 +114,10 @@ if(set.geo){
 	+'</div></td></tr>\
 	<tr><td class="GeoPubDateTitle3">省份名称</td>\
 		<td class="GeoPubDateName">全国所有省</td>\
-		<td colspan="6"></td></tr>\
+		<td colspan="6"><div class="GeoPubDate_Geo_Row1"></div></td></tr>\
 	<tr><td class="GeoPubDateTitle3">更新时间</td>\
 		<td>'+Geo.date+'</td>\
-		<td colspan="6"></td></tr>'
+		<td colspan="6"><div class="GeoPubDate_Geo_Row2"></div></td></tr>'
 	);
 };
 	

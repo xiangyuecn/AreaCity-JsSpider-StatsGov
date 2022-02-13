@@ -19,6 +19,7 @@
 <script src="https://jiebian.life/static/bjc/web/jiebian/www/lib_pc.js"></script>
 <script src="https://xiangyuecn.gitee.io/recorder/assets/ztest-codemirror.min.5.48.4.js"></script>
 
+<script src="csv-ver-date.js"></script>
 <script src="geo-echarts-data-cache-0.js"></script>
 </head>
 
@@ -69,6 +70,10 @@ img{
 	background: #fff;
 	--border: 1px solid #f60;
 	box-shadow: 2px 2px 3px #aaa;
+}
+.mainTitle{
+	font-size: 24px;
+	font-weight: bold;
 }
 
 .lb{
@@ -144,20 +149,24 @@ body::-webkit-scrollbar-thumb{
 		<a href="geo-echarts.html" target="_blank">[全屏]</a>
 	</div>
 	
-	<div class="mainBox" class2="">
+	<div class="mainBox" class2="" style="padding-bottom:0;" style2="color:#fff">
 		<div class="FlexBox" class3="">
 			<div class="FlexItem" class2="Hide2">
 				<div class="mapView"></div>
 			</div>
-			<div class="FlexItem" style="border:1px solid #ddd" style2="">
-				<div class="echartsView"></div>
+			<div class="FlexItem">
+				<div class="echartsView" style="border:1px solid #ddd;box-sizing: border-box;" style2=""></div>
 			</div>
 		</div>
+		
+		<div class="statusView" style="padding:5px 0;text-align:right" style2="">初始化中...</div>
 	</div>
 	
 	<div class="mainBox" class2="" style2="color:#fff">
-		<div class="statusView" style="text-align:right" style2=""></div>
-		
+		<div class="FlexBox" class2="">
+		<div class="FlexItem" class2="Hide">
+			<div class="mainTitle">配置项</div>
+		</div>
 		<div style="text-align:right" style2="">
 			<span class="ILB pd" style="margin-right:10px">
 				<span class="lb">边界采样数 :</span>
@@ -173,6 +182,7 @@ body::-webkit-scrollbar-thumb{
 				<span class="Btn" onclick="updateSet()">确定</span>
 			</span>
 		</div>
+		</div>
 		
 		<div style="padding-top:15px;">
 			因为api接口返回的边界数据已经过了重新采样抽稀处理+GeoZip压缩（为了节省流量）；抽稀后最高的从5万个坐标点变成1200个坐标点，两个边界之间放大后会明显感受到不够精细，自己使用时可以调高采样数或者直接返回原始数据，就没有这个问题了。
@@ -180,6 +190,8 @@ body::-webkit-scrollbar-thumb{
 	</div>
 	
 	<div class="mainBox">
+		<div class="mainTitle" class2="Hide">数据下载</div>
+		
 		<div class="pd">
 			<span style="font-weight:bold;color:#0b0;">诸位大佬高抬贵手，</span>
 			<span style="font-weight:bold;color:#fa0;font-size:30px">请勿采集本页面接口数据</span>（服务器小水管不经揍），所有数据均已提供完整版下载，并且下载的csv文件可使用《<a href="AreaCity-Geo-Transform-Tools.html" target="_blank">AreaCity-Geo格式转换工具软件</a>》转成 shp、geojson、sql、坐标系转换、导入数据库 等强大支持，请直接下载数据不要采集：
@@ -203,6 +215,9 @@ body::-webkit-scrollbar-thumb{
 			<a href="geo-level4.html" target="_blank">可以到此下载 和 查看报价</a>
 			，压缩包内 ok_geo4_*.csv 文件含了全部的乡镇数据，为付费数据，下载的压缩包里面提供了部分免费数据供测试，欢迎下载体验。
 		</div>
+		
+		<div class="mainTitle" style="padding-top:60px">数据版本</div>
+		<div class="geoVerDateView" style="padding-top:5px"></div>
 	</div>
 	
 	<div class="mainBox">
@@ -255,6 +270,9 @@ var Review=function(){
 	}
 };
 Review();
+
+
+$(".geoVerDateView").html(CsvPubDate.TableHTML({level4:true,geo:true,geo4:true}));
 
 $(function(){
 	var elem=$(".codeEditJs");
@@ -358,6 +376,9 @@ var geoECharts=geoEChartsLib.Create({
 				var f=geojson.features[j],fp=f.properties,fg=f.geometry;
 				if(fp.id==o.id){
 					var fi=geoEChartsLib.FeaturePolygonInfo(f);
+					if(cur.level==3 || fp.last_time){
+						o.tips+="<br>更新时间: "+(fp.last_time||"-");
+					};
 					o.tips+="<br>类型: "+fg.type;
 					o.tips+="<br>环数: "+fi.polygon;
 					o.tips+="<br>坐标数: "+fi.point;
@@ -386,7 +407,7 @@ var geoECharts=geoEChartsLib.Create({
 			var o=levels[i];
 			html.push('<a onclick="goLevel('+i+')">'+o.name+'</a>');
 		};
-		var tips="路径："+html.join(" > ");
+		var tips="单击地图进入下一级，当前路径："+html.join(" > ");
 		
 		if(cur.level==3 && !/^(8|4420|4403)/.test(cur.id)){
 			var msg='当前为乡镇级别边界（付费数据），只有是最后一个乡镇【'+mapDatas[mapDatas.length-1].name+'】是最高80个采样数的粗略边界，其他的乡镇均为边界外接矩形（4个坐标点），仅供测试（深圳、中山、香港、澳门无此限制）';
@@ -461,6 +482,11 @@ var geoECharts=geoEChartsLib.Create({
 
 var goLevel=function(idx){
 	geoECharts.load(levels[idx]);
+};
+var reviewLevel=function(){
+	var level=levels[levels.length-1];
+	console.log("reviewLevel",level);
+	geoECharts.load(level);
 };
 
 var updateSet=function(){
@@ -591,6 +617,7 @@ updateSet();
 				FieldRead FR = DBTable.AreaCityGeo4.FRReadOrWrite();
 				FR.AddInt("id", "unique_id");
 				FR.AddString("ext_path");
+				FR.AddString("last_time");
 				FR.AddString("polygon", "polygon.STAsText()", "", true);
 				dbList = FR.QueryAll(new SQL().Cmd("pid=").Int(pid));
 
@@ -607,6 +634,9 @@ updateSet();
 
 				obj["id"] = item.getOrNull("id");
 				obj["ext_path"] = item.getOrNull("ext_path");
+				if (level == 3) {
+					obj["last_time"] = item.getOrNull("last_time");
+				}
 				obj["polygon"] = FormatPolygon(item.getString("polygon"), polygonPointsMax);
 			}
 

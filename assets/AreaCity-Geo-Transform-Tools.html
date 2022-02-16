@@ -452,12 +452,26 @@ select id,ext_path,polygon from 【此处改成你的表名】 where ST_Intersec
 					
 					<div style="margin-top:8px;color:#f60;font-size:13px">注意：MySQL的空间索引的创建要按<a href="https://dev.mysql.com/doc/refman/8.0/en/spatial-index-optimization.html" target="_blank">官方文档</a>进行创建，否则很可能会索引失效，从而导致空间查询异常缓慢；或者切换成MyISAM引擎，会比InnoDB引擎的空间查询快很多。</div>
 				</div>
+				
+				<div style="margin-top:20px; line-height:26px">
+					<i class="b">附：其他数据库的支持（支持空间查询的Oracle、PostgreSQL等）</i>
+					
+					<div>可尝试导出成MySQL版SQL文件，然后手动修改此SQL文件（PostgreSQL无需大的修改，<a href="https://docs.oracle.com/en/database/oracle/oracle-database/12.2/spatl/spatial-datatypes-metadata.html" target="_blank">Oracle参考文档</a>）：</div>
+					<div style="padding-left:30px">
+						<div>1. 将 CREATE TABLE 语句修改成目标数据库支持的创建表语法，字段类型 geometry 替换成目标数据库对应的类型名称（如Oracle: SDO_GEOMETRY）；</div>
+						<div>2. 将 INSERT 语句内的 ST_GeomFromText 批量替换成目标数据库支持的处理函数（如Oracle: SDO_GEOMETRY）；</div>
+						<div>3. 尝试将此SQL文件导入到数据库执行，有语法错误改正再尝试。</div>
+					</div>
+				</div>
 			</div>
 			
 			
 			<div class="h3">ok_geo.csv坐标边界 导入数据库<a name="sy-db"></a></div>
 			<div class="desc">
-				<div>
+				<div style="font-size:13px;color:#aaa">
+					工具目前仅支持导入到MySQL、SQL Server数据库，如果要导入到其他数据库（Oracle、PostgreSQL等），请参考上面的转成sql文件。
+				</div>
+				<div style="margin-top:10px">
 					<i class="b">步骤一、步骤二、</i>
 					请参考上面的ok_geo.csv坐标边界 转成shp文件，按它的步骤一、步骤二操作。
 				</div>

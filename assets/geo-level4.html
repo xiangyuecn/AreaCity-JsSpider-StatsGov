@@ -211,9 +211,12 @@ img{
 			
 			
 			<div class="h3">数据版本</div>
+			<div style="font-size:13px;color:#888;margin-bottom:8px">
+				以下表格中四级行政区划数据（ok_data_level4）、省市区三级坐标边界数据（ok_geo）的版本为GitHub上的当前最新版，ok_geo4乡镇数据压缩包内的三级数据版本可能会比GitHub上的版本更老，使用ok_geo4时，应当使用相同版本（就是在一个压缩包里）的ok_geo和ok_data_level4文件，否则可能会因为区划变更导致上下级区域不一致。
+			</div>
 			<div class="geoVerDateView"></div>
 			<script src="csv-ver-date.js"></script>
-			<script>document.querySelector(".geoVerDateView").innerHTML=CsvPubDate.TableHTML({geo4:true});</script>
+			<script>document.querySelector(".geoVerDateView").innerHTML=CsvPubDate.TableHTML({level4:true,geo:true,geo4:true});</script>
 			
 			
 			<div class="h3">数据字段文档（ok_geo4_*.csv）</div>

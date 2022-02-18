@@ -17,10 +17,6 @@
 
 <script src="geo-echarts.js"></script>
 <script src="https://jiebian.life/static/bjc/web/jiebian/www/lib_pc.js"></script>
-<script src="https://xiangyuecn.gitee.io/recorder/assets/ztest-codemirror.min.5.48.4.js"></script>
-
-<script src="csv-ver-date.js"></script>
-<script src="geo-echarts-data-cache-0.js"></script>
 </head>
 
 <body>
@@ -163,7 +159,7 @@ body::-webkit-scrollbar-thumb{
 	</div>
 	
 	<div class="mainBox" class2="" style2="color:#fff">
-		<div class="FlexBox" class2="">
+		<div class="FlexBox" class2="" class3="">
 		<div class="FlexItem" class2="Hide">
 			<div class="mainTitle">配置项</div>
 		</div>
@@ -218,6 +214,8 @@ body::-webkit-scrollbar-thumb{
 		
 		<div class="mainTitle" style="padding-top:60px">数据版本</div>
 		<div class="geoVerDateView" style="padding-top:5px"></div>
+		<script src="csv-ver-date.js"></script>
+		<script>$(".geoVerDateView").html(CsvPubDate.TableHTML({level4:true,geo:true,geo4:true}));</script>
 	</div>
 	
 	<div class="mainBox">
@@ -270,56 +268,23 @@ var Review=function(){
 	}
 };
 Review();
-
-
-$(".geoVerDateView").html(CsvPubDate.TableHTML({level4:true,geo:true,geo4:true}));
-
-$(function(){
-	var elem=$(".codeEditJs");
-	var w=elem.width();
-	var edit=CodeMirror.fromTextArea(elem[0],{
-			mode:"javascript"
-			,lineNumbers:true
-			,lineWrapping:true
-		});
-	window.CodeEditJs=edit;
-	edit.setSize(w+"px","auto");
-
-	edit.setValue(GeoECharts.GeoEChartsLib.toString());
-	edit.refresh();
-	
-	elem=$(".codeEditCs");
-	var w=elem.width();
-	var edit=CodeMirror.fromTextArea(elem[0],{
-			mode:"javascript"
-			,lineNumbers:true
-			,lineWrapping:true
-		});
-	window.CodeEditJs=edit;
-	edit.setSize(w+"px","auto");
-
-	edit.setValue($(".CS_Code").html().trim());
-	edit.refresh();
-});
 </script>
 
 
 
-
+<script src="https://webapi.amap.com/maps?v=1.4.15"></script>
 <script>
 var geoEChartsLib=GeoECharts.GeoEChartsLib();
 
 $(".mapView,.echartsView").css({height:IsWidget?200:$(window).height()-130+"px"});
 var map=0;
 if(!IsWidget){
-	LoadJs("https://webapi.amap.com/maps?v=1.4.15",function(){
-		map=new AMap.Map($(".mapView")[0]);
+	map=new AMap.Map($(".mapView")[0]);
 
-		AMap.plugin([ 'AMap.ToolBar', 'AMap.Scale', 'AMap.MapType' ], function(){
-			map.addControl(new AMap.ToolBar());
-			map.addControl(new AMap.Scale());
-			map.addControl(new AMap.MapType({defaultType:0, showRoad:true}));
-		});
+	AMap.plugin([ 'AMap.ToolBar', 'AMap.Scale', 'AMap.MapType' ], function(){
+		map.addControl(new AMap.ToolBar());
+		map.addControl(new AMap.Scale());
+		map.addControl(new AMap.MapType({defaultType:0, showRoad:true}));
 	});
 };
 
@@ -505,7 +470,15 @@ var updateSet=function(){
 	
 	geoECharts.reload();
 };
-updateSet();
+
+
+PageModule.maskLoad("省级数据加载中，请稍后...");
+LoadJs("geo-echarts-data-cache-0.js",function(){
+	PageModule.closeMask();
+	updateSet();
+},function(){
+	updateSet();
+});
 </script>
 
 
@@ -520,6 +493,36 @@ updateSet();
 
 
 
+<script src="https://xiangyuecn.gitee.io/recorder/assets/ztest-codemirror.min.5.48.4.js"></script>
+<script>
+$(function(){
+	var elem=$(".codeEditJs");
+	var w=elem.width();
+	var edit=CodeMirror.fromTextArea(elem[0],{
+			mode:"javascript"
+			,lineNumbers:true
+			,lineWrapping:true
+		});
+	window.CodeEditJs=edit;
+	edit.setSize(w+"px","auto");
+
+	edit.setValue(GeoECharts.GeoEChartsLib.toString());
+	edit.refresh();
+	
+	elem=$(".codeEditCs");
+	var w=elem.width();
+	var edit=CodeMirror.fromTextArea(elem[0],{
+			mode:"javascript"
+			,lineNumbers:true
+			,lineWrapping:true
+		});
+	window.CodeEditJs=edit;
+	edit.setSize(w+"px","auto");
+
+	edit.setValue($(".CS_Code").html().trim());
+	edit.refresh();
+});
+</script>
 
 <script class="CS_Code" type="text/template">
 /*************************

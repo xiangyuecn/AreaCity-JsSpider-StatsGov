@@ -454,6 +454,15 @@ select id,ext_path,polygon from 【此处改成你的表名】 where ST_Intersec
 				</div>
 				
 				<div style="margin-top:20px; line-height:26px">
+					<i class="b">附：边界数据如何查询出 WKT 文本</i>
+					<div style="padding-left:30px">
+						用SQL查询空间类型字段时，需要用 ST_AsText() 方法转换成 WKT(Well Known Text) 文本，否则数据库可能会返回二进制数据不方便处理使用。
+						<div>[MySQL] select id,ext_path,ST_AsText(polygon) as polygon from AreaCity_Geo where id=11</div>
+						<div>[MSSQL] select id,ext_path,polygon.STAsText() as polygon from AreaCity_Geo where id=11</div>
+					</div>
+				</div>
+				
+				<div style="margin-top:20px; line-height:26px">
 					<i class="b">附：其他数据库的支持（支持空间查询的Oracle、PostgreSQL等）</i>
 					
 					<div>可尝试导出成MySQL版SQL文件，然后手动修改此SQL文件（PostgreSQL无需大的修改，<a href="https://docs.oracle.com/en/database/oracle/oracle-database/12.2/spatl/spatial-datatypes-metadata.html" target="_blank">Oracle参考文档</a>）：</div>
@@ -614,10 +623,10 @@ select id,ext_path,polygon from 【此处改成你的表名】 where ST_Intersec
 		<div class="h2">升级付费<a name="ff"></a></div>
 		<div class="content">
 			<div>
-				<i class="b">免费版：</i>未填写激活密钥时本工具软件为免费版，会受到限制，每次转换操作最多导出一个城市和它的下一级数据；免费版的功能也足够强大了，就算不付费，需要的数据量不大的情况下，多点几次也能达到和付费版相同的效果。
+				<i class="b">免费版：</i>未填写激活密钥时本工具软件为免费版，会受到限制，每次转换操作最多导出全国所有省级、或一个城市和它的下一级数据；免费版的功能也足够强大了，就算不付费，需要的数据量不大的情况下，通过填写城市前缀 + 多点几次也能达到和付费版相同的效果。
 			</div>
 			<div style="margin-top:12px">
-				<i class="b">付费版：</i>填写有效激活密钥后软件将打开所有可用功能，解除限制，每次转换操作会导出所有匹配的数据。
+				<i class="b">付费版：</i>填写有效激活密钥后软件将打开所有可用功能，解除限制，每次转换操作会导出所有匹配的数据，点击操作一次即可在5分钟内导出全国省市区所有数据。
 			</div>
 			<div style="margin-top:12px">
 				<i class="b">激活密钥：</i>激活密钥是免费版升级为付费版的核心许可凭据，密钥存在许可使用期限、可激活计算机数量的限制，激活密钥可通过付费购买、活动赠送等途径获得；激活密钥分多个种类，详细差异和价格请看下表。
@@ -631,7 +640,7 @@ select id,ext_path,polygon from 【此处改成你的表名】 where ST_Intersec
 					<tr>
 						<th style="width:20%"></th>
 						<th style="width:16%">免费版</th>
-						<th style="width:22%">1天激活密钥<sup>[1]</sup></th>
+						<th style="width:22%" colspan="2">短期激活密钥<sup>[1]</sup></th>
 						<th style="width:22%">单机许可激活密钥</th>
 						<th style="width:20%">批量许可激活密钥</th>
 					</tr>
@@ -640,14 +649,16 @@ select id,ext_path,polygon from 【此处改成你的表名】 where ST_Intersec
 					<tr>
 						<td class="right">许可有效期</td>
 						<td style="color:#999">无限试用</td>
-						<td>1天</td>
+						<td>2小时</td>
+						<td>3天</td>
 						<td style="color:#0b1;">不限</td>
 						<td style="color:#0b1;">不限</td>
 					</tr>
 					<tr>
 						<td class="right">密钥有效期</td>
 						<td style="color:#999">-</td>
-						<td>1天</td>
+						<td>2小时</td>
+						<td>3天</td>
 						<td style="color:#0b1;">每30天自助续期<sup>[2]</sup></td>
 						<td style="color:#0b1;">每30天人工续期<sup>[3]</sup></td>
 					</tr>
@@ -656,16 +667,17 @@ select id,ext_path,polygon from 【此处改成你的表名】 where ST_Intersec
 						<td style="color:#999;">免激活</td>
 						<td>1</td>
 						<td>1</td>
+						<td>1</td>
 						<td style="color:#0b1;">不限</td>
 					</tr>
 					<tr>
 						<td class="right">服务支持</td>
 						<td style="color:#999;font-size:12px;padding:10px 10px;text-align: left;">
 							<div>功能限制：</div>
-							<div style="margin-top:6px">每次可导出一个城市和它的下一级数据；</div>
+							<div style="margin-top:6px">每次可导出全国所有省级、或一个城市和它的下一级数据；</div>
 							<div style="margin-top:6px">软件中标注的免费版有限制的功能。</div>
 						</td>
-						<td>
+						<td colspan="2">
 							<div>解除所有限制</div>
 							<div>消息优先处理</div>
 							<div class="del" style="color:#999">不支持软件升级</div>
@@ -687,13 +699,17 @@ select id,ext_path,polygon from 【此处改成你的表名】 where ST_Intersec
 					<tr>
 						<td class="right">价格</td>
 						<td style="color:#999;">免费</td>
-						<td style="font-size:32px;color:#04f;">¥29</td>
+						<td style="font-size:32px;color:#04f;padding:0;position: relative;">
+							¥10
+							<div style="position: absolute;top: 3px;right: 6px;font-size: 12px;background: #0b1;color: #fff;border-radius: 99px;line-height: 18px;width: 18px;height: 18px;">荐</div>
+						</td>
+						<td style="font-size:32px;color:#04f;padding:0">¥29</td>
 						<td style="font-size:32px;color:#04f;">¥298</td>
 						<td style="color:#999;">不售</td>
 					</tr>
 					<tr>
 						<td class="right">如何购买</td>
-						<td colspan="4" class="left" style="font-size:14px;color:#666">
+						<td colspan="5" class="left" style="font-size:14px;color:#666">
 							<div>请先加客服QQ 1251654593，联系客服后付款，提供需要激活的ID信息（打开软件底下有显示ID），然后客服给你签发激活密钥。<span style="color:red">请勿通过其他途径购买，以免造成损失。</span></div>
 							
 							<div style="margin-top:8px;color:#f60">温馨提示：此激活密钥是用来处理省市区三级的数据，不能用来处理乡镇级的付费数据，如果您需要乡镇级数据，请到<a href="geo-level4.html" target="_blank">此文档</a>购买乡镇级的数据密钥（会赠送工具激活密钥）。</div>
@@ -703,9 +719,9 @@ select id,ext_path,polygon from 【此处改成你的表名】 where ST_Intersec
 			</table>
 			
 			<div style="font-size:14px;margin-top:10px">
-				<div>[1] 1天激活密钥许可有效期只有1天的时间，1天之内你可以使用软件的所有功能；主要用于单次或少量次数的数据转换导出，如果你的得到数据后不需要更新数据，相当于你只要用几次付费版此工具，那么购买此类型密钥会很划算。</div>
-				<div style="margin-top:6px">[2] 单机许可签发的密钥有效期为30天，许可有效期内可通过<a href="https://jiebian.life/web/h5/github/areacity-agt-renew.aspx" target="_blank">自助服务</a>续签新密钥，新密钥拥有老密钥同等效力。</div>
-				<div style="margin-top:6px">[3] 批量许可签发的密钥有效期为30天，许可有效期内可联系客服续签新密钥，新密钥拥有老密钥同等效力。</div>
+				<div>[1] 短期激活密钥许可有效期只有2小时或3天的时间，2小时或3天之内你可以使用软件的所有功能；需要一次性导出全国所有省市区数据时（仅需耗时5分钟内即可全部导出），推荐购买2小时的此类型密钥进行体验，会很划算；后续如需继续体验可以再次购买，当天内升级成3天的只需补差价即可；如需升级成单机许可只需补差价（减去累计已支付的总金额）。</div>
+				<div style="margin-top:6px">[2] 单机许可签发的密钥有效期为30天，许可有效期内可通过<a href="https://jiebian.life/web/h5/github/areacity-agt-renew.aspx" target="_blank">自助服务</a>免费续签新密钥，新密钥拥有老密钥同等效力（违规被吊销的不允许续签）。</div>
+				<div style="margin-top:6px">[3] 批量许可签发的密钥有效期为30天，许可有效期内可联系客服免费续签新密钥，新密钥拥有老密钥同等效力（违规被吊销的不允许续签）。</div>
 				<div style="margin-top:6px">[4] 技术指导为一对一指导，单次服务最长时间为1小时；服务期间可提供软件功能范围内的：软件使用教学、数据导出配置方案；软件功能范围外的需求：如功能定制、特殊数据处理，根据需求复杂度和需要花费的预估时间，协商解决，如果需要的时间超出总的指导机会时间，需另付费。</div>
 				
 				<div style="margin-top:50px;color:#0b1;font-size:22px;">

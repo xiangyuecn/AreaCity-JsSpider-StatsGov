@@ -181,7 +181,7 @@ body::-webkit-scrollbar-thumb{
 		</div>
 		
 		<div style="padding-top:15px;">
-			因为api接口返回的边界数据已经过了重新采样抽稀处理+GeoZip压缩（为了节省流量）；抽稀后最高的从5万个坐标点变成1200个坐标点，两个边界之间放大后会明显感受到不够精细，自己使用时可以调高采样数或者直接返回原始数据，就没有这个问题了。
+			因为api接口返回的边界数据已经过了重新采样抽稀处理+GeoZip压缩（大幅节省流量，算法源码在页面下方）；抽稀后最高的从5万个坐标点变成1200个坐标点，两个边界之间放大后会明显感受到不够精细（因算法简单，未考虑相邻区域的拓扑结构），自己使用时可以调高采样数或者直接返回原始数据，就没有这个问题了。
 		</div>
 	</div>
 	
@@ -531,12 +531,12 @@ $(function(){
 【禁】 > 源码都让你看了，请不要搞我的服务器哦~ <
 
 
-【WKT】mysql、sqlserver直接查询出来的 polygon 一般是二进制格式，需要使用数据库内置的 ST_AsText 方法转换成 WKT 文本；sql查询语句：
+【WKT】mysql、sqlserver直接查询出来的 polygon 一般是二进制格式，需要使用数据库内置的 ST_AsText 方法转换成 WKT (Well Known Text) 文本；sql查询语句：
 [MySQL] select id,ext_path,ST_AsText(polygon) as polygon from AreaCity_Geo where id=11
 [MSSQL] select id,ext_path,polygon.STAsText() as polygon from AreaCity_Geo where id=11
 
 
-【采样抽稀】省市区三级边界数据，一半以上边界的坐标点超过1000个点，超过1万个坐标点边界有80个，超过3万个坐标点的边界有11个；内蒙的边界坐标点数最多（5万个点），转成文本后超过1MB大小，重采样成600个点后变成16KB大小；在大部分ECharts显示场合，重采样抽稀后边界外观基本上是一致的（下面源码中有一段边界质量优化的代码对超大的边界进行了增强处理），数据量已经大幅减少。
+【采样抽稀】省市区三级边界数据，一半以上边界的坐标点超过1000个点，超过1万个坐标点边界有80个，超过3万个坐标点的边界有11个；内蒙的边界坐标点数最多（5万个点），转成文本后超过1MB大小，重采样成600个点后变成16KB大小；在大部分ECharts显示场合，重采样抽稀后边界外观基本上是一致的（下面源码中有一段边界质量优化的代码对超大的边界进行了增强处理），数据量已经大幅减少；本算法仅为简单的对一个环进行坐标删除，未考虑相邻区域的拓扑结构，如需高质量的精简+保持拓扑结构，可以参考MapShaper的simplify实现：https://github.com/mbloch/mapshaper/tree/master/src/simplify
 
 【GeoZip压缩、解压】本代码内实现了一套压缩解压的代码，6位小数精度下可压缩到 1/3 - 1/5 大小。压缩代码参考自echarts（ZigZag算法）：https://github.com/apache/echarts/blob/8eeb7e5abe207d0536c62ce1f4ddecc6adfdf85e/src/util/mapData/rawData/encode.js
 *************************/

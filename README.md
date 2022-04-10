@@ -9,7 +9,7 @@
 
 ## 数据下载
 
-当前最新版数据在 **src文件夹** 内，此数据更新于2022-02-06，整合了 `统计局2021-12-30`、`民政部2021-05-10`、`腾讯地图行政区划2022-01-14`、`高德地图行政区划采集当天` 数据。
+当前最新版数据在 **src文件夹** 内，此数据更新于2022-04-08，整合了 `统计局2021-12-30`、`民政部2022-03-21`、`腾讯地图行政区划2022-01-14`、`高德地图行政区划采集当天` 数据。
 
 可在 [GitHub Releases](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases) 中下载最新发布数据文件，也可直接打开 `src/采集到的数据` 文件夹内的文件来使用。
 
@@ -26,7 +26,13 @@
 
 
 
-<p align="center"><a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov"><img width="100" src="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/assets/icon.png" alt="AreaCity logo"></a></p>
+
+[​](?)
+
+[​](?)
+
+
+<p align="center"><a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov"><img width="100" src="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/icon.png" alt="AreaCity logo"></a></p>
 
 <p align="center">
   <a title="Stars" href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov"><img src="https://img.shields.io/github/stars/xiangyuecn/AreaCity-JsSpider-StatsGov?color=15822e&logo=github" alt="Stars"></a>
@@ -36,6 +42,10 @@
   <a title="License" href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/LICENSE"><img src="https://img.shields.io/github/license/xiangyuecn/AreaCity-JsSpider-StatsGov?color=f60&logo=github" alt="License"></a>
 </p>
 
+
+[​](?)
+
+[​](?)
 
 
 ## 如何clone: Gitee镜像库加速
@@ -47,6 +57,20 @@ git clone --depth 1 https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov.git
 //源GitHub仓库: 可能比较慢或无法访问
 git clone --depth 1 https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov.git
 ```
+
+
+## 【QQ群】交流与支持
+
+欢迎加QQ群：484560085，纯小写口令：`areacity`
+
+<img src="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/qq_group_484560085.png" width="220px">
+
+
+
+[​](?)
+
+[​](?)
+
 
 ## 数据源
 
@@ -70,7 +94,7 @@ chrome 控制台，当前数据采集使用的chrome版本：`Chrome 97` + `Chro
 
 ## 采集深度
 
-- 2021.210510.220114版(更新时间: 2022-02-06)采集了4层，省、市、区、镇，来源：[统计局2021版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2021/index.html)；省市区3级合并了[民政部2021-05-10数据](http://www.mca.gov.cn/article/sj/xzqh/1980/202105/20210500033655.shtml)、[高德地图行政区域](https://lbs.amap.com/api/webservice/guide/api/district)、[腾讯地图行政区划v20220114](https://lbs.qq.com/webservice_v1/guide-region.html)数据；镇级采用腾讯地图行政区划作为主要数据，综合高德和统计局的镇级。采集高德省市区三级坐标和行政区域边界范围。
+- 2021.220321.220114版(更新时间: 2022-04-08)采集了4层，省、市、区、镇，来源：[统计局2021版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2021/index.html)；省市区3级合并了[民政部2022-03-21数据](http://www.mca.gov.cn/article/sj/xzqh/1980/202203/20220300040708.shtml)、[高德地图行政区域](https://lbs.amap.com/api/webservice/guide/api/district)、[腾讯地图行政区划v20220114](https://lbs.qq.com/webservice_v1/guide-region.html)数据；镇级采用腾讯地图行政区划作为主要数据，综合高德和统计局的镇级。采集高德省市区三级坐标和行政区域边界范围。
 - 2020.210510.1103版(2021)采集了4层，省、市、区、镇，来源：[统计局2020版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2020/index.html)；省市区3级合并了[民政部2021-05-10数据](http://www.mca.gov.cn/article/sj/xzqh/1980/202105/20210500033655.shtml)、[高德地图行政区域](https://lbs.amap.com/api/webservice/guide/api/district)、[腾讯地图行政区划v20211103](https://lbs.qq.com/webservice_v1/guide-region.html)数据；镇级采用腾讯地图行政区划作为主要数据，综合高德和统计局的镇级。采集高德省市区三级坐标和行政区域边界范围。
 - 2020.201120.0814版(2020)采集了4层，省、市、区、镇，来源：[统计局2020版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2020/index.html)；省市区3级合并了[民政部2020-11-20数据](http://www.mca.gov.cn/article/sj/xzqh/2020/202011/20201100030582.shtml)、[高德地图行政区域](https://lbs.amap.com/api/webservice/guide/api/district)、[腾讯地图行政区划v20200814](https://lbs.qq.com/webservice_v1/guide-region.html)数据；镇级采用腾讯地图行政区划作为主要数据，综合高德和统计局的镇级。采集高德省市区三级坐标和行政区域边界范围。
 - 2019.200925.0814版(2020)采集了4层，省、市、区、镇，来源：[统计局2019版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2019/index.html)；省市区3级合并了[民政部2020-09-25数据](http://www.mca.gov.cn/article/sj/xzqh/2020/2020/2020092500801.html)、[高德地图行政区域](https://lbs.amap.com/api/webservice/guide/api/district)、[腾讯地图行政区划v20200814](https://lbs.qq.com/webservice_v1/guide-region.html)数据；镇级采用腾讯地图行政区划作为主要数据，综合高德和统计局的镇级。采集高德省市区三级坐标和行政区域边界范围。
@@ -88,6 +112,13 @@ chrome 控制台，当前数据采集使用的chrome版本：`Chrome 97` + `Chro
 会发生补齐行为的数据很少，约50来个（不含台湾），主要为：直筒子市（东莞、儋州等）、省直辖县级市（济源、潜江等），他们的下一级仅有补齐的这条数据。另外直辖市（北京、天津等）下级也仅有一条数据，ID结尾为01（不包括重庆，重庆下级分成了市、县两个）。
 
 直筒子等这种为什么不直接把下级往上提一级来做区级，采用补齐填充的方式来对齐数据的原因，请参考[issue#9](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/issues/9)。
+
+
+
+[​](?)
+
+[​](?)
+
 
 ## 【字段】ok_data表
 省市区镇数据表，可使用 [AreaCity-Geo格式转换工具软件](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html) 直接导入数据库。
@@ -119,16 +150,24 @@ geo|string|城市中心坐标，高德地图`GCJ-02`火星坐标系。格式："
 polygon|string|行政区域边界，高德地图`GCJ-02`火星坐标系。格式："lng lat,...;lng lat,..." or "EMPTY"，少量的EMPTY（仅台湾的城市、国外）代表此城市没有抓取到边界信息；存在多个地块(如海岛、飞地)时用`;`分隔，每个地块的坐标点用`,`分隔，特别要注意：多个地块组合在一起可能是[MULTIPOLYGON](https://docs.microsoft.com/zh-cn/sql/relational-databases/spatial/multipolygon?view=sql-server-2014)或者[POLYGON](https://docs.microsoft.com/zh-cn/sql/relational-databases/spatial/polygon?view=sql-server-2014)，需用工具进行计算和对数据进行验证
 
 
-## 【QQ群】交流与支持
 
-欢迎加QQ群：484560085，纯小写口令：`areacity`
+[​](?)
 
-<img src="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/assets/qq_group_484560085.png" width="220px">
+[​](?)
 
 
 ## 案例效果
-[<img src="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/assets/use_picker.gif" width="280px">](https://jiebian.life/start/test/app?picker=1) [<img src="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/assets/use_select.png" width="460px">](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/)
+[<img src="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/use_picker.gif" width="280px">](https://jiebian.life/start/test/app?picker=1) [<img src="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/use_select.png" width="460px">](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/)
 
+
+
+
+
+[​](?)
+
+[​](?)
+
+[​](?)
 
 
 
@@ -148,10 +187,16 @@ polygon|string|行政区域边界，高德地图`GCJ-02`火星坐标系。格式
 5. 网页版省市区多级联动js代码生成（含数据）。
 
 ## 效果图
-![](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/assets/tools.png)
+![](assets/tools.png)
 
 
 
+
+[​](?)
+
+[​](?)
+
+[​](?)
 
 
 # :open_book:拼音标注
@@ -175,7 +220,19 @@ polygon|string|行政区域边界，高德地图`GCJ-02`火星坐标系。格式
 排序方案三看起来好些；为什么不直接用名称文本进行排序，我怕不同环境下对多音字不友好，最差情况下也不会比方案一差，并且排序可透过前缀实施自定义控制。
 
 
+
+[​](?)
+
+[​](?)
+
+[​](?)
+
+
 # :open_book:坐标和行政区域边界范围
+
+## 在线测试和预览
+坐标边界范围在线测试预览地址：[ECharts Map四级下钻在线测试和预览+代码生成](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-echarts.html)
+
 
 ## 数据源
 使用高德接口采集的，本来想采百度地图的，但经过使用发现百度地图数据~~有严重问题(百度已更新，不能复现了)~~：
@@ -187,8 +244,10 @@ polygon|string|行政区域边界，高德地图`GCJ-02`火星坐标系。格式
 所以放弃使用百度地图数据。
 
 
-## 在线测试和预览
-坐标边界范围在线测试预览地址：[ECharts Map四级下钻在线测试和预览+代码生成](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-echarts.html)
+
+[​](?)
+
+[​](?)
 
 
 ## 如何使用坐标和边界数据
@@ -207,10 +266,17 @@ polygon|string|行政区域边界，高德地图`GCJ-02`火星坐标系。格式
 
 ## 省市区三级边界效果
 
-![](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/assets/geo-sheng.gif) ![](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/assets/geo-guangdong.gif)
+![](assets/geo-sheng.gif) ![](assets/geo-guangdong.gif)
 
 ## 乡镇第4级边界效果
-![](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/assets/geo-level4/preview-free.png) ![](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/assets/geo-level4/z01.png)
+![](assets/geo-level4/preview-free.png) ![](assets/geo-level4/z01.png)
+
+
+
+[​](?)
+
+[​](?)
+
 
 ## AreaCity-Geo格式转换工具软件
 
@@ -220,9 +286,18 @@ polygon|string|行政区域边界，高德地图`GCJ-02`火星坐标系。格式
 
 **相关截图：**
 
-![](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/assets/AGT-Images/sy-4.png)
+![](assets/AGT-Images/sy-4.png)
 
-![](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/assets/AGT-Images/sy-2.png)
+![](assets/AGT-Images/sy-2.png)
+
+
+
+
+[​](?)
+
+[​](?)
+
+[​](?)
 
 
 # :open_book:数据规则和相关问题
@@ -266,6 +341,15 @@ polygon|string|行政区域边界，高德地图`GCJ-02`火星坐标系。格式
 
 
 
+
+
+[​](?)
+
+[​](?)
+
+[​](?)
+
+
 # :open_book:使用js自行采集
 
 在低版本chrome控制台内运行1、2、3打头的文件即可完成采集，这些文件按文件名顺序执行。环境配置好的情况下完成一次采集大概30分钟内。
@@ -288,6 +372,15 @@ polygon|string|行政区域边界，高德地图`GCJ-02`火星坐标系。格式
 
 
 
+
+
+[​](?)
+
+[​](?)
+
+[​](?)
+
+
 # :open_book:其他资源
 - 行政区划吧：[百度贴吧链接](https://tieba.baidu.com/f?kw=%E8%A1%8C%E6%94%BF%E5%8C%BA%E5%88%92)，一个指点江山有味道的吧，区划变更先知道
 - 全国基础地理数据库：[http://www.webmap.cn](http://www.webmap.cn)
@@ -295,9 +388,15 @@ polygon|string|行政区域边界，高德地图`GCJ-02`火星坐标系。格式
 - 含街道居委会（五级）数据：[https://github.com/modood/Administrative-divisions-of-China](https://github.com/modood/Administrative-divisions-of-China)
 
 
+
+[​](?)
+
+[​](?)
+
+
 # :star:捐赠
 如果这个库有帮助到您，请 Star 一下。
 
 您也可以使用支付宝或微信打赏作者：
 
-![](https://gitee.com/xiangyuecn/Recorder/raw/master/assets/donate-alipay.png)  ![](https://gitee.com/xiangyuecn/Recorder/raw/master/assets/donate-weixin.png)
+![](https://xiangyuecn.gitee.io/recorder/assets/donate-alipay.png)  ![](https://xiangyuecn.gitee.io/recorder/assets/donate-weixin.png)

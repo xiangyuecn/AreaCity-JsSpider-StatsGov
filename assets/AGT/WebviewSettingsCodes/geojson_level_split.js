@@ -323,7 +323,7 @@ var analysisFile=function(path,Catch,OK){
 			
 			var id=prop.id||prop.unique_id;
 			if(splitToSingle && id==null){
-				throw new Error("第"+lineNo+"行数据中无 id|unique_id 属性，不支持最小化拆分");
+				throw new Error("第"+lineNo+"行数据中无 id|unique_id 属性，不支持 每条数据单独生成一个文件");
 			};
 			
 			//固定的id格式，省去查找上级id麻烦，直接截取

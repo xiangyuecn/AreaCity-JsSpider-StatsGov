@@ -85,6 +85,58 @@ git clone --depth 1 https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov.git
 - [高德地图坐标和行政区域边界范围](https://lbs.amap.com/api/javascript-api/example/district-search/draw-district-boundaries)：当城市数据有变化时，主动从高德查询坐标和边界信息。
 
 
+
+
+## 【字段】ok_data_level*.csv表
+省市区镇数据表，可使用 [AreaCity-Geo格式转换工具软件](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html) 直接导入数据库。
+
+字段|类型|描述
+:--:|:--:|--
+id|int/long|城市编号，三级用int类型，四级用long类型；省市区三级为统计局的编号经过去除后缀的`0{3,6,8}`得到的短编号，港澳台编号为民政部的编号；如果是添加的数据（国外），此编号为自定义编号；镇级主要为腾讯地图行政区划的编号，大部分和统计局的数据一致，约7.5%（约3000个）的镇级不一致；如果某级缺失(如：省直辖县级市、新增城市)，会用上级数据进行补齐，编号为上级结尾添加0{2,3}，*注意如果要恢复长编号时（简单的补上00）已有的ID会和添加的ID产生冲突，比如4位恢复到6位将导致部分上下级ID冲突，恢复时这些新加的数据要进行特殊处理*。
+pid|int|上级ID
+deep|int|层级深度；0：省，1：市，2：区，3：镇
+name|string|城市名称；省市区三级为统计局的名称精简过后的，镇级主要为腾讯地图行政区划的名称精简过后的
+pinyin_prefix|string|`name`的拼音前缀，取的是`pinyin`第一个字母，或港澳台、国外自定义前缀；用来排序时应当先根据拼音前缀的首字母来排序，相同的再根据前缀+名称进行排序
+pinyin|string|`name`的完整拼音
+ext_id|long|数据源原始的编号；如果是添加的数据，此编号为0
+ext_name|string|数据源原始的名称，为未精简的名称
+
+## 【字段】ok_geo.csv表
+此表为坐标和行政区域边界范围数据表，含省市区三级不含第四级，如需乡镇坐标边界数据[请到此下载](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-level4.html)；因为数据文件过大（130M+），所以分开存储。
+
+由于边界数据的解析比较复杂，请参考[src/map_geo_格式化.js](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/src/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)内的SQL Server的解析语句，或者使用 [AreaCity-Geo格式转换工具软件](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html) 直接导入数据库，或者转换成`shp`、`geojson`、`sql`格式。
+
+字段|类型|描述
+:--:|:--:|--
+id|int|和`ok_data_level*.csv`表中的`ID`相同，通过这个`ID`关联到省市区具体数据，`map_geo_格式化.js`中有数据合并SQL语句
+pid|int|上级ID
+deep|int|层级深度；0：省，1：市，2：区
+name|string|城市完整名称
+ext_path|string|如：“广东省 深圳市 罗湖区”，为省市区三级完整名称，中间用空格分隔
+geo|string|城市中心坐标，高德地图`GCJ-02`火星坐标系。格式："lng lat" or "EMPTY"，少量的EMPTY（仅台湾的城市、国外）代表此城市没有抓取到坐标信息
+polygon|string|行政区域边界，高德地图`GCJ-02`火星坐标系。格式："lng lat,...;lng lat,..." or "EMPTY"，少量的EMPTY（仅台湾的城市、国外）代表此城市没有抓取到边界信息；存在多个地块(如海岛、飞地)时用`;`分隔，每个地块的坐标点用`,`分隔，特别要注意：多个地块组合在一起可能是[MULTIPOLYGON](https://docs.microsoft.com/zh-cn/sql/relational-databases/spatial/multipolygon?view=sql-server-2014)或者[POLYGON](https://docs.microsoft.com/zh-cn/sql/relational-databases/spatial/polygon?view=sql-server-2014)，需用工具进行计算和对数据进行验证
+
+
+
+## 数据有效性和完整性
+本库会尽量和民政部的更新频率保持一致，但由于最为主要的两个数据源`国家统计局`、`腾讯地图行政区划`更新频度并没有民政部高；因此省市区三级准确度和民政部准确度是一量级，并且要更完整些；第四级镇级主要由`腾讯地图行政区划`提供，腾讯数据源并不经常更新，因此会导致小部分新增、调整的城市第四级没有数据（会用上级数据补齐），使用前应该考虑此缺陷。
+
+数据通过使用上级数据补齐的形式（具体细节请参考后面的数据规则），使得任何一个数据都能满足省市区镇4级结构，没有孤立的（ID全局唯一），因此不管从哪级进行下级选择，都能进行有效操作。可以通过ID结构来识别这种补齐填充的数据，只要ID为上级的ID+多个0，就代表此数据为补齐填充数据，比如：东莞（4419）-东莞（441900），很容易鉴别出441900为补齐用的填充数据。
+
+会发生补齐行为的数据很少，约50来个（不含台湾），主要为：直筒子市（东莞、儋州等）、省直辖县级市（济源、潜江等），他们的下一级仅有补齐的这条数据。另外直辖市（北京、天津等）下级也仅有一条数据，ID结尾为01（不包括重庆，重庆下级分成了市、县两个）。
+
+直筒子等这种为什么不直接把下级往上提一级来做区级，采用补齐填充的方式来对齐数据的原因，请参考[issue#9](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/issues/9)。
+
+数据中不包含大部分[行政管理区](https://baike.baidu.com/item/%E8%A1%8C%E6%94%BF%E7%AE%A1%E7%90%86%E5%8C%BA/17184852)，比如：雄安新区、天府新区、苏州工业园区等，请自行查阅和[行政区划](https://baike.baidu.com/item/%E8%A1%8C%E6%94%BF%E5%8C%BA%E5%88%92/4655526)的区别。
+
+
+
+
+[​](?)
+
+[​](?)
+
+
 ## 采集环境
 
 chrome 控制台，当前数据采集使用的chrome版本：`Chrome 97` + `Chrome 80`，chrome越来越难用（[简单制作chrome便携版实现多版本共存](https://github.com/xiangyuecn/Docs/blob/master/Other/%E8%87%AA%E5%B7%B1%E5%88%B6%E4%BD%9Cchrome%E4%BE%BF%E6%90%BA%E7%89%88%E5%AE%9E%E7%8E%B0%E5%A4%9A%E7%89%88%E6%9C%AC%E5%85%B1%E5%AD%98.md)）。
@@ -104,62 +156,6 @@ chrome 控制台，当前数据采集使用的chrome版本：`Chrome 97` + `Chro
 - 2013版(2013)采集了4层，省、市、区、镇，来源：[统计局2013版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2013/index.html)。
 
 
-## 数据有效性和完整性
-本库会尽量和民政部的更新频率保持一致，但由于最为主要的两个数据源`国家统计局`、`腾讯地图行政区划`更新频度并没有民政部高；因此省市区三级准确度和民政部准确度是一量级，并且要更完整些；第四级镇级主要由`腾讯地图行政区划`提供，腾讯数据源并不经常更新，因此会导致小部分新增、调整的城市第四级没有数据（会用上级数据补齐），使用前应该考虑此缺陷。
-
-数据通过使用上级数据补齐的形式（具体细节请参考后面的数据规则），使得任何一个数据都能满足省市区镇4级结构，没有孤立的（ID全局唯一），因此不管从哪级进行下级选择，都能进行有效操作。可以通过ID结构来识别这种补齐填充的数据，只要ID为上级的ID+多个0，就代表此数据为补齐填充数据，比如：东莞（4419）-东莞（441900），很容易鉴别出441900为补齐用的填充数据。
-
-会发生补齐行为的数据很少，约50来个（不含台湾），主要为：直筒子市（东莞、儋州等）、省直辖县级市（济源、潜江等），他们的下一级仅有补齐的这条数据。另外直辖市（北京、天津等）下级也仅有一条数据，ID结尾为01（不包括重庆，重庆下级分成了市、县两个）。
-
-直筒子等这种为什么不直接把下级往上提一级来做区级，采用补齐填充的方式来对齐数据的原因，请参考[issue#9](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/issues/9)。
-
-
-
-[​](?)
-
-[​](?)
-
-
-## 【字段】ok_data表
-省市区镇数据表，可使用 [AreaCity-Geo格式转换工具软件](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html) 直接导入数据库。
-
-字段|类型|描述
-:--:|:--:|--
-id|int/long|城市编号，三级用int类型，四级用long类型；省市区三级为统计局的编号经过去除后缀的`0{3,6,8}`得到的短编号，港澳台编号为民政部的编号；如果是添加的数据（国外），此编号为自定义编号；镇级主要为腾讯地图行政区划的编号，大部分和统计局的数据一致，约7.5%（约3000个）的镇级不一致；如果某级缺失(如：省直辖县级市、新增城市)，会用上级数据进行补齐，编号为上级结尾添加0{2,3}，*注意如果要恢复长编号时（简单的补上00）已有的ID会和添加的ID产生冲突，比如4位恢复到6位将导致部分上下级ID冲突，恢复时这些新加的数据要进行特殊处理*。
-pid|int|上级ID
-deep|int|层级深度；0：省，1：市，2：区，3：镇
-name|string|城市名称；省市区三级为统计局的名称精简过后的，镇级主要为腾讯地图行政区划的名称精简过后的
-pinyin_prefix|string|`name`的拼音前缀，取的是`pinyin`第一个字母，或港澳台、国外自定义前缀；用来排序时应当先根据拼音前缀的首字母来排序，相同的再根据前缀+名称进行排序
-pinyin|string|`name`的完整拼音
-ext_id|long|数据源原始的编号；如果是添加的数据，此编号为0
-ext_name|string|数据源原始的名称，为未精简的名称
-
-## 【字段】ok_geo表
-此表为坐标和行政区域边界范围数据表，含省市区三级不含第四级，如需乡镇坐标边界数据[请到此下载](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-level4.html)；因为数据文件过大（130M+），所以分开存储。
-
-由于边界数据的解析比较复杂，请参考[src/map_geo_格式化.js](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/src/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)内的SQL Server的解析语句，或者使用 [AreaCity-Geo格式转换工具软件](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html) 直接导入数据库，或者转换成`shp`、`geojson`、`sql`格式。
-
-字段|类型|描述
-:--:|:--:|--
-id|int|和`ok_data`表中的`ID`相同，通过这个`ID`关联到省市区具体数据，`map_geo_格式化.js`中有数据合并SQL语句
-pid|int|上级ID
-deep|int|层级深度；0：省，1：市，2：区
-name|string|城市完整名称
-ext_path|string|如：“广东省 深圳市 罗湖区”，为省市区三级完整名称，中间用空格分隔
-geo|string|城市中心坐标，高德地图`GCJ-02`火星坐标系。格式："lng lat" or "EMPTY"，少量的EMPTY（仅台湾的城市、国外）代表此城市没有抓取到坐标信息
-polygon|string|行政区域边界，高德地图`GCJ-02`火星坐标系。格式："lng lat,...;lng lat,..." or "EMPTY"，少量的EMPTY（仅台湾的城市、国外）代表此城市没有抓取到边界信息；存在多个地块(如海岛、飞地)时用`;`分隔，每个地块的坐标点用`,`分隔，特别要注意：多个地块组合在一起可能是[MULTIPOLYGON](https://docs.microsoft.com/zh-cn/sql/relational-databases/spatial/multipolygon?view=sql-server-2014)或者[POLYGON](https://docs.microsoft.com/zh-cn/sql/relational-databases/spatial/polygon?view=sql-server-2014)，需用工具进行计算和对数据进行验证
-
-
-
-[​](?)
-
-[​](?)
-
-
-## 案例效果
-[<img src="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/use_picker.gif" width="280px">](https://jiebian.life/start/test/app?picker=1) [<img src="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/use_select.png" width="460px">](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/)
-
-
 
 
 
@@ -171,53 +167,25 @@ polygon|string|行政区域边界，高德地图`GCJ-02`火星坐标系。格式
 
 
 
-# :open_book:测试和WEB数据格式转换工具
+# :open_book:在线测试工具
 
 在线测试工具地址：[https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/)
 
-或者直接使用`测试和WEB数据格式转换工具.js`，在任意网页控制台中使用。
-
-此工具主要用于把csv数据转换成别的格式，另外提供省市区多级联动测试，并且可生成js源码（含数据）下载，3级联动生成的文件紧凑版68kb，4级联动紧凑版1mb大小。
+此工具主要用于将`ok_data_level*.csv`四级行政区划数据文件转换成别的格式，另外提供省市区多级联动测试，并且可生成js源码（含数据）下载，3级联动生成的文件紧凑版68kb，4级联动紧凑版1mb大小。
 
 ## 工具支持：
-1. 数据预览和测试。
+1. 省市区镇四级行政区划数据预览和测试。
 2. 将csv数据导出成压缩后的紧凑版js格式纯数据文件，省市区3级数据65kb大小。
 3. 将csv数据导出成JSON对象、JSON数组纯数据文件，省市区3级数据120kb+。
 4. 网页版省市区镇多级联动测试。
-5. 网页版省市区多级联动js代码生成（含数据）。
+5. 网页版省市区镇多级联动js代码生成（含数据）。
 
-## 效果图
+## 相关截图
 ![](assets/tools.png)
 
 
 
 
-[​](?)
-
-[​](?)
-
-[​](?)
-
-
-# :open_book:拼音标注
-
-## 拼音源
-省市区这三级采用在线拼音工具转换，据说依据《新华字典》、《现代汉语词典》等规范性辞书校对，多音字地名大部分能正确拼音，`重庆:chong qing`，`朝阳:chao yang`，`郫都:pi du`，`闵行:min hang`，`康巴什:kang ba shi`、`六安市:lu an shi`；转换完成后会和腾讯地图行政区划存在的拼音进行对比校正。
-
-镇级以下地名采用本地拼音库（`assets/pinyin-python-server`）转换，准确度没有省市区的高。
-
-## 拼音前缀
-目前采用的是截取第一个字拼音的首字母，和港澳台、国外特殊指定前缀。
-
-### 排序方案：
-
-方案一(2016版废弃)：取每个字的拼音首字母排序，比如：`河北:hb` `湖北:hb` `黑龙江:hlj` `河南:hn` `湖南:hn`
-
-方案二(2018版废弃)：取的是第一个字前两个字母和后两个字首字母排序：`河北:heb` `黑龙江:helj` `河南:hen` `湖北:hub` `湖南:hun`
-
-方案三(返璞归真)：取第拼音前缀首字母进行排序，如果两个字母相同，再使用(首字母前缀或自定义前缀)+(名称)进行排序：`河北:h.河北` `河南:h.河南` `黑龙江:h.黑龙江` `湖北:h.湖北` `湖南:h.湖南` `香港:~1.香港` `澳门:~2.澳门`
-
-排序方案三看起来好些；为什么不直接用名称文本进行排序，我怕不同环境下对多音字不友好，最差情况下也不会比方案一差，并且排序可透过前缀实施自定义控制。
 
 
 
@@ -228,67 +196,56 @@ polygon|string|行政区域边界，高德地图`GCJ-02`火星坐标系。格式
 [​](?)
 
 
-# :open_book:坐标和行政区域边界范围
+# :open_book:格式转换工具-PC版软件
 
-## 在线测试和预览
-坐标边界范围在线测试预览地址：[ECharts Map四级下钻在线测试和预览+代码生成](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-echarts.html)
+[AreaCity-Geo格式转换工具软件](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html)用于将采集到的 `ok_geo.csv` 省市区乡镇坐标和边界范围文件转成其他格式，也支持将 `ok_data_level*.csv` 省市区镇行政区划数据导入数据库。
 
+此软件可免费使用，但有些功能会受到限制，比如省市区边界数据：每次转换操作最多导出全国所有省级、或一个城市和它的下一级数据，可付费升级为完整版。
 
-## 数据源
-使用高德接口采集的，本来想采百度地图的，但经过使用发现百度地图数据~~有严重问题(百度已更新，不能复现了)~~：
-
-参考 `肃宁县（右下方向那块飞地）`、`路南区（唐山科技职业技术学院那里一段诡异的边界）` 边界，~~百度数据大量线段交叉的无效`polygon`(百度已更新，不能复现了)~~（[百度地图测试](http://lbsyun.baidu.com/jsdemo.htm#c1_10)），没有人工无法修[​](?FixGitee_Block)正，高德没有这个问题（[高德地图测试](https://lbs.amap.com/api/javascript-api/example/district-search/draw-district-boundaries)）；
-
-并且高德对镂空性质(Hole)的地块处理比百度强，参考`池州市`对`铜陵市`的飞地处理，高德数据只需要`Union`操作就能生成`polygon`，百度如果不计算位置关系，是完全不知道应该进行`Union`操作还是`Difference`操作，极其复杂数据还无效。
-
-所以放弃使用百度地图数据。
-
-
-
-[​](?)
-
-[​](?)
+## 工具支持：
+1. 将 ok_geo.csv坐标边界 转成 ESRI Shapefile (.shp) 文件。
+2. 将 ok_geo.csv坐标边界 转成 GeoJSON (.json) 文件，支持按层级拆分成多级json文件。
+3. 将 ok_geo.csv坐标边界 转成 SQL (.sql) 文件，支持多种数据库格式。
+4. 将 ok_geo.csv坐标边界 导入 MySQL 5.0+、SQL Server 2008+ 数据库。
+5. 将 ok_data_level*.csv省市区镇行政区划 转成 SQL 文件、导入 数据库；可同时将坐标、边界范围附加到同一表中。
+6. 支持坐标系转换，ok_geo默认为GCJ-02火星坐标系，支持转换成：BD-09、WGS-84 GPS、CGCS2000。
+7. 可执行自定义 JavaScript 脚本，可扩展出丰富功能。
+8. 转换精度高，速度快，内存占用小，3-5分钟左右可转换完所有数据。
+9. 支持Win10、Win8、Win7，32位、64位系统使用（其他系统装虚拟机可用）。
 
 
-## 如何使用坐标和边界数据
+## 相关截图
 
-`坐标和边界数据` 和 `省市区` 数据是分开存储的，通过`ID`来进行关联。
+工具软件界面：
 
-可以把`ok_geo.csv`导入到数据库内使用，由于`POLYGON`需要解析，蛮复杂的，可以参考[src/map_geo_格式化.js](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/src/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)内的SQL Server导入用的SQL语句的例子，或者直接使用[AreaCity-Geo格式转换工具软件](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html)进行转换成`shp`、`geojson`、`sql`格式或直接导入数据库。
+![](assets/AGT-Images/a0.png)
 
-如果需要特定的`POLYGON`格式，可以根据上面介绍的字段格式，自行进行解析和验证。
-
-使用过程中如果遇到多种不同坐标系的问题，比如请求的参数是`WGS-84坐标(GPS)`，我们后端存储的是高德的坐标，可以通过将`WGS-84坐标`转成`高德坐标`后进行处理，百度的坐标一样。转换有相应方法，转换精度一般可以达到预期范围，可自行查找。或者直接把高德的原始坐标数据转换成目标坐标系后再存储（精度？）。
-
-> 注意：MySQL 5.* 中进行空间计算查询时，不带ST_打头的函数均为采用Polygon的外接矩形计算，会导致结果不准确，应当使用带ST_打头的方法来进行查询，[FAQ](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html#badmysql)
-> 
-> 注意：MySQL的空间索引的创建要按[官方文档](https://dev.mysql.com/doc/refman/8.0/en/spatial-index-optimization.html)进行创建，否则很可能会索引失效，从而导致空间查询异常缓慢；或者切换成MyISAM引擎，会比InnoDB引擎的空间查询快很多。
-
-## 省市区三级边界效果
-
-![](assets/geo-sheng.gif) ![](assets/geo-guangdong.gif)
-
-## 乡镇第4级边界效果
-![](assets/geo-level4/preview-free.png) ![](assets/geo-level4/z01.png)
-
-
-
-[​](?)
-
-[​](?)
-
-
-## AreaCity-Geo格式转换工具软件
-
-本工具软件用于将采集到的 ok_geo.csv 城市坐标和边界范围文件转成其他格式，比如：`shp`、`geojson`、`sql`；或者直接导入数据库：SQL Server、MySQL；也支持省市区镇数据的数据库导入；[软件教程和下载地址](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html)。
-
-此软件可免费使用，但会受到限制，每次转换操作最多导出一个城市和它的下一级数据，可付费升级为完整版。
-
-**相关截图：**
+导入MySQL查询效果：
 
 ![](assets/AGT-Images/sy-4.png)
 
+导入SQL Server查询效果：
+
+![](assets/AGT-Images/sy-5.png)
+
+省市区三级边界（ArcMap Asia_Lambert_Conformal_Conic投影）：
+
 ![](assets/AGT-Images/sy-2.png)
+
+全国乡镇边界（ArcMap Asia_Lambert_Conformal_Conic投影）：
+
+![](assets/geo-level4/preview-arcmap-full.png)
+
+湖北省市和乡镇边界（QGIS Asia_Lambert_Conformal_Conic投影）：
+
+![](assets/geo-level4/preview-qgis-wuhan.png)
+
+湖北省乡镇边界（SQL Server查询空间结果）：
+
+![](assets/geo-level4/z01.png)
+
+
+
 
 
 
@@ -333,7 +290,28 @@ polygon|string|行政区域边界，高德地图`GCJ-02`火星坐标系。格式
 4. 其他平台的数据在感官上显得都[不够完美](https://v2ex.com/t/607306)，综合一下舒畅多了。
 
 
-## 修[​](?FixGitee_Block)正数据
+## 拼音标注和排序
+
+### 拼音源
+省市区这三级采用在线拼音工具转换，据说依据《新华字典》、《现代汉语词典》等规范性辞书校对，多音字地名大部分能正确拼音，`重庆:chong qing`，`朝阳:chao yang`，`郫都:pi du`，`闵行:min hang`，`康巴什:kang ba shi`、`六安市:lu an shi`；转换完成后会和腾讯地图行政区划存在的拼音进行对比校正。
+
+镇级以下地名采用本地拼音库（`assets/pinyin-python-server`）转换，准确度没有省市区的高。
+
+### 拼音前缀
+目前采用的是截取第一个字拼音的首字母，和港澳台、国外特殊指定前缀。
+
+### 排序方案：
+
+方案一(2016版废弃)：取每个字的拼音首字母排序，比如：`河北:hb` `湖北:hb` `黑龙江:hlj` `河南:hn` `湖南:hn`
+
+方案二(2018版废弃)：取的是第一个字前两个字母和后两个字首字母排序：`河北:heb` `黑龙江:helj` `河南:hen` `湖北:hub` `湖南:hun`
+
+方案三(返璞归真)：取第拼音前缀首字母进行排序，如果两个字母相同，再使用(首字母前缀或自定义前缀)+(名称)进行排序：`河北:h.河北` `河南:h.河南` `黑龙江:h.黑龙江` `湖北:h.湖北` `湖南:h.湖南` `香港:~1.香港` `澳门:~2.澳门`
+
+排序方案三看起来好些；为什么不直接用名称文本进行排序，我怕不同环境下对多音字不友好，最差情况下也不会比方案一差，并且排序可透过前缀实施自定义控制。
+
+
+### 修[​](?FixGitee_Block)正数据
 
 - [issues/2](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/issues/2) `乐亭县` 的 `乐`读`lào` ，此县下面的`乐亭`读音均已修[​](?FixGitee_Block)正。
 - [2020-8-23] QQ:85005150反馈 `宕昌县` 的 `宕` 读 `tàn`。

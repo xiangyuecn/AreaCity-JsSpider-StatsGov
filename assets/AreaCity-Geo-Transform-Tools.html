@@ -192,11 +192,10 @@ img{
 		<div class="content">
 			<ul class="c_ul" style="list-style-type: square;">
 				<li>将 ok_geo.csv坐标边界 转成 ESRI Shapefile (<i class="i">.shp</i>) 文件。</li>
-				<li>将 ok_geo.csv坐标边界 转成 GeoJSON (<i class="i">.json</i>) 文件。</li>
+				<li>将 ok_geo.csv坐标边界 转成 GeoJSON (<i class="i">.json</i>) 文件，支持按层级拆分成多级json文件。</li>
 				<li>将 ok_geo.csv坐标边界 转成 SQL (<i class="i">.sql</i>) 文件，支持SQL Server、MySQL数据库格式。</li>
-				<li>将 ok_geo.csv坐标边界 导入 SQL Server 2008+ 数据库。</li>
-				<li>将 ok_geo.csv坐标边界 导入 MySQL 5.0+ 数据库。</li>
-				<li>支持将 ok_data_level*.csv省市区镇行政区划 转成 SQL 文件、导入 数据库；可同时将坐标、边界范围附加到同一表中。</li>
+				<li>将 ok_geo.csv坐标边界 导入 MySQL 5.0+、SQL Server 2008+ 数据库。</li>
+				<li>将 ok_data_level*.csv省市区镇行政区划 转成 SQL 文件、导入 数据库；可同时将坐标、边界范围附加到同一表中。</li>
 				<li>支持限定导出数据级别，比如只导出全国所有市级数据，默认导出全部级别数据。</li>
 				<li>支持限定导出指定城市的数据，比如只导出湖北的所有城市，默认导出全国所有数据。</li>
 				<li>支持限定导出数据内容，比如可以只导出坐标或边界范围，默认两个都导出。</li>
@@ -342,7 +341,7 @@ img{
 					可以将转换成的shp文件在 ArcMap 等GIS软件中打开查看；注意：ok_geo.csv为高德地图的坐标数据，坐标系为GCJ-02火星坐标系，显示到Google地图、百度地图内有肉眼可见的偏移（几百米），可通过高级自定义脚本转换坐标系修正；此处以 ArcMap 为例。
 					<div style="padding-left:30px">
 						<div style="margin-top:20px">
-							1. 打开ArcMap，在Layers菜单上右键点击“Add Data”
+							1. 打开ArcMap，Layers用Asia_Lambert_Conformal_Conic投影，在Layers菜单上右键点击“Add Data”
 						</div>
 						<div style="margin-top:20px">
 							2. 在Add Data对话框中点击“Connect To Folder”，选择 ok_geo.csv 所在目录
@@ -439,7 +438,7 @@ select * from 【此处改成你的表名】 as t where deep=1 and polygon.STInt
 -- 查看广东省的所有市、区
 select id,ext_path,geo.STAsText(),polygon from 【此处改成你的表名】 where ext_path like '%广东省%'
 
--- 反解一个坐标对应的城市
+-- 反解一个坐标对应的城市 SQL Server版
 select id,ext_path,polygon from 【此处改成你的表名】 where polygon.STIntersects(geometry::STGeomFromText('POINT(114.044346 22.691963)',0))=1
 
 -- 反解一个坐标对应的城市 MySQL版

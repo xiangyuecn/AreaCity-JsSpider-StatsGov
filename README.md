@@ -102,7 +102,7 @@ ext_id|long|数据源原始的编号；如果是添加的数据，此编号为0
 ext_name|string|`如：武汉市`，数据源原始的名称，为未处理未精简的名称
 
 ## 【字段】ok_geo.csv - 坐标边界表
-此表为坐标和行政区域边界范围数据表，含省市区三级不含第四级，如需乡镇坐标边界数据[请到此下载](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-level4.html)；因为数据文件过大（130M+），所以分开存储。
+此表为坐标和行政区域边界范围数据表，可[在线测试预览](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-echarts.html)；此表含省市区三级不含第四级，如需乡镇级坐标边界数据[请到此下载](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-level4.html)；因为数据文件过大（130M+），所以分开存储。
 
 由于边界数据的解析比较复杂，请参考[src/map_geo_格式化.js](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/src/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)内的SQL Server的解析语句，或者使用 [AreaCity-Geo格式转换工具软件](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html) 直接导入数据库，或者转换成`shp`、`geojson`、`sql`格式。
 
@@ -173,7 +173,14 @@ polygon|string|行政区域边界，高德地图`GCJ-02`火星坐标系。格式
 5. 网页版省市区镇多级联动js代码生成（含数据）。
 
 ## 相关截图
+
+行政区划数据在线转换+多级联动：
+
 ![](assets/tools.png)
+
+ECharts + 高德地图四级下钻：
+
+![](assets/tools_map.png)
 
 
 

@@ -87,21 +87,21 @@ git clone --depth 1 https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov.git
 
 
 
-## 【字段】ok_data_level*.csv表
-省市区镇数据表，可使用 [AreaCity-Geo格式转换工具软件](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html) 直接导入数据库。
+## 【字段】ok_data_level*.csv - 行政区划数据表
+此表为省市区镇三级、四级行政区划数据表，可[在线测试预览](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/)（支持转成json、生成多级联动js代码），可使用 [AreaCity-Geo格式转换工具软件](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html) 直接导入数据库。
 
 字段|类型|描述
 :--:|:--:|--
 id|int/long|城市编号，三级用int类型，四级用long类型；省市区三级为统计局的编号经过去除后缀的`0{3,6,8}`得到的短编号，港澳台编号为民政部的编号；如果是添加的数据（国外），此编号为自定义编号；镇级主要为腾讯地图行政区划的编号，大部分和统计局的数据一致，约7.5%（约3000个）的镇级不一致；如果某级缺失(如：省直辖县级市、新增城市)，会用上级数据进行补齐，编号为上级结尾添加0{2,3}，*注意如果要恢复长编号时（简单的补上00）已有的ID会和添加的ID产生冲突，比如4位恢复到6位将导致部分上下级ID冲突，恢复时这些新加的数据要进行特殊处理*。
 pid|int|上级ID
 deep|int|层级深度；0：省，1：市，2：区，3：镇
-name|string|城市名称；省市区三级为统计局的名称精简过后的，镇级主要为腾讯地图行政区划的名称精简过后的
-pinyin_prefix|string|`name`的拼音前缀，取的是`pinyin`第一个字母，或港澳台、国外自定义前缀；用来排序时应当先根据拼音前缀的首字母来排序，相同的再根据前缀+名称进行排序
-pinyin|string|`name`的完整拼音
+name|string|`如：武汉`，为城市名称；省市区三级为统计局的名称精简过后的，镇级主要为腾讯地图行政区划的名称精简过后的
+pinyin_prefix|string|`如：w、~1`，为`name`的拼音前缀，取的是`pinyin`第一个字母`a-z`，或港澳台、国外自定义前缀`~1、~4`；用来排序时应当先根据拼音前缀的首字母来排序，相同的再根据前缀+名称进行排序
+pinyin|string|`如：wu han`，为`name`的完整拼音
 ext_id|long|数据源原始的编号；如果是添加的数据，此编号为0
-ext_name|string|数据源原始的名称，为未精简的名称
+ext_name|string|`如：武汉市`，数据源原始的名称，为未处理未精简的名称
 
-## 【字段】ok_geo.csv表
+## 【字段】ok_geo.csv - 坐标边界表
 此表为坐标和行政区域边界范围数据表，含省市区三级不含第四级，如需乡镇坐标边界数据[请到此下载](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-level4.html)；因为数据文件过大（130M+），所以分开存储。
 
 由于边界数据的解析比较复杂，请参考[src/map_geo_格式化.js](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/src/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)内的SQL Server的解析语句，或者使用 [AreaCity-Geo格式转换工具软件](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html) 直接导入数据库，或者转换成`shp`、`geojson`、`sql`格式。
@@ -111,12 +111,17 @@ ext_name|string|数据源原始的名称，为未精简的名称
 id|int|和`ok_data_level*.csv`表中的`ID`相同，通过这个`ID`关联到省市区具体数据，`map_geo_格式化.js`中有数据合并SQL语句
 pid|int|上级ID
 deep|int|层级深度；0：省，1：市，2：区
-name|string|城市完整名称
-ext_path|string|如：“广东省 深圳市 罗湖区”，为省市区三级完整名称，中间用空格分隔
+name|string|`如：罗湖区`，城市完整名称
+ext_path|string|`如：广东省 深圳市 罗湖区`，为省市区三级完整名称，中间用空格分隔
 geo|string|城市中心坐标，高德地图`GCJ-02`火星坐标系。格式："lng lat" or "EMPTY"，少量的EMPTY（仅台湾的城市、国外）代表此城市没有抓取到坐标信息
 polygon|string|行政区域边界，高德地图`GCJ-02`火星坐标系。格式："lng lat,...;lng lat,..." or "EMPTY"，少量的EMPTY（仅台湾的城市、国外）代表此城市没有抓取到边界信息；存在多个地块(如海岛、飞地)时用`;`分隔，每个地块的坐标点用`,`分隔，特别要注意：多个地块组合在一起可能是[MULTIPOLYGON](https://docs.microsoft.com/zh-cn/sql/relational-databases/spatial/multipolygon?view=sql-server-2014)或者[POLYGON](https://docs.microsoft.com/zh-cn/sql/relational-databases/spatial/polygon?view=sql-server-2014)，需用工具进行计算和对数据进行验证
 
 
+
+
+[​](?)
+
+[​](?)
 
 ## 数据有效性和完整性
 本库会尽量和民政部的更新频率保持一致，但由于最为主要的两个数据源`国家统计局`、`腾讯地图行政区划`更新频度并没有民政部高；因此省市区三级准确度和民政部准确度是一量级，并且要更完整些；第四级镇级主要由`腾讯地图行政区划`提供，腾讯数据源并不经常更新，因此会导致小部分新增、调整的城市第四级没有数据（会用上级数据补齐），使用前应该考虑此缺陷。
@@ -131,20 +136,7 @@ polygon|string|行政区域边界，高德地图`GCJ-02`火星坐标系。格式
 
 
 
-
-[​](?)
-
-[​](?)
-
-
-## 采集环境
-
-chrome 控制台，当前数据采集使用的chrome版本：`Chrome 97` + `Chrome 80`，chrome越来越难用（[简单制作chrome便携版实现多版本共存](https://github.com/xiangyuecn/Docs/blob/master/Other/%E8%87%AA%E5%B7%B1%E5%88%B6%E4%BD%9Cchrome%E4%BE%BF%E6%90%BA%E7%89%88%E5%AE%9E%E7%8E%B0%E5%A4%9A%E7%89%88%E6%9C%AC%E5%85%B1%E5%AD%98.md)）。
-
-2022年以前统计局数据乱码的根本原因在于统计局服务器响应的内容编码为`gb2312`（2022已采用utf-8编码无此问题），但服务器响应头只给了`Content-Type: text/html`，因此可用Fiddler篡改`Content-Type`响应头为`Content-Type: text/html; charset=gb2312`也可解决新版Chrome乱码问题。
-
-
-## 采集深度
+## 数据更新日志
 
 - 2021.220321.220114版(更新时间: 2022-04-08)采集了4层，省、市、区、镇，来源：[统计局2021版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2021/index.html)；省市区3级合并了[民政部2022-03-21数据](http://www.mca.gov.cn/article/sj/xzqh/1980/202203/20220300040708.shtml)、[高德地图行政区域](https://lbs.amap.com/api/webservice/guide/api/district)、[腾讯地图行政区划v20220114](https://lbs.qq.com/webservice_v1/guide-region.html)数据；镇级采用腾讯地图行政区划作为主要数据，综合高德和统计局的镇级。采集高德省市区三级坐标和行政区域边界范围。
 - 2020.210510.1103版(2021)采集了4层，省、市、区、镇，来源：[统计局2020版数据](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2020/index.html)；省市区3级合并了[民政部2021-05-10数据](http://www.mca.gov.cn/article/sj/xzqh/1980/202105/20210500033655.shtml)、[高德地图行政区域](https://lbs.amap.com/api/webservice/guide/api/district)、[腾讯地图行政区划v20211103](https://lbs.qq.com/webservice_v1/guide-region.html)数据；镇级采用腾讯地图行政区划作为主要数据，综合高德和统计局的镇级。采集高德省市区三级坐标和行政区域边界范围。
@@ -336,7 +328,15 @@ chrome 控制台，当前数据采集使用的chrome版本：`Chrome 97` + `Chro
 
 统计局官网也会对请求进行限制，超过一定量的请求后会要求输入验证码。只要没有禁用浏览器缓存，一个统计局url请求过一次就不再次发起网络请求（会走缓存），最多会产生4000个有效网络请求，发现要输入验证码时，重新开始采集即可，有缓存的非常快速。
 
-## 城市数据标准操作流程
+
+## 采集环境参考
+
+chrome 控制台，当前数据采集使用的chrome版本：`Chrome 97` + `Chrome 80`，chrome越来越难用（[简单制作chrome便携版实现多版本共存](https://github.com/xiangyuecn/Docs/blob/master/Other/%E8%87%AA%E5%B7%B1%E5%88%B6%E4%BD%9Cchrome%E4%BE%BF%E6%90%BA%E7%89%88%E5%AE%9E%E7%8E%B0%E5%A4%9A%E7%89%88%E6%9C%AC%E5%85%B1%E5%AD%98.md)）。
+
+2022年以前统计局数据乱码的根本原因在于统计局服务器响应的内容编码为`gb2312`（2022已采用utf-8编码无此问题），但服务器响应头只给了`Content-Type: text/html`，因此可用Fiddler篡改`Content-Type`响应头为`Content-Type: text/html; charset=gb2312`也可解决新版Chrome乱码问题。
+
+
+## 行政区划数据采集
 
 1. 按顺序用文本编辑器打开1-3打头的js文件，阅读源码开头的注释，用浏览器打开注释内相应的目标页面。
 2. 在浏览器页面内打开控制台，控制台中导入需要的数据。

@@ -9,8 +9,9 @@
 
 <script>
 /*
-界面显示创意来自：
+左右两幅地图显示创意来自：
 	https://github.com/TangSY/echarts-map-demo
+纯色的配色来自：
 	https://www.jianshu.com/p/028525cbd080
 */
 </script>
@@ -33,7 +34,7 @@ body{
 
 .main{
 	margin:0 auto;
-	padding:0 50px 80px;
+	padding:0 50px 20px;
 }
 </style>
 <style>
@@ -183,6 +184,23 @@ body::-webkit-scrollbar-thumb{
 		<div style="padding-top:15px;">
 			因为api接口返回的边界数据已经过了重新采样抽稀处理+GeoZip压缩（大幅节省流量，算法源码在页面下方）；抽稀后最高的从5万个坐标点变成1200个坐标点，两个边界之间放大后会明显感受到不够精细（因算法简单，未考虑相邻区域的拓扑结构），自己使用时可以调高采样数或者直接返回原始数据，就没有这个问题了。
 		</div>
+		
+		<div class2="Hide2" style="padding-top:15px;">
+			<div class="FlexBox">
+				<div class="FlexItem" class="RuntimeChoiceFileBox">
+					<div class="RuntimeChoiceDropFile" onclick="$('.RuntimeChoiceFile').click()" style="border: 3px dashed #a2a1a1;background:#eee; padding:30px 0; text-align:center;cursor: pointer;">
+						拖拽多个 .geojson|.json 文件到本页面，或点此选择文件立即绘图
+					</div>
+					<input type="file" class="RuntimeChoiceFile" style="display:none" multiple="multiple">
+				</div>
+				<div style="padding:8px 0 0 10px">
+					<div>文件编码：<input class="RuntimeChoiceFileEncode" style="width:80px" value="utf-8"></div>
+					<div>保留已绘制的：<input class="RuntimeChoiceFileAppend" type="checkbox" checked></div>
+					<div>名称字段：<input class="RuntimeChoiceFileNameKey" style="width:80px" value="name"></div>
+				</div>
+			</div>
+			<div class="RuntimeChoiceFileLogs"></div>
+		</div>
 	</div>
 	
 	<div class="mainBox">
@@ -218,7 +236,7 @@ body::-webkit-scrollbar-thumb{
 		<script>$(".geoVerDateView").html(CsvPubDate.TableHTML({level4:true,geo:true,geo4:true}));</script>
 	</div>
 	
-	<div class="mainBox">
+	<div class="mainBox" style="max-height:90vh;overflow-y:auto">
 		<div class="FlexBox" class2="" class3="">
 			<div class="FlexItem">
 				<div style="font-size:26px;font-weight:bold;padding-bottom:10px">
@@ -268,6 +286,12 @@ var Review=function(){
 	}
 };
 Review();
+
+var Toast=function(msg,color){
+	PageModule.toast(msg);
+	$(".PageToast").css("background",color==1?"red":color==2?"#0b1":"#888")
+	.css("boxShadow","2px 2px 10px "+(color==1?"red":color==2?"#0b1":"#888"))
+};
 </script>
 
 
@@ -298,6 +322,9 @@ var geoECharts=geoEChartsLib.Create({
 			True(data.list?data:data.v);
 		},False,false);
 	}
+	,showLog:function(msg,color){
+		Toast(msg,color);
+	}
 	,onLoadBefore:function(args,loadProcess){
 		PageModule.maskLoad();
 		
@@ -317,24 +344,35 @@ var geoECharts=geoEChartsLib.Create({
 	,onLoadEnd:function(err,apiData,mapDatas,geojson,dataProcess){
 		PageModule.closeMask();
 		if(err){
-			PageModule.toast(err);
+			Toast(err,1);
 			return;
 		};
+		var isChoiceFile=apiData==null;
 		var cur=geoECharts.current;
 		
 		//0级时，控制一下缩放
 		geoECharts.set.zoom=1;
 		if(cur.id==0 && IsWidget){
-			geoECharts.set.zoom=2;
+			geoECharts.set.zoom=1.4;
+		};
+		//0级时，如果隐藏了三沙市，就显示南海诸岛
+		if(cur.id==0 && geoEChartsLib.Polygon4603Hide && !isChoiceFile){
+			var feature=geoEChartsLib.NanhaiFeature(),prop=feature.properties;
+			geojson.features.push(feature);
+			mapDatas.push({id:prop.id,name:prop.name,isTemp:true});
 		};
 		
+		//显示配置编辑
+		geoECharts.set.showConfigEdit=!IsWidget;
+		
 		//echarts内容控制
-		if(geoEChartsLib.IsEmptyGeoJSON(geojson)){
-			PageModule.toast("无任何子级边界");
+		if(geoEChartsLib.IsEmptyGeoJSON(geojson) && !isChoiceFile){
+			Toast("无任何子级边界",1);
 		};
 		var zipSize=0,rawSize=0;
 		for(var i=0;i<mapDatas.length;i++){
-			var o=mapDatas[i],isZip=o.polygon.indexOf("Z:")+1;
+			var o=mapDatas[i]; if(o.isTemp || IsWidget)continue;
+			var isZip=o.polygon.indexOf("Z:")+1;
 			//提示信息替换
 			o.tips+="<br>【自定义】:";
 			for(var j=0;j<geojson.features.length;j++){
@@ -372,11 +410,14 @@ var geoECharts=geoEChartsLib.Create({
 			var o=levels[i];
 			html.push('<a onclick="goLevel('+i+')">'+o.name+'</a>');
 		};
-		var tips="单击地图进入下一级，当前路径："+html.join(" > ");
+		if(isChoiceFile){
+			html.push('选择的文件');
+		};
+		var tips="单击地图进入下一级"+(IsWidget?"":"，点击下载按钮保存png图片")+"，当前路径："+html.join(" > ");
 		
 		if(cur.level==3 && !/^(8|4420|4403)/.test(cur.id)){
 			var msg='当前为乡镇级别边界（付费数据），只有是最后一个乡镇【'+mapDatas[mapDatas.length-1].name+'】是最高80个采样数的粗略边界，其他的乡镇均为边界外接矩形（4个坐标点），仅供测试（深圳、中山、香港、澳门无此限制）';
-			PageModule.toast(msg);
+			Toast(msg,2);
 			
 			tips+='<div style="color:#fa0">'+msg+'，如需完整的乡镇边界数据，<a href="geo-level4.html" target="_blank">可以到此下载和购买</a>。</div>';
 		}
@@ -392,6 +433,9 @@ var geoECharts=geoEChartsLib.Create({
 			var mapGeo = new AMap.GeoJSON({
 				geoJSON: geojson
 				,getPolygon: function(json, lnglats) {
+					if(json.properties.id==-4603){
+						return;//南海诸岛
+					}
 					var pol=new AMap.Polygon({
 						path: lnglats,
 						strokeWeight: 1,
@@ -436,7 +480,12 @@ var geoECharts=geoEChartsLib.Create({
 				});
 				txt.on("click",function(e){
 					var o=e.target.getExtData();
-					geoECharts.load(o);
+					console.log("amap click",o);
+					if(o.isTemp){
+						Toast("临时数据，不支持进入下级");
+					}else{
+						geoECharts.load(o);
+					}
 				});
 			}
 			
@@ -463,7 +512,7 @@ var updateSet=function(){
 		pmax=1200;
 		$(".polygonPointsMax").val(pmax);
 		
-		PageModule.toast("错误：由于测试服务器带宽太小，边界采样数限制最高1200，如需体验原版边界数据效果，请自行提供接口测试");
+		Toast("错误：由于测试服务器带宽太小，边界采样数限制最高1200，如需体验原版边界数据效果，请自行提供接口测试",1);
 		return;
 	}
 	geoECharts.set.polygonPointsMax=pmax;
@@ -486,6 +535,151 @@ LoadJs("geo-echarts-data-cache-0.js",function(){
 
 
 
+
+
+
+
+
+<script>
+//处理拖拽进来的geojson文件，直接绘制
+$("body").bind("dragover",function(e){
+	e.preventDefault();
+}).bind("drop",function(e){
+	e.preventDefault();
+	
+	readChoiceFile(e.originalEvent.dataTransfer.files);
+});
+$(".RuntimeChoiceFile").bind("change",function(e){
+	readChoiceFile(e.target.files);
+});
+var readChoiceFileFeatures=[],readChoiceFileID=0;
+function readChoiceFile(files){
+	if(!files.length){
+		return;
+	};
+	PageModule.maskLoad("文件处理中...");
+	
+	var encode=$(".RuntimeChoiceFileEncode").val()||"utf-8";
+	var nameKey=$(".RuntimeChoiceFileNameKey").val()||"name";
+	var append=$(".RuntimeChoiceFileAppend")[0].checked;
+	if(!append){
+		readChoiceFileFeatures=[];
+		$(".RuntimeChoiceFileLogs").html("");
+	};
+	
+	var log=function(msg,color){
+		$(".RuntimeChoiceFileLogs").prepend('<div style="padding-left:25px;border-top: 1px solid #eee;color:'+(!color?"":color==1?"red":color==2?"#0b1":color)+'">'+msg+'</div>');
+	};
+	log("发现"+files.length+"个文件，配置: "
+		+JSON.stringify({encode:encode,append:append,nameKey:nameKey})
+		+"，开始处理...");
+	
+	var idx=-1,errCount=0;
+	var run=function(){
+		idx++;
+		if(idx>=files.length){
+			PageModule.closeMask();
+			var msg="已处理完所有文件，共"+readChoiceFileFeatures.length+"个边界"
+				+(errCount?"，有"+errCount+"个文件处理出错":"")
+				+"。";
+			log(msg,errCount?1:2);
+			Toast(msg,errCount?1:2);
+			
+			//绘图，照抄GeoECharts.load
+			var mapDatas=[],existsName={};
+			var geojson={type: "FeatureCollection",features:[]};
+			var arr=readChoiceFileFeatures;
+			for(var i=0;i<arr.length;i++){
+				var obj=arr[i],prop=obj.properties;
+				var id=prop.id;
+				var name=prop.raw[nameKey];
+				if(name==null){
+					name="[数据中无"+nameKey+"字段]";
+				}else{
+					name=name||"[无名称]";
+				}
+				var en=existsName[name]=(existsName[name]||0)+1;
+				if(en>1){
+					name=name+" ["+en+"]";
+				};
+				
+				var o={
+					id:id
+					,name:name
+					,isTemp:true
+				};
+				prop.name=name;
+				
+				mapDatas.push(o);
+				geojson.features.push(obj);
+			};
+			
+			geoECharts.current=levels[0];//路径定位到全国
+			var end=function(){
+				console.log("readChoiceFile draw", mapDatas, geojson);
+			
+				echarts.registerMap('City'+"fromFile", geojson);
+				geoECharts.draw("fromFile", mapDatas);
+			}
+			var hasProcess=false;
+			geoECharts.set.onLoadEnd("",null,mapDatas,geojson,function(call){
+				hasProcess=true;
+				call(end);
+			});
+			if(hasProcess){
+				return;
+			};
+			end();
+			return;
+		};
+		
+		var fileID=++readChoiceFileID;
+		var file = files[idx];
+		var reader = new FileReader();
+		reader.onload = function(e){
+			var txt=reader.result;
+			try{
+				if(!/^\s*\{/.test(txt)){
+					throw new Error("不是geojson文件");
+				}
+				var json=JSON.parse(txt);
+				if(json.type!="FeatureCollection"){
+					throw new Error("不是FeatureCollection");
+				}
+				var features=json.features||[];
+				if(!features.length){
+					throw new Error("没有一个feature，空文件无需处理");
+				}
+				var polygonCount=0;
+				for(var i=0;i<features.length;i++){
+					var o=features[i]||{},geom=o.geometry||{};
+					if(geom.type=="Polygon" || geom.type=="MultiPolygon"){
+						polygonCount++;
+						readChoiceFileFeatures.push(o);
+						
+						var prop=o.properties||{};
+						o.properties={
+							isTemp:true
+							,id:(fileID*-1e8)+readChoiceFileFeatures.length
+							,raw:prop
+						};
+					}
+				}
+				log("文件："+file.name+" 解析成功，发现："+polygonCount+"个边界"+(polygonCount!=features.length?"，"+(features.length-polygonCount)+"个其他数据":""),2);
+				
+				run();
+			}catch(e){
+				errCount++;
+				var msg="文件："+file.name+" 解析json失败："+e.message;
+				log(msg,1);Toast(msg,1);
+				run();
+			};
+		}
+		reader.readAsText(file,encode);
+	};
+	run();
+};
+</script>
 
 
 

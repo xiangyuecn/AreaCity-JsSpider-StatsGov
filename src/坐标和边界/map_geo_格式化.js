@@ -127,6 +127,12 @@ print '分解polygon完成，耗时'+cast(datediff(ms,@startTime,getdate()) as v
 --********计算上下级之间差异超过1平方公里的数据*********
 --drop table #tb2;select polygon.STArea()*10000 as a1,(select sum(t2.polygon.STArea()) from 【此处改成你的表名】 as t2 where t2.deep=t1.deep+1 and CHARINDEX(t1.ext_path, t2.ext_path)=1)*10000 as a2,* into #tb2 from 【此处改成你的表名】 as t1; select Round((a1-a2)/a1*100,2) as '%',a1-a2 as loss,* from #tb2 where deep<2 and a1-a2>1 order by [%] desc
 
+--********校验pid的边界包含程度，应当全部是100%********
+select case when t1.polygon.STArea()=0 then 0 else round(tg.polygon.STIntersection(t1.polygon).STArea()/t1.polygon.STArea()*100,2) end as bl,t1.id,t1.pid,t1.ext_path,t1.deep from 【表名】 as t1 left join 【表名】 as tg on tg.id=t1.pid where t1.deep>0 and t1.id not like '71%' order by bl
+
+--********计算同一级之间的重叠区域，应当不存在明显重叠*********
+select * from (select round(t2.polygon.STIntersection(t1.polygon).STArea()/t1.polygon.STArea()*100,2) as bl,t1.id,t1.ext_path,t1.deep,t2.id as id2,t2.ext_path as ext_path2,t2.deep as deep2 from 【表名】 as t1,【表名】 as t2 where t1.deep=【0 1 2】 and t2.deep=【一样】 and t1.id!=t2.id and t1.polygon.STIsEmpty()=0 and t1.polygon.STIntersects(t2.polygon)=1) as t where bl>0.5 order by bl desc,id2
+
 
 --select id,ext_path,geo.STAsText(),polygon from 【此处改成你的表名】 where ext_path not like '% %' or ext_path like '%港澳台%'
 

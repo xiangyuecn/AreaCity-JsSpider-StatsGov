@@ -50,6 +50,8 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 			
 			polygonPointsMax:600 //边界采样数，一个边界最多返回这么多个点
 			,zoom:1 //显示缩放
+			,showLog:function(msg,color){console.log(msg)} //显示日志提示 color:1错误 2成功 其他普通
+			,showConfigEdit:true //是否显示配置编辑功能 下载、调色等
 			
 			,onLoadBefore:NOOP /*边界数据加载开始前回调 fn(args,loadProcess)
 					args: { 加载请求的参数
@@ -141,10 +143,11 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 					};
 					
 					var geojson=lib.WKTList2GeoJSON(mapDatas);
-					echarts.registerMap('City'+cur.id, geojson);
 					
 					var end=function(){
 						console.log("GeoECharts draw", mapDatas, geojson);
+						
+						echarts.registerMap('City'+cur.id, geojson);
 						This.draw(cur.id, mapDatas);
 					};
 					var hasProcess=false;
@@ -283,35 +286,253 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 		}
 		
 		
+		//随机色表，取自ArcMap
+		,ColorRamp:"CCFCF2,F2B6FC,FCC0B8,F4FCB3,BBCCFC,B9FCB6,FCF5D7,FCD7F4,B3E5FC,DFFCCC,B3B4FC,FCB3C6,B6FCD6,D7E3FC,E0C5FC,FCDAB8,FCD2D7"
+		
+		/*显示配置编辑功能*/
+		,reviewConfigEdit:function(){
+			var This=this,set=this.set,elem=This.elem;
+			var config=this.drawArgs.config;
+			var cls="GeoEChartsConfigEdit";
+			
+			var view=elem.configEditView;
+			if(!view){
+				view=document.createElement("div");
+				elem.configEditView=view;
+				if(set.showConfigEdit)elem.appendChild(view);
+				
+				view.innerHTML=(
+'<div class="@c" style="position:absolute;left:50px;bottom:4px;padding:5px 10px;border-radius:6px;font-size:12px;color:#06c;background:rgba(255,255,255,.6)">\
+<style>\
+.@c *{vertical-align: middle;}\
+.@c_i,.@c_c{padding:0;margin:0;font-size:12px;height:16px;box-sizing:content-box;border-color:#ddd;width:55px}\
+.@c_c{width:20px}\
+</style>\
+<div>\
+	颜色: <input type="color" class="@c_c @c_c_areaColor"><input class="@c_i @c_areaColor" placeholder="透明">\
+	边线: <input type="color" class="@c_c @c_c_borderColor"><input class="@c_i @c_borderColor" placeholder="不显示">\
+	文字: <input type="color" class="@c_c @c_c_txtColor"><input class="@c_i @c_txtColor" placeholder="不显示">\
+	更多设置: <input type="checkbox" class="@c_cb_more">\
+</div>\
+<div class="@cMore" style="padding-top:5px">\
+	颜色随机：<input type="checkbox" class="@c_cb_rndAreaColor" style="margin-right:30px">\
+	边线粗细: <input class="@c_i @c_borderSize" placeholder="单位px">\
+	文字大小: <input class="@c_i @c_txtSize" placeholder="单位px">\
+	文字阴影: <input type="color" class="@c_c @c_c_txtShadow"><input class="@c_i @c_txtShadow" placeholder="无">\
+<div style="padding-top:5px">\
+	背景: <input type="color" class="@c_c @c_c_bgColor"><input class="@c_i @c_bgColor" placeholder="透明">\
+	地图尺寸: <input class="@c_i @c_viewSize" placeholder="单位px"><input type="range" class="@c_c_viewSize" style="width:220px" min="500" max="3000" step="100">\
+</div>\
+</div>\
+</div>').replace(/@c/g,cls);
+			};
+			
+			var review=function(key){
+				if(key=="viewSize" && ++config.txtSize){//调整文字大小
+					config.txtSize=Math.max(12,~~((+config.viewSize)/100*1.5))+"";
+					setVal(0,"txtSize");
+				};
+				if(key=="areaColor"){//调整了地图颜色，取消随机色
+					config.rndAreaColor=false;
+					rndAC.checked=false;
+				};
+				
+				//切换随机色时，调整一下文字配色
+				var rndAC_TC=["#000000","#ffffff"];
+				var rndAC_TS=["","#000000"];
+				if(config.rndAreaColor){
+					rndAC_TC.reverse();
+					rndAC_TS.reverse();
+				};
+				if(key!="txtColor" && config.txtColor==rndAC_TC[0]){
+					config.txtColor=rndAC_TC[1];
+					setVal(0,"txtColor");
+				};
+				if(key!="txtShadow" && config.txtShadow==rndAC_TS[0]){
+					config.txtShadow=rndAC_TS[1];
+					setVal(0,"txtShadow");
+				};
+				
+				clearTimeout(This._ConfigEditInt);
+				This._ConfigEditInt=setTimeout(function(){
+					var o=This.draw(This.drawArgs.id,This.drawArgs.data);
+					console.log("变更echarts配置，已重绘",o);
+				},500);
+			};
+			var setVal=function(isColor,key,def,defC){
+				var val=config[key];
+				if(val==null){
+					val=config[key]=def;
+				};
+				var input=view.querySelector("."+cls+"_"+key);
+				var inputC=view.querySelector("."+cls+"_c_"+key);
+				input.value=val==null?def||"默认":val;
+				input.oninput=function(){
+					clearTimeout(This._ConfigEditInt);//还在编辑，取消上次的显示
+					input.style.borderColor="red";
+					val=input.value.toLowerCase();
+					var valOK=0;
+					if(isColor){
+						valC="#ffffff";
+						if(!val){
+							valOK=1;
+						}else if(/^#[\da-f]+$/i.test(val) && (val.length==4 || val.length==7)){
+							valOK=1;
+							valC=val;
+						}
+					}else{
+						valOK=+val+""===val;
+					}
+					if(valOK){
+						config[key]=val;
+						input.style.borderColor=null;
+						resetC();
+						review(key);
+					};
+				};
+				var valC="";
+				var resetC=function(){
+					if(inputC){
+						var v=valC||val||defC||def||"#ffffff";
+						if(isColor && v.length==4)v="#"+v[1]+v[1]+v[2]+v[2]+v[3]+v[3];
+						inputC.value=v;
+						inputC.oninput=function(){
+							val=inputC.value.toLowerCase();
+							config[key]=val;
+							input.value=val;
+							review(key);
+						};
+					}
+				};
+				resetC();
+			};
+			setVal(1,"areaColor","#0d0059");
+			setVal(1,"borderColor","#389dff");
+			setVal(1,"txtColor","#000000");
+			setVal(1,"bgColor","");
+			setVal(0,"borderSize","1");
+			setVal(0,"txtSize","12");
+			setVal(1,"txtShadow","");
+			setVal(0,"viewSize","","500");
+			
+			var rndAC=view.querySelector("."+cls+"_cb_rndAreaColor");
+			rndAC.checked=config.rndAreaColor=config.rndAreaColor==null?true:config.rndAreaColor;
+			if(rndAC.checked){
+				view.querySelector("."+cls+"_areaColor").value="随机";
+			};
+			rndAC.onclick=function(){
+				config.rndAreaColor=rndAC.checked;
+				config.rndAreaColorVals=null;//重置颜色数据
+				config.rndAreaColorMp=null;
+				review("rndAreaColor");
+			};
+			
+			var more=view.querySelector("."+cls+"_cb_more");
+			more.checked=!!config.showMore;
+			more.onclick=function(){
+				config.showMore=more.checked;
+				view.querySelector("."+cls+"More").style.display=more.checked?"block":"none";
+			};
+			more.onclick();
+		}
 		
 		
-		/*echarts map绘制*/
+		
+		
+		
+		
+		/*******echarts map绘制*******/
 		,draw:function(id,data){
 			var This=this,set=this.set,elem=This.elem;
 			if(!elem){
 				return;
 			};
+			var config=(this.drawArgs||{}).config||{};
+			this.drawArgs={id:id,data:data,config:config};
+			
+			var boxView=elem.chartBoxView;
+			if(!boxView){
+				boxView=document.createElement("div");
+				boxView.style.width=boxView.style.height="100%";
+				elem.appendChild(boxView);
+				elem.chartBoxView=boxView;
+			};
+			This.reviewConfigEdit();
+			
+			//重设显示区域大小
+			if(config.viewSize){
+				elem.style.boxSizing="content-box";
+				elem.style.width=config.viewSize+"px";
+				elem.style.height=config.viewSize+"px";
+			};
+			
+			//生成随机色
+			if(config.rndAreaColor){
+				config.rndAreaColorVals=config.rndAreaColorVals||[];
+				config.rndAreaColorMp=config.rndAreaColorMp||{};
+				var rndArr=[];
+				for(var i=0;i<data.length;i++){
+					var o=data[i];
+					o.value=+o.id||0;
+					if(!config.rndAreaColorMp[o.value]){
+						if(!rndArr.length)rndArr=This.ColorRamp.split(",");
+						var color=rndArr.splice(~~(Math.random()*rndArr.length),1)[0];
+						var o2={
+							value:o.value
+							,color:"#"+color
+						};
+						config.rndAreaColorVals.push(o2);
+						config.rndAreaColorMp[o.value]=o2;
+					};
+				}
+			}else{
+				config.rndAreaColorVals=null;
+				config.rndAreaColorMp=null;
+			};
+			
+			
+			//生成echarts，echarts显示的核心代码就在这里
 			var chartView = elem.chartView;
 			if(chartView){
 				chartView.dispose();
 			}
-			chartView=echarts.init(elem);
+			chartView=echarts.init(boxView);
 			elem.chartView=chartView;
 			chartView.on("click",function(e){
 				console.log("map click",e);
 				var o=e.data;
-				This.load({id:o.id, level:o.level, name:o.name});
+				if(o.isTemp){
+					set.showLog("临时数据，不支持进入下级");
+				}else{
+					This.load({id:o.id, level:o.level, name:o.name});
+				};
 			});
 			chartView.on("dblclick",function(e){
 				console.log("map dblclick",e);
 			});
-			chartView.setOption({
+			
+			var option={
+				backgroundColor: config.bgColor||null,
 				tooltip: {
 					trigger: 'item'
 					,formatter: function(e){
-						return e.data.tips||"无信息";
+						return e.data.tips||e.name||"无信息";
 					}
 				},
+				toolbox: {
+					left: 20, bottom: 4, show:!!set.showConfigEdit,
+					feature:{
+						saveAsImage:{//保存成文件
+							name: "geo-echarts-"+id
+							,backgroundColor: config.bgColor||"rgba(0,0,0,0)" 
+						}
+					}
+				},
+				
+				visualMap:config.rndAreaColor?{
+					show:false,
+					pieces:config.rndAreaColorVals
+				}:null,
 				
 				series: [
 					{
@@ -320,55 +541,37 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 						,scaleLimit:{ min:1 }
 						,zoom:set.zoom
 						,label: {
-							show:true
+							show:!!+config.txtSize
 							,textStyle: {
-								color: "#fff"
-								,textShadowColor:"#000"
-								,textShadowBlur:3
+								color: config.txtColor
+								,fontSize: +config.txtSize
+								,textShadowColor: config.txtShadow
+								,textShadowBlur: Math.max(3,~~(+config.txtSize/6))
 							}
 						}
 						,emphasis:{
 							label: {
-								color: "#fa0"
-							}
-						}
-						,select:{
-							label: {
-								color: "#fa0"
-							}
-							,itemStyle:{
-								areaColor: "#184cff",
-								shadowOffsetX: 0,
-								shadowOffsetY: 0,
-								shadowBlur: 5,
-								borderWidth: 0,
-								shadowColor: "rgba(0, 0, 0, 0.5)"
+								color: config.rndAreaColor?"#fff":"#fa0"
 							}
 						}
 						,itemStyle: {
 							normal: {
-								areaColor: "#0d0059",
-								borderColor: "#389dff",
-								borderWidth: 1, //设置外层边框
-								shadowBlur: 5,
-								shadowOffsetY: 8,
-								shadowOffsetX: 0,
-								shadowColor: "#01012a"
+								areaColor: config.areaColor||"rgba(0,0,0,0)",
+								borderColor: config.borderColor,
+								borderWidth: config.borderColor?+config.borderSize||0:0, //设置外层边框
 							},
 							emphasis: {
 								areaColor: "#184cff",
-								shadowOffsetX: 0,
-								shadowOffsetY: 0,
-								shadowBlur: 5,
-								borderWidth: 0,
-								shadowColor: "rgba(0, 0, 0, 0.5)"
+								borderColor: "#184cff",
 							}
 						}
 						,roam:true
 						,data: data
 					}
 				]
-			});
+			};
+			chartView.setOption(option);
+			return option;
 		}
 	};
 
@@ -415,6 +618,46 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 	
 	/*是否隐藏三沙市*/
 	lib.Polygon4603Hide=false;
+	
+	/*南海诸岛九段线*/
+	lib.NanhaiFeature=function(){
+		//https://github.com/apache/echarts/blob/3e8d3d234929d9592c4a6d9d53d45ac1db4747d8/src/coord/geo/fix/nanhai.ts
+		var geoCoord = [126, 25];
+		var points = [
+			[[0, 3.5], [7, 11.2], [15, 11.9], [30, 7], [42, 0.7], [52, 0.7],
+				[56, 7.7], [59, 0.7], [64, 0.7], [64, 0], [5, 0], [0, 3.5]],
+			[[13, 16.1], [19, 14.7], [16, 21.7], [11, 23.1], [13, 16.1]],
+			[[12, 32.2], [14, 38.5], [15, 38.5], [13, 32.2], [12, 32.2]],
+			[[16, 47.6], [12, 53.2], [13, 53.2], [18, 47.6], [16, 47.6]],
+			[[6, 64.4], [8, 70], [9, 70], [8, 64.4], [6, 64.4]],
+			[[23, 82.6], [29, 79.8], [30, 79.8], [25, 82.6], [23, 82.6]],
+			[[37, 70.7], [43, 62.3], [44, 62.3], [39, 70.7], [37, 70.7]],
+			[[48, 51.1], [51, 45.5], [53, 45.5], [50, 51.1], [48, 51.1]],
+			[[51, 35], [51, 28.7], [53, 28.7], [53, 35], [51, 35]],
+			[[52, 22.4], [55, 17.5], [56, 17.5], [53, 22.4], [52, 22.4]],
+			[[58, 12.6], [62, 7], [63, 7], [60, 12.6], [58, 12.6]],
+			[[0, 3.5], [0, 93.1], [64, 93.1], [64, 0], [63, 0], [63, 92.4],
+				[1, 92.4], [1, 3.5], [0, 3.5]]
+		];
+		for (var i = 0; i < points.length; i++) {
+			for (var k = 0; k < points[i].length; k++) {
+				var lng=points[i][k][0],lat=points[i][k][1];
+				lng=+(lng/10.5 + geoCoord[0]).toFixed(6);
+				lat=+(lat / -10.5 * 0.75 + geoCoord[1]).toFixed(6);
+				points[i][k][0]=lng;
+				points[i][k][1]=lat;
+			}
+		};
+		
+		return {
+			type: "Feature"
+			,properties: {id:-4603,name:"南海诸岛",cp:[129, 19.2]}
+			,geometry:{
+				type: "Polygon"
+				,coordinates:points
+			}
+		};
+	};
 	
 	
 	

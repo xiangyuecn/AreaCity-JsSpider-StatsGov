@@ -70,8 +70,12 @@ var QueryPinYin=function(end){
 		};
 		
 		if(name=="市辖区"){//北京、天津、嘉峪关等的唯一一个的辖区，"市"级直接用上级名称
+			if(!/^(北京|天津|上海|嘉峪关)/.test(p.name)){
+				console.error("市辖区改成上级名称失败，未知上级",o);
+				throw new Error();
+			}
+			console.log(p.name+" 子级 "+name+" 使用上级名称 "+p.name);
 			o2.name=p.name;
-			o2.ext_name=name;
 		};
 		return o2;
 	};

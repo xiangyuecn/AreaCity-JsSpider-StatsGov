@@ -154,23 +154,7 @@ if(/^file:/.test(location.href)){
 					var input=el(".AreaFormatInput");
 					input.value=ajax.responseText;
 					
-					FormatLog(`成功加载【${path}】数据。
-					<hr>
-					<div>输入框中本来的提示信息：</div>
-					<pre>${input.placeholder}</pre>
-					
-					<hr>
-					<div class='initTest1'></div>
-					
-					<hr>
-					<div class='initTest2'></div>
-					
-					<hr>
-					<div class='initTest3'></div>`);//<script>
-					
-					TestClick("js",".initTest1");
-					TestClick("jsonObject",".initTest2",460204);//选中 三亚 天涯
-					TestClick("jsonArray",".initTest3",11);//选中 北京
+					TestReView("成功加载【"+path+"】数据");
 				}else{
 					FormatLog("【"+path+"】数据加载失败");
 				}

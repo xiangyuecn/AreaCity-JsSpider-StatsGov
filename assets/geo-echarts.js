@@ -344,11 +344,12 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 					rndAC_TC.reverse();
 					rndAC_TS.reverse();
 				};
-				if(key!="txtColor" && config.txtColor==rndAC_TC[0]){
+				var hitKey=key=="rndAreaColor" || key=="areaColor";
+				if(hitKey && config.txtColor==rndAC_TC[0]){
 					config.txtColor=rndAC_TC[1];
 					setVal(0,"txtColor");
 				};
-				if(key!="txtShadow" && config.txtShadow==rndAC_TS[0]){
+				if(hitKey && config.txtShadow==rndAC_TS[0]){
 					config.txtShadow=rndAC_TS[1];
 					setVal(0,"txtShadow");
 				};
@@ -366,7 +367,7 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 				};
 				var input=view.querySelector("."+cls+"_"+key);
 				var inputC=view.querySelector("."+cls+"_c_"+key);
-				input.value=val==null?def||"默认":val;
+				input.value=val;
 				input.oninput=function(){
 					clearTimeout(This._ConfigEditInt);//还在编辑，取消上次的显示
 					input.style.borderColor="red";

@@ -553,6 +553,7 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 						,emphasis:{
 							label: {
 								color: config.rndAreaColor?"#fff":"#fa0"
+								,textShadowColor: "#000"
 							}
 						}
 						,itemStyle: {

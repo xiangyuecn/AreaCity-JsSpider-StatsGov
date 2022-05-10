@@ -156,7 +156,10 @@ body::-webkit-scrollbar-thumb{
 			</div>
 		</div>
 		
-		<div class="statusView" style="padding:5px 0;text-align:right" style2="">初始化中...</div>
+		<div class="FlexBox" class3="" style="padding:5px 0" style2="">
+			<div class="FlexItem mapPointView" class2="Hide2" style="min-width:450px" style3=""></div>
+			<div class="statusView">初始化中...</div>
+		</div>
 	</div>
 	
 	<div class="mainBox" class2="" style2="color:#fff">
@@ -425,6 +428,7 @@ var geoECharts=geoEChartsLib.Create({
 					}
 					var pol=new AMap.Polygon({
 						path: lnglats,
+						bubble: true,//事件冒泡
 						strokeWeight: 1,
 						strokeColor: '#0091ea',
 						fillColor: '#80d8ff',
@@ -477,6 +481,8 @@ var geoECharts=geoEChartsLib.Create({
 			}
 			
 			map.setFitView();
+			
+			window.mapPointReview&&mapPointReview();
 		}
 	}
 });

@@ -7,7 +7,7 @@ ok_geo.csv中的数据是GCJ-02坐标系坐标，GCJ-02(火星坐标)是在WGS-8
 
 如果需要更高精度，需要自行寻找更高精度的反解算法，如果有的话，参考本代码编写新的插件即可转换。
 
-转换算法来自 https://www.oschina.net/code/snippet_260395_39205
+转换算法来自 https://www.oschina.net/code/snippet_260395_39205 《GPS坐标互转：WGS-84(GPS)、GCJ-02(Google地图)、BD-09(百度地图) 》已无法访问，镜像搬运： https://www.cnblogs.com/yzycoder/p/6531890.html
 
 注：CGCS2000坐标系和GPS坐标之间的误差小到可以忽略，因此转成GPS坐标后（误差已经是米级）直接当成CGCS2000坐标来使用也是可行的，参考：https://www.zhihu.com/question/35775670。
 

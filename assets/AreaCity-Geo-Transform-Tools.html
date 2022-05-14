@@ -447,9 +447,12 @@ select id,ext_path,polygon from 【此处改成你的表名】 where ST_Intersec
 						</div>
 					</div>
 					
-					<div style="margin-top:8px;color:#f60;font-size:13px">注意：MySQL 5.* 中进行空间计算查询时，不带ST_打头的函数均为采用Polygon的外接矩形计算，会导致结果不准确，应当使用带ST_打头的方法来进行查询，<a href="#badmysql">FAQ</a>。</div>
+					<div style="margin-top:8px;color:#f60;font-size:13px;word-break: break-all;">注意：MySQL 5.* 中进行空间计算查询时，不带ST_打头的函数均为采用Polygon的外接矩形计算，会导致结果不准确，应当使用带ST_打头的方法来进行查询。
+				
+					MySQL的空间索引很难生效 <a href="https://dev.mysql.com/doc/refman/8.0/en/spatial-index-optimization.html" target="_blank">官方文档</a>，从而导致空间查询异常缓慢，可通过增加一个字段: polygon_envelope=ST_Envelope(polygon) 来自建索引，查询的时候先查 polygon_envelope ，然后再查 polygon 字段，速度就会快很多(10倍+)，也可同时切换成MyISAM引擎，会比InnoDB引擎的空间查询快很多。
 					
-					<div style="margin-top:8px;color:#f60;font-size:13px">注意：MySQL的空间索引的创建要按<a href="https://dev.mysql.com/doc/refman/8.0/en/spatial-index-optimization.html" target="_blank">官方文档</a>进行创建，否则很可能会索引失效，从而导致空间查询异常缓慢；或者切换成MyISAM引擎，会比InnoDB引擎的空间查询快很多。</div>
+					
+					详细请阅读<a href="#badmysql">FAQ</a>。</div>
 				</div>
 				
 				<div style="margin-top:20px; line-height:26px">
@@ -755,7 +758,9 @@ select id,ext_path,polygon from 【此处改成你的表名】 where ST_Intersec
 				；比如Intersects函数，表现为Polygon的最大外接矩形有包含就会作为匹配结果，这样就会无端多出很多不在边界内结果
 				，所以应当使用ST_Intersects来计算空间位置（5.6+开始支持），5.5及以下版本无解（只能升级？），ST_打头的都是精确计算，结果符合预期
 				<a href="https://dev.mysql.com/doc/refman/5.6/en/spatial-relation-functions-object-shapes.html" target="_blank">MySQL Doc</a>。</p>
-				<p>另外：MySQL的空间索引的创建要按<a href="https://dev.mysql.com/doc/refman/8.0/en/spatial-index-optimization.html" target="_blank">官方文档</a>进行创建，否则很可能会索引失效，从而导致空间查询异常缓慢；或者切换成MyISAM引擎，会比InnoDB引擎的空间查询快很多。</p>
+				<p style="word-break: break-all;">另外：MySQL的空间索引很难生效 <a href="https://dev.mysql.com/doc/refman/8.0/en/spatial-index-optimization.html" target="_blank">官方文档</a>，从而导致空间查询异常缓慢，可通过增加一个字段 polygon_envelope 来自建索引: <i class="i">update xxx set polygon_envelope=ST_Envelope(polygon)</i>，查询的时候先查 polygon_envelope ，然后再查 polygon 字段，速度就会快很多(10倍+) : <i class="i" style="white-space: normal;">select id,ext_path from xxx where 
+		ST_Intersects(polygon_envelope,ST_GeomFromText('POINT(114.044346 22.691963)',0))=1
+		and ST_Intersects(polygon,ST_GeomFromText('POINT(114.044346 22.691963)',0))=1</i>；也可同时切换成MyISAM引擎，会比InnoDB引擎的空间查询快很多。</p>
 			</div>
 			
 			<div class="h3">如何在QQ群内下载本工具？<a name="xzqq"></a></div>

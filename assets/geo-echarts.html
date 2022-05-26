@@ -315,14 +315,23 @@ var geoECharts=geoEChartsLib.Create({
 	,showLog:function(msg,color){
 		Toast(msg,color);
 	}
-	,onLoadBefore:function(args,loadProcess){
+	,onLoadBefore:function(args,cacheData,loadProcess){
 		PageModule.maskLoad();
 		
 		//0级数据，默认使用js缓存文件，不走接口，大幅减少api服务器流量
-		if(args.id==0 && window.DataCache0){
+		if(args.id==0){
 			loadProcess(function(next){
-				console.log("Geo DataCache0: "+FormatDate(DataCache0.T));
-				next(DataCache0.v);
+				if(cacheData){//有缓存数据直接用缓存
+					next(cacheData);
+					return;
+				};
+				PageModule.maskLoad("省级数据加载中，请稍后...");
+				LoadJs("geo-echarts-data-cache-0.js",function(){
+					console.log("Geo DataCache0: "+FormatDate(DataCache0.T));
+					next(DataCache0.v);
+				},function(){
+					next();
+				});
 			});
 			return;
 		};
@@ -444,6 +453,7 @@ var geoECharts=geoEChartsLib.Create({
 						obj.pols.push({
 							pos:pol.getBounds().getCenter()
 							,size:pol.getArea()
+							,pol:pol
 						});
 						texts[prop.id]=obj;
 					}
@@ -454,7 +464,7 @@ var geoECharts=geoEChartsLib.Create({
 			mapGeo.setMap(map);
 			
 			//显示名称
-			for(var k in texts){
+			for(var k in texts){(function(){
 				var o=texts[k];
 				o.pols.sort(function(a,b){return b.size-a.size});
 				var txt=new AMap.Text({
@@ -478,7 +488,19 @@ var geoECharts=geoEChartsLib.Create({
 						geoECharts.load(o);
 					}
 				});
-			}
+				txt.on('mouseover',function(){
+					txt.setStyle({color:"#fa0"});
+					for(var i=0;i<o.pols.length&&i<10;i++){//只高亮前面最大的几个图形 其他小的忽略 提高性能
+						o.pols[i].pol.setOptions({fillColor:"#0091ea",fillOpacity: 1});
+					}
+				});
+				txt.on('mouseout',function(){
+					txt.setStyle({color:"#06c"});
+					for(var i=0;i<o.pols.length&&i<10;i++){
+						o.pols[i].pol.setOptions({fillColor:"#80d8ff", fillOpacity: 0.3});
+					}
+				});
+			})()}
 			
 			map.setFitView();
 			
@@ -513,14 +535,7 @@ var updateSet=function(){
 	geoECharts.reload();
 };
 
-
-PageModule.maskLoad("省级数据加载中，请稍后...");
-LoadJs("geo-echarts-data-cache-0.js",function(){
-	PageModule.closeMask();
-	updateSet();
-},function(){
-	updateSet();
-});
+updateSet();
 </script>
 
 

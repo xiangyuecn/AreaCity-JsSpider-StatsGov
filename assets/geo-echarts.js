@@ -53,13 +53,15 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 			,showLog:function(msg,color){console.log(msg)} //显示日志提示 color:1错误 2成功 其他普通
 			,showConfigEdit:true //是否显示配置编辑功能 下载、调色等
 			
-			,onLoadBefore:NOOP /*边界数据加载开始前回调 fn(args,loadProcess)
+			,onLoadBefore:NOOP /*边界数据加载开始前回调 fn(args,cacheData,loadProcess)
 					args: { 加载请求的参数
 						id: 0||123 要加载哪个城市的id，0为全国，返回这个城市的所有下级
 						level: 0 1 2 3 要加载的城市级别，0全国，1省，2市，3区
 					}
-					loadProcess: fn(call:fn(next)) 自行处理函数，如果调用了本方法，代表你要自己加载数据，比如特殊缓存处理
-						next:fn(apiData) 加载到接口数据后，执行本方法回传，会走后续的onLoadEnd和绘制图形
+					cacheData: 缓存的数据或null，可在loadProcess中直接传入回调
+					loadProcess: fn(call) 自行处理函数，如果调用了本方法，代表你要自己加载数据，比如特殊缓存处理
+						调用本方法时需要传入一个回调函数fn(next)：
+						next:fn(apiData) 加载到接口数据后，执行本方法回传，会走后续的onLoadEnd和绘制图形，如果回传的null将继续加载数据
 				*/
 			,onLoadEnd:NOOP /*边界数据加载结束回调 fn(err,apiData,mapDatas,geojson,dataProcess)
 					err: "" 如果不为空，代表加载出错
@@ -94,11 +96,12 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 		/*加载指定的数据，或不提供参数只进行初始化显示*/
 		load:function(data){
 			var This=this,set=This.set;
-			var cur=This.current=data||{id:0,level:0,name:"全国"};
+			var cur=data||{id:0,level:0,name:"全国"};
 			if(cur.level>=4){
 				set.onLoadEnd("已经是最后一级了");
 				return;
 			};
+			This.current=cur;
 			This.init(function(err){
 				if(err){
 					set.onLoadEnd(err);
@@ -111,7 +114,13 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 				};
 				var cacheKey=set.polygonPointsMax+"_"+cur.id;
 				
-				var next=function(data){
+				var next=function(data,saveCache){
+					if(saveCache){
+						lib.CacheDB.Set(cacheKey,JSON.stringify({
+							time:Date.now()
+							,data:data
+						}),NOOP,NOOP);
+					};
 					setTimeout(function(){//保证异步，让动画能正常显示
 						__next(data);
 					},Math.max(0, 300-(Date.now()-nextStart)));
@@ -163,12 +172,7 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 				var loadApi=function(){
 					console.log("GeoECharts api加载："+cacheKey);
 					set.reqPost(set.api,args,function(data){
-						lib.CacheDB.Set(cacheKey,JSON.stringify({
-							time:Date.now()
-							,data:data
-						}),NOOP,NOOP);
-						
-						next(data);
+						next(data, true);
 					},function(err){
 						err="GeoECharts api调用失败："+err;
 						console.error(err,args);
@@ -177,25 +181,39 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 				};
 				
 				//开始加载数据前处理
-				var hasProcess=false;
-				set.onLoadBefore(args,function(call){
-					hasProcess=true;
-					call(next);
-				});
-				if(hasProcess){
-					return;
+				var beforeCall=function(cacheData){
+					var hasProcess=false;
+					var callNext=function(data){
+						if(data){
+							if(data==cacheData){
+								console.log("GeoECharts 使用缓存: "+cacheKey);
+							}
+							next(data, data!=cacheData);
+						}else{
+							loadApi();
+						}
+					};
+					set.onLoadBefore(args,cacheData,function(call){
+						hasProcess=true;
+						call(callNext);
+					});
+					if(hasProcess){
+						return;
+					};
+					callNext(cacheData);
 				};
 				
 				//发起请求前先尝试读取缓存
 				lib.CacheDB.Get(cacheKey,function(val){
 					var obj=ParseObject(val);
 					if(obj.time && Date.now()-obj.time<15*24*60*60*1000){
-						console.log("GeoECharts 使用缓存: "+cacheKey);
-						next(obj.data);
+						beforeCall(obj.data);
 						return;
 					}
-					loadApi();
-				},loadApi);
+					beforeCall();
+				},function(){
+					beforeCall();
+				});
 			});
 		}
 		/*重新加载当前数据并重绘*/
@@ -306,7 +324,7 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 <style>\
 .@c *{vertical-align: middle;}\
 .@c_i,.@c_c{padding:0;margin:0;font-size:12px;height:16px;box-sizing:content-box;border-color:#ddd;width:55px}\
-.@c_c{width:20px}\
+.@c_c{width:20px;cursor: pointer;}\
 </style>\
 <div>\
 	颜色: <input type="color" class="@c_c @c_c_areaColor"><input class="@c_i @c_areaColor" placeholder="透明">\
@@ -585,16 +603,29 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 	
 	/*post接口请求*/
 	lib.Post=function(url,data,True,False){
+		lib.Req({method:"POST",url:url,data:data},True,False);
+	};
+	/*get数据请求*/
+	lib.Get=function(url,True,False){
+		lib.Req({method:"GET",url:url},True,False);
+	};
+	lib.Req=function(set,True,False){
+		var method=set.method||"GET",isGet=method=="GET";
 		var xhr=new XMLHttpRequest();
 		xhr.timeout=20000;
-		xhr.open("POST",url);
+		xhr.open(method,set.url);
 		xhr.onreadystatechange=function(){
 			if(xhr.readyState==4){
 				if(xhr.status==200){
 					try{
 						var o=JSON.parse(xhr.responseText);
-					}catch(e){};
+					}catch(e){ };
+					if(isGet){//获取数据
+						o?True(o):False("Get获取到了非json数据");
+						return;
+					};
 					
+					o=o||{};
 					if(o.c!==0 || !o.v){
 						False(o.m||"接口返回非预定义json数据");
 						return;
@@ -606,10 +637,12 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 			}
 		};
 		var arr=[];
-		for(var k in data){
-			arr.push(k+"="+encodeURIComponent(data[k]));
+		if(!isGet){
+			for(var k in set.data){
+				arr.push(k+"="+encodeURIComponent(set.data[k]));
+			};
+			xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 		};
-		xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 		xhr.send(arr.join("&"));
 	};
 

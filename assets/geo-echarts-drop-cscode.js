@@ -338,13 +338,13 @@ window.mapPointShowClick=function(){
 		+'<div style="color:#ba4e4e"'
 			+'>'+tag+'输入WGS-84坐标转成GCJ-02：'+ss(gps)+'</div>'
 		+'<div style="color:#d89c09"'
-			+'>'+tag+'输入BG-09转成GCJ-02显示 ：'+ss(bd09)+'</div>'
+			+'>'+tag+'输入BD-09转成GCJ-02显示 ：'+ss(bd09)+'</div>'
 	+'</div>');
 	
 	var arr=[
 		{p:gcj02,t:"GCJ-02",c:"#666"}
 		,{p:gps,t:"WGS-84",c:"#ba4e4e"}
-		,{p:bd09,t:"BG-09",c:"#d89c09"}
+		,{p:bd09,t:"BD-09",c:"#d89c09"}
 	];
 	for(var i=0;i<arr.length;i++){
 		var o=arr[i];
@@ -359,6 +359,9 @@ window.mapPointShowClick=function(){
 	mapPointReview();
 };
 var markerList=[],tagIdx=0;
+window.mapPointAdd=function(marker){
+	markerList.push(marker);
+};
 window.mapPointReview=function(clear){
 	for(var i=0;i<markerList.length;i++){
 		markerList[i].setMap(clear?null:map);

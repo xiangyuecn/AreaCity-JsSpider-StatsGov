@@ -4,7 +4,8 @@
 
 - [【在线测试和预览】省市区镇四级行政区划数据](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/)：支持在线生成JSON、多级联动js；
 - [【在线测试和预览】ECharts Map四级下钻在线测试和预览+代码生成](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-echarts.html)：坐标边界范围在线测试和预览；
-- [【转换工具】AreaCity-Geo格式转换工具软件](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html)：csv文件导入数据库，坐标、边界范围转换（支持转成`sql`、`shp`、`geojson`）。
+- [【转换工具】AreaCity-Geo格式转换工具软件](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html)：csv文件导入数据库，坐标、边界范围转换（支持转成`sql`、`shp`、`geojson`）；
+- [【查询工具】AreaCity-Query-Geometry](https://github.com/xiangyuecn/AreaCity-Query-Geometry)：高性能的坐标数据、边界数据查询工具，Java开源程序、带http查询接口，内存占用低。
 
 
 ## 数据下载
@@ -21,7 +22,7 @@
 
 > csv纯文本文件可以非常方便解析成其他格式；如果在使用csv文件过程中出现乱码、错乱等情况，需自行调对utf-8（带BOM）编码，文本限定符为`"`。
 > 
-> 通过本库提供的 [AreaCity-Geo格式转换工具](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html) 可快速方便的将省市区、坐标、边界范围csv文件导入数据库，并且提供格式转换功能（shp、geojson、sql），欢迎下载使用。
+> 通过本库提供的 [AreaCity-Geo格式转换工具](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html) 可快速方便的将省市区、坐标、边界范围csv文件导入数据库，并且提供格式转换功能（shp、geojson、sql），欢迎下载使用。边界导出成geojson后可通过 [AreaCity-Query-Geometry](https://github.com/xiangyuecn/AreaCity-Query-Geometry) Java开源程序进行高性能的坐标数据、边界数据查询。
 
 
 
@@ -105,6 +106,8 @@ ext_name|string|`如：武汉市`，为数据源原始的完整名称，name字�
 此表为坐标和行政区域边界范围数据表，可[在线测试预览](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-echarts.html)；此表含省市区三级不含第四级，如需乡镇级坐标边界数据[请到此下载](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-level4.html)；因为数据文件过大（130M+），所以分开存储。
 
 由于边界数据的解析比较复杂，请参考[src/map_geo_格式化.js](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/src/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)内的SQL Server的解析语句，或者使用 [AreaCity-Geo格式转换工具软件](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html) 直接导入数据库，或者转换成`shp`、`geojson`、`sql`格式。
+
+如果需要查询坐标对应的城市、查询城市或下级的边界数据，可下载 [AreaCity-Query-Geometry](https://github.com/xiangyuecn/AreaCity-Query-Geometry) Java开源程序进行高性能的查询，内存占用低，比数据库查询快几百倍。
 
 字段|类型|描述
 :--:|:--:|--
@@ -242,6 +245,40 @@ ECharts + 高德地图四级下钻：
 湖北省乡镇边界（SQL Server查询空间结果）：
 
 ![](assets/geo-level4/z01.png)
+
+
+
+
+
+
+
+
+
+
+[​](?)
+
+[​](?)
+
+[​](?)
+
+
+# :open_book:坐标边界查询工具 - AreaCity-Query-Geometry
+[AreaCity-Query-Geometry](https://github.com/xiangyuecn/AreaCity-Query-Geometry) 是一个高性能的坐标数据、边界数据查询工具，Java开源程序、带http查询接口，内存占用低，比数据库查询快几百倍；先用上面的格式转换工具将ok_geo.csv转成geojson格式，然后运行此工具即可测试使用。
+
+## 工具支持：
+- 查询一个坐标点对应的城市信息；
+- 查询一条路径经过的所有城市；
+- 查询一个矢量范围覆盖的所有城市；
+- 查询一个城市或下一级所有边界数据（WKT格式）；
+- 支持通过HTTP API服务进行查询调用；
+- 支持通过Java代码进行查询调用；
+- 源码简单，包括测试bat脚本共5个文件，无需IDE即可修改和运行，copy即用。
+
+## 测试截图
+
+![](assets/use_aqg-console.png)
+
+
 
 
 

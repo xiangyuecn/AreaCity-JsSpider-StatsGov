@@ -184,12 +184,26 @@ body::-webkit-scrollbar-thumb{
 		</div>
 		</div>
 		
-		<div style="padding-top:15px;">
+		<div style="padding-top:10px;">
 			因为api接口返回的边界数据已经过了重新采样抽稀处理+GeoZip压缩（大幅节省流量，算法源码在页面下方）；抽稀后最高的从5万个坐标点变成1200个坐标点，两个边界之间放大后会明显感受到不够精细（因算法简单，未考虑相邻区域的拓扑结构），自己使用时可以调高采样数或者直接返回原始数据，就没有这个问题了。
 		</div>
 		
-		<div class2="Hide2" style="padding-top:15px;">
-			<div class="dropChoiceBox"></div>
+		<div class2="Hide2" style="padding-top:20px;">
+			<div>
+				<span class="mainTitle">自定义数据源 - 文本文件</span>
+				<span style="color:#999;font-size:14px;margin-left:10px">json、wkt</span>
+			</div>
+			
+			<div class="dropChoiceBox" style="padding-top:5px"></div>
+		</div>
+		
+		<div class2="Hide2" style="padding-top:20px;">
+			<div>
+				<span class="mainTitle">自定义数据源 - AreaCity-Query-Geometry</span>
+				<span style="color:#999;font-size:14px;margin-left:10px">一个高性能的坐标数据、边界数据查询工具</span>
+			</div>
+			
+			<div class="aqgToolsBox" style="padding-top:5px"></div>
 		</div>
 	</div>
 	
@@ -410,7 +424,7 @@ var geoECharts=geoEChartsLib.Create({
 			html.push('<a onclick="goLevel('+i+')">'+o.name+'</a>');
 		};
 		if(isChoiceFile){
-			html.push('选择的文件');
+			html.push('自定义数据源');
 		};
 		var tips="单击地图进入下一级"+(IsWidget?"":"，点击下载按钮保存png图片")+"，当前路径："+html.join(" > ");
 		
@@ -544,6 +558,7 @@ updateSet();
 
 <script src="https://xiangyuecn.gitee.io/recorder/assets/ztest-codemirror.min.5.48.4.js"></script>
 <script src="geo-echarts-drop-cscode.js"></script>
+<script src="geo-echarts-aqg-tools.js"></script>
 
 
 <div style="width:0;height:0;overflow:hidden;">

@@ -198,6 +198,24 @@ for(var k=0;k<DATA_GEO.length;k++){
 			while(arr[0].join(" ")==arr[arr.length-1].join(" ")){
 				arr.pop();
 			};
+			
+			//找到最小的一个坐标，环从这个坐标开始，免得每次采集起点不一样导致差异
+			var min=999.999999,idx=0;
+			for(var i=0;i<arr.length;i++){
+				if(arr[i][0]<min){
+					min=arr[i][0];
+					idx=i;
+				}
+			};
+			var arr2=[];
+			for(var i=idx;i<arr.length;i++){
+				arr2.push(arr[i]);
+			}
+			for(var i=0;i<idx;i++){//起点接到尾部后面
+				arr2.push(arr[i]);
+			}
+			arr=arr2;
+			
 			polygon[j]=arr;
 		};
 		

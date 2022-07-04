@@ -43,16 +43,19 @@ var fixQQmapAddGovBeforeAmp={
 	/*130502:{
 		name:"襄都区",pid:1305
 	}*/
+	659011:{name:"新星市",pid:65,childCopySelf:true} //还要复制一份当子级 直辖市
 };
 //和高德数据对比前qq替换统计局数据，就是这些id对应的数据都采用统计局的数据
 var fixQQmapReplaceGovBeforeAmp={
-	/*3205:{
-		name:"苏州市",level:2
-		,msg:"统计局、高德都有一个工业园（高德里面全国唯一一个，百度地图也有），并且边界也是独立出来的，qq缺少了并且子级在分散在各城区"
-	},*/
-	6328:{
+	/*6328:{
 		name:"海西",level:2,msg:"qq的大柴旦不正常，整个都用统计局的"
-	}
+	}*/
+	
+	//qq升级数据后，这些没有下级，用老id才能查出下级，直接换统计的数据
+	 350405:{name:"沙县区",level:3,whereEmptyChild:true,msg:"emptyChild"}
+	,431181:{name:"祁阳市",level:3,whereEmptyChild:true,msg:"emptyChild"}
+	,513402:{name:"会理市",level:3,whereEmptyChild:true,msg:"emptyChild"}
+	,532302:{name:"禄丰市",level:3,whereEmptyChild:true,msg:"emptyChild"}
 };
 //qq地图数据用上级替换，表现为下级和上级的编号前缀不匹配，主要是那几个直筒子市是qq自定义的99结尾
 var fixQQmapReplaceFill={
@@ -64,12 +67,8 @@ var fixQQmapReplaceFill={
 	
 	//qq编号名称有问题的，直接替换掉当前级和下级编号，一般新的为高德的
 	,350403:{name:"三元区",level:3,replaceAs:{codePrefix:"350404",name:"三元区"}}
-	,350427:{name:"沙县区",level:3,replaceAs:{codePrefix:"350405",name:"沙县区"}}
-	,350681:{name:"龙海区",level:3,replaceAs:{codePrefix:"350604",name:"龙海区"}}
-	,410306:{name:"孟津区",level:3,replaceAs:{codePrefix:"410308",name:"孟津区"}}
-	,410381:{name:"偃师区",level:3,replaceAs:{codePrefix:"410307",name:"偃师区"}}
-	,520522:{name:"黔西市",level:3,replaceAs:{codePrefix:"520581",name:"黔西市"}}
-		
+	,350402:{name:"梅列区",remove:true} //已撤销的，删除qq的
+	
 	
 	//添加明确缺失的子级
 	/*,2327:{name:"大兴安岭地区",addOnNotExists:[
@@ -78,14 +77,17 @@ var fixQQmapReplaceFill={
 	
 	
 	//移除特殊的
-	,440499:{name:"香洲区澳门大学横琴校区(由澳门特别行政区实施管辖)",remove:true}
+	//,440499:{name:"香洲区澳门大学横琴校区(由澳门特别行政区实施管辖)",remove:true}
 	
 	//港澳转换成 港澳(省)-港澳(市)-港澳(区)-第二级(镇) 结构。当做直筒子市来处理，比如把香港当做东莞，从面积和人口来看还算合理
 	,81:{name:"香港特别行政区",repeat:2}
 	,82:{name:"澳门特别行政区",repeat:2}
 	
 	//移除QQ单独的芦台区（唐山市芦台经济技术开发区），本着都没有开发区，像高德一样转移到路南区下面。qq的子级code和统计局不同，不处理
-	,130230:{name:"芦台区",childMove:"130202000000"}
+	//,130230:{name:"芦台区",childMove:"130202000000"}
+	
+	//移除又被QQ拆分出来的苏州工业园区，移到吴中区
+	,320571:{name:"苏州工业园区",childMove:"320506000000"}
 	
 	//新改名的，qq未及时更新，需更新为新名称
 	//同名保持住，mca是老的，配置上会打标识
@@ -95,7 +97,8 @@ var fixQQmapReplaceFill={
 	//移除已废弃的
 	,460321:{name:"西沙群岛",remove:true}
 	,460322:{name:"南沙群岛",remove:true}
-	,460323:{name:"中沙群岛的岛礁及其海域",remove:true}
+	,460323:{name:"中沙群岛",remove:true}
+	,460324:{name:"东沙群岛",remove:true}
 };
 
 //qq地图数据和高德地图前三级数据有效的差异
@@ -105,19 +108,19 @@ var amapDifference={
 		,childCompareName:true}
 	,82:{name:"澳门特别行政区",level:1,xAomenChild:true}//特殊的，高德和qq的完全不同，采用高德的全面些，但code规则按qq的来
 	
-	,232761:{name:"加格达奇区",compareName:true}//id不同，qq的是对的，通过名称可以匹配
+	//,232761:{name:"加格达奇区",compareName:true}//id不同，qq的是对的，通过名称可以匹配
 	
 	//声明名称不同但code相同的项，这种是qq未fix的，并且最终采用qq的名称
-	//,632825:{name:"大柴旦行政委员会",amapName:"海西蒙古族藏族自治州直辖"}
-	,632857:{name:"大柴旦行政委员会",useQQ:true}
+	,632825:{name:"大柴旦行政委员会",amapName:"海西蒙古族藏族自治州直辖"}
+	//,632857:{name:"大柴旦行政委员会",useQQ:true}
 	
 	//标记QQ里确实不存在的，如果需要添加到qq中需lostAdd=true
-	,632825:{lostName:"海西蒙古族藏族自治州直辖"}//qq统计局为632857大柴旦行政委员会
+	//,632825:{lostName:"海西蒙古族藏族自治州直辖"}//qq统计局为632857大柴旦行政委员会
 	,460301:{lostName:"西沙区",lostAdd:true}//新设区
 	,460302:{lostName:"南沙区",lostAdd:true}//新设区
 	
-	//,320613: {lostName: "崇川区",lostAdd:true}//新调整的区划 qq滞后，使用高德的
-	//,350625:{lostName:"长泰区",lostAdd:true}//新调整的区划 qq滞后，使用高德的
+	//高德的id错误，使用qq的id
+	//,431121:{name:"祁阳市",useQQCode:"431181000000"}
 };
 
 
@@ -147,52 +150,37 @@ var gov3Difference={
 	,460322:{lostName:"南沙群岛"}
 	,460323:{lostName:"中沙群岛的岛礁及其海域"}
 	
-	,350403:{lostName:"三元区"} //已被合并到其他新区
-	,320611:{lostName:"港闸区"}
-	,320684:{lostName:"海门市"}
-	,330103:{lostName:"下城区"}
-	,330104:{lostName:"江干区"}
-	,340208:{lostName:"三山区"}
-	,340221:{lostName:"芜湖县"}
-	,340222:{lostName:"繁昌县"}
-	,350402:{lostName:"梅列区"}
-	,350427:{lostName:"沙县"}
-	,350625:{lostName:"长泰县"}
-	,350681:{lostName:"龙海市"}
-	,410306:{lostName:"吉利区"}
-	,410322:{lostName:"孟津县"}
-	,410381:{lostName:"偃师市"}
-	,421023:{lostName:"监利县"}
-	,520221:{lostName:"水城县"}
-	,520522:{lostName:"黔西县"}
-	,632321:{lostName:"同仁县"}
+	,330103:{lostName:'下城区'} //已被合并到其他新区
+	,330104:{lostName:'江干区'}
+	,350402:{lostName:'梅列区'}
+	,350427:{lostName:'沙县'}
+	,350625:{lostName:'长泰县'}
+	,350681:{lostName:'龙海市'}
+	,410306:{lostName:'吉利区'}
+	,410322:{lostName:'孟津县'}
+	,410381:{lostName:'偃师市'}
+	,431121:{lostName:'祁阳县'}
+	,450127:{lostName:'横县'}
+	,513425:{lostName:'会理县'}
+	,520522:{lostName:'黔西县'}
+	,532331:{lostName:'禄丰县'}
+	,610322:{lostName:'凤翔县'}
+	,610928:{lostName:'旬阳县'}
+	,654223:{lostName:'沙湾县'}
 
 	
 	//MCA和qq名称称相同但id不同的，但qq和高德相同，暂采用qq和高德的便于数据处理
 	//,0:{name:"",asID:00}
+	,232718:{name:"加格达奇区",asID:"232761"}
+	,632825:{name:"大柴旦行政委员会",asID:"632857"}
 	
 	//MCA和qq id相同，但名称不同的，这里明确取qq的名称
-	,431121:{name:"祁阳市",useQQ:true}
-	,450127:{name:"横州市",useQQ:true}
-	,513425:{name:"会理市",useQQ:true}
-	,532331:{name:"禄丰市",useQQ:true}
-	,610322:{name:"凤翔区",useQQ:true}
-	,610928:{name:"旬阳市",useQQ:true}
-	,654223:{name:"沙湾市",useQQ:true}
+	//,431121:{name:"祁阳市",useQQ:true}
 	
 	
 	//MAC没有的，但是是新出的
-	,330113:{name:"临平区",keep:true}
-	,330114:{name:"钱塘区",keep:true}
-	,350404:{name:"三元区",keep:true}
-	,350405:{name:"沙县区",keep:true}
-	,350605:{name:"长泰区",keep:true}
-	,350604:{name:"龙海区",keep:true}
-	,410308:{name:"孟津区",keep:true}
-	,410307:{name:"偃师区",keep:true}
 	,460301:{name:"西沙区",keep:true}
 	,460302:{name:"南沙区",keep:true}
-	,520581:{name:"黔西市",keep:true}
 
 };
 
@@ -256,6 +244,7 @@ var setParent=function(p,arr,mp){
 };
 
 var qqMap=JSON.parse(JSON.stringify(window[QQmapSaveName]));
+var amapData=JSON.parse(JSON.stringify(window[AmapSaveName]));
 var govData=JSON.parse(JSON.stringify(window[StatsGovMCASaveName]));
 
 var govDataMP=setParent(null,govData.cityList);
@@ -397,6 +386,7 @@ var formatQQ=function(arr,parent,findBad){
 					};
 				};
 				if(replaceSet.childMove){//平级移动合并子级
+					replaceAsFn(itm,{replaceAs:{codePrefix:SCode(moveTo)}});
 					for(var i=0;i<itm.child.length;i++){
 						moveTo.child.push(itm.child[i]);
 					};
@@ -545,7 +535,14 @@ var formatQQ=function(arr,level){
 				console.log(itm.code+":"+itm.name+"已添加子级",govItm,itm);
 				addSet.fix=true;
 				govItm.isAdd=true;
-				itm.child.push(govItm);
+				if(addSet.childCopySelf){
+					itm.child.push(Object.assign({}
+						,govItm
+						,{child:[govItm]}
+					));
+				}else{
+					itm.child.push(govItm);
+				}
 			};
 		};
 	};
@@ -560,6 +557,10 @@ var formatQQ=function(arr,level){
 				console.error("fixQQmapReplaceGovBeforeAmp名称不匹配",replaceSet,itm);
 				throw new Error();
 			};
+			if(replaceSet.whereEmptyChild && itm.child.length){
+				console.error("fixQQmapReplaceGovBeforeAmp子级不为空",replaceSet,itm);
+				throw new Error();
+			}
 			var govItm=govDataMP[itm.code];
 			if(!govItm){
 				console.error("fixQQmapReplaceGovBeforeAmp项在Gov中不存在",replaceSet,itm);
@@ -613,6 +614,12 @@ var compareAmap=function(parent,qqmapArr,amapArrSrc,level){
 		
 		for(var i1=0;i1<amapArr.length;i1++){
 			var itm=amapArr[i1];
+			var diffSet=amapDifference[SCode(itm)];
+			if(diffSet && diffSet.useQQCode){//高德使用qq的code
+				diffSet.hit=true;
+				itm.code=diffSet.useQQCode;
+			};
+			
 			if(itm.code==qqItm.code){
 				if(amapItm){
 					console.error("高德存在多个和qq相同的ID",qqItm,amapArr);
@@ -750,7 +757,7 @@ var compareAmap=function(parent,qqmapArr,amapArrSrc,level){
 		qq_amap_QQLost.push({level:level,code:itm.code,name:itm.name});
 	};
 };
-compareAmap(null,qqMap.cityList,window[AmapSaveName].cityList,1);
+compareAmap(null,qqMap.cityList,amapData.cityList,1);
 for(var k in amapDifference){
 	if(!amapDifference[k].hit){
 		console.error("存在未被匹配的预定义amapDifference",k,amapDifference[k]);

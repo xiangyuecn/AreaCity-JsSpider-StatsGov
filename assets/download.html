@@ -88,7 +88,8 @@ a:hover{
 	
 	<div class="mainBox downArea" downkey="level3">
 		<div class="mainCodeBtn">
-			<a class="downBtn mainBtn">【免费开源】【三级】省市区 行政区划 数据下载</a>
+			【免费开源】【三级】省市区 行政区划 数据
+			<a class="downBtn mainBtn">下载</a>
 			<span class="downTips">
 				文件路径：<span class="downPath"></span>
 				(200KB+)
@@ -98,7 +99,8 @@ a:hover{
 	
 	<div class="mainBox downArea" downkey="level4">
 		<div class="mainCodeBtn">
-			<a class="downBtn mainBtn">【免费开源】【四级】省市区镇 行政区划 数据下载</a>
+			【免费开源】【四级】省市区镇 行政区划 数据
+			<a class="downBtn mainBtn">下载</a>
 			<span class="downTips">
 				文件路径：<span class="downPath"></span>
 				(3MB+)
@@ -108,7 +110,8 @@ a:hover{
 	
 	<div class="mainBox downArea" downkey="geo">
 		<div class="mainCodeBtn">
-			<a class="downBtn mainBtn">【免费开源】【GEO三级】省市区 坐标和边界 数据下载</a>
+			【免费开源】【GEO三级】省市区 坐标和边界 数据
+			<a class="downBtn mainBtn">下载</a>
 			<span class="downTips">
 				文件路径：<span class="downPath"></span>
 				(13MB+压缩包 解压后130M+)
@@ -118,7 +121,8 @@ a:hover{
 	
 	<div class="mainBox">
 		<div class="mainCodeBtn">
-			<a class="mainBtn Btn_Yellow" href="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-level4.html">【付费数据】【GEO四级】乡镇 坐标和边界 数据下载</a>
+			<span style="color:#fa0">【付费数据】【GEO四级】乡镇 坐标和边界 数据</span>
+			<a class="mainBtn Btn_Yellow" href="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-level4.html">下载</a>
 			<span class="downTips">
 				<span style="color:#fa0">乡镇第4级坐标边界数据 ok_geo4_*.csv，</span>
 				(90MB+压缩包 导出后300M+)
@@ -164,6 +168,7 @@ if(file){
 	mainLog("发现"+file,2);
 };
 
+mainLog('高性能：如何做到1秒查询1万个以上坐标对应的城市信息？使用配套提供的坐标数据、边界数据查询工具：<a href="https://github.com/xiangyuecn/AreaCity-Query-Geometry" target="_blank">AreaCity-Query-Geometry</a>开源库（<a href="https://gitee.com/xiangyuecn/AreaCity-Query-Geometry" target="_blank">Gitee镜像库</a>），支持Java调用或HTTP API接口调用，内存占用低，1秒可查1万个以上坐标对应的城市信息',"#000;font-weight:bold;font-size:24px");
 mainLog('坐标和边界数据为csv格式，需自行解析提取。或者使用《<a href="AreaCity-Geo-Transform-Tools.html" target="_blank">AreaCity-Geo格式转换工具软件</a>》快速的转换成shp、geojson、sql、导入数据库、转换坐标系，本工具也支持将行政区划数据导入数据库',"#f60;font-weight:bold;font-size:24px");
 mainLog('点击上方下载按钮即可下载csv格式数据，行政区划数据如果需要其他格式，<a href="../" target="_blank">可点此在线转换</a>',"#0b1;font-weight:bold;font-size:24px");
 mainLog('GitHub Releases中提供的下载连接可能下载缓慢，因此提供本Gitee Pages外链下载，速度会快很多~');

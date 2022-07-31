@@ -17,6 +17,7 @@
 </script>
 
 <script src="geo-echarts.js"></script>
+<script src="csv-ver-date.js"></script>
 <script src="https://jiebian.life/static/bjc/web/jiebian/www/lib_pc.js"></script>
 </head>
 
@@ -185,13 +186,16 @@ body::-webkit-scrollbar-thumb{
 		</div>
 		
 		<div style="padding-top:10px;">
-			因为api接口返回的边界数据已经过了重新采样抽稀处理+GeoZip压缩（大幅节省流量，算法源码在页面下方）；抽稀后最高的从5万个坐标点变成1200个坐标点，两个边界之间放大后会明显感受到不够精细（因算法简单，未考虑相邻区域的拓扑结构），自己使用时可以调高采样数或者直接返回原始数据，就没有这个问题了。
+			默认的后端api接口返回的边界数据已经过：重采样Simplify简化处理 + GeoZip压缩，大幅节省流量，算法源码在本页面下面；简化后最高的从5万个坐标点变成1200个坐标点
+			，两个边界之间放大后会明显感受到不够精细
+			，<span style="color:red">因后端api接口使用的Simplify算法太简单，未考虑相邻区域的拓扑结构，放大后会出现间隙或重叠，甚至边角缺失的现象</span>
+			；<span style="color:#0b0">自己使用时可以调高采样数、或使用专业的Simplify算法、或直接返回原始数据，就没有这个问题了</span>。
 		</div>
 		
 		<div class2="Hide2" style="padding-top:20px;">
 			<div>
 				<span class="mainTitle">自定义数据源 - 文本文件</span>
-				<span style="color:#999;font-size:14px;margin-left:10px">json、wkt</span>
+				<span style="color:#999;font-size:14px;margin-left:10px">json、wkt，支持图形：Point、Polygon、MultiPolygon</span>
 			</div>
 			
 			<div class="dropChoiceBox" style="padding-top:5px"></div>
@@ -200,10 +204,21 @@ body::-webkit-scrollbar-thumb{
 		<div class2="Hide2" style="padding-top:20px;">
 			<div>
 				<span class="mainTitle">自定义数据源 - AreaCity-Query-Geometry</span>
-				<span style="color:#999;font-size:14px;margin-left:10px">一个高性能的坐标数据、边界数据查询工具</span>
+				<span style="color:#999;font-size:14px;margin-left:10px">坐标数据、边界数据查询工具，1秒可查1万个以上坐标对应的城市信息</span>
 			</div>
 			
 			<div class="aqgToolsBox" style="padding-top:5px"></div>
+		</div>
+	</div>
+	
+	<div class="mainBox" class2="Hide">
+		<div class="mainTitle">功能定制开发</div>
+		
+		<div style="padding-top:10px;font-size:22px;font-weight:bold;color:#0ab;">
+			如需数据、功能定制，网站、App、小程序、前端后端开发等需求；
+			矢量专题地图绘制、修改，前端地图、大屏、ECharts数据展示开发，后端数据处理、接口开发；
+			请加QQ群：<span class="qqGroupList"></span>，联系群主（即作者），谢谢~
+			<script>QQGroupList.HTML_i(".qqGroupList")</script>
 		</div>
 	</div>
 	
@@ -236,7 +251,6 @@ body::-webkit-scrollbar-thumb{
 		
 		<div class="mainTitle" style="padding-top:60px">数据版本</div>
 		<div class="geoVerDateView" style="padding-top:5px"></div>
-		<script src="csv-ver-date.js"></script>
 		<script>$(".geoVerDateView").html(CsvPubDate.TableHTML({level4:true,geo:true,geo4:true}));</script>
 	</div>
 	
@@ -517,9 +531,10 @@ var geoECharts=geoEChartsLib.Create({
 			})()}
 			
 			map.setFitView();
-			
-			window.mapPointReview&&mapPointReview();
 		}
+	}
+	,onDraw:function(){
+		window.mapPointReview&&mapPointReview();
 	}
 });
 

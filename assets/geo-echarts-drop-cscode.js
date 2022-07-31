@@ -18,10 +18,20 @@ $(".dropChoiceBox").html(`
 			WKT文本
 		</div>
 	</div>
-	<div style="padding:8px 0 0 10px">
-		<div>文件编码：<input class="dropChoiceEncode" style="width:80px" value="utf-8"></div>
-		<div>保留已绘制的：<input class="dropChoiceAppend" type="checkbox" checked></div>
-		<div>名称字段：<input class="dropChoiceNameKey" style="width:80px" value="name"></div>
+	<div style="padding:0 0 0 10px">
+		<div style="font-size:12px">
+			保留已绘制的：<input class="dropChoiceAppend" type="checkbox" checked>
+			文件编码：<input class="dropChoiceEncode" style="width:80px" value="utf-8">
+		</div>
+		<div style="margin-top:3px">坐标系：
+			<select class="dropChoiceGCS" style="padding:2px 0;border:1px solid #bbb;">
+				<option selected value="gcj02">GCJ-02：高德、腾讯地图</option>
+				<option value="wgs84">WGS-84：GPS、谷歌地图</option>
+				<option value="cgcs2000">CGCS2000：天地图</option>
+				<option value="bd09">BD-09：百度地图</option>
+			</select>
+		</div>
+		<div style="margin-top:7px">名称字段：<input class="dropChoiceNameKey" style="width:80px" value="name"></div>
 	</div>
 </div>
 <div class="dropChoiceLogs"></div>
@@ -48,12 +58,12 @@ window.dropChoiceWKTClick=function(){
 	$(".ConfirmBox").css("width","65vw")
 	$(".PromptBox textarea").attr("placeholder",`【支持粘贴文本内容格式】：
 - 查询结果的单个纯WKT文本（需留意WKT过长时有没有被查询工具截断），如：
-	POLYGON(( ... ))
+	POLYGON(( ... )) 或 MULTIPOLYGON((( ... ))) 或 POINT( ... )
 
 - 查询结果复制为多行文本，如：
-	POLYGON(( ... ))
-	可选名称 POLYGON(( ... ))
-	.. 可选名称 MULTIPOLYGON((( ... ))) ..
+	POLYGON(( ... )) MULTIPOLYGON((( ... ))) POINT( ... ) 一行可以有多个点和面
+	可选名称 POLYGON( ... ) POINT( ... ) 左边如果有一个文本会自动当做名称
+	xxx 可选名称 MULTIPOLYGON((( ... ))) xxx
 
 - 查询结果复制为Insert、Update多行SQL语句，如：
 	insert xx(..) values(..,'前一字符串始终作为名称','MULTIPOLYGON(( ... ))',..)
@@ -64,13 +74,15 @@ window.dropChoiceWKTClick=function(){
 
 
 var choiceFeatures=[],choiceID=0;
-var log,encode,nameKey,append;
+var log,encode,srcGCS,nameKey,append;
 var init=function(msg){
 	encode=$(".dropChoiceEncode").val()||"utf-8";
 	nameKey=$(".dropChoiceNameKey").val()||"name";
 	append=$(".dropChoiceAppend")[0].checked;
+	srcGCS=$(".dropChoiceGCS").val()||"gcj02";
 	if(!append){
 		choiceFeatures=[];
+		mapPointClear();
 		$(".dropChoiceLogs").html("");
 	};
 	
@@ -78,10 +90,16 @@ var init=function(msg){
 		$(".dropChoiceLogs").prepend('<div style="padding-left:25px;border-top: 1px solid #eee;color:'+(!color?"":color==1?"red":color==2?"#0b1":color)+'">'+msg+'</div>');
 	};
 	log(msg+"，配置: "
-		+JSON.stringify({encode:encode,append:append,nameKey:nameKey})
+		+JSON.stringify({encode:encode,append:append,srcGCS:srcGCS,nameKey:nameKey})
 		+"，开始处理...");
 };
 var drawMap=function(){
+	if(mapPointList.length && !choiceFeatures.length){
+		//只显示坐标点，无需绘制（保留之前的地图）
+		mapPointReview();
+		return;
+	}
+	
 	//绘图，照抄GeoECharts.load
 	var mapDatas=[],existsName={};
 	var geojson={type: "FeatureCollection",features:[]};
@@ -89,12 +107,7 @@ var drawMap=function(){
 	for(var i=0;i<arr.length;i++){
 		var obj=arr[i],prop=obj.properties;
 		var id=prop.id;
-		var name=prop.raw[nameKey];
-		if(name==null){
-			name="[数据中无"+nameKey+"字段]";
-		}else{
-			name=name||"[无名称]";
-		}
+		var name=rawName(prop.raw);
 		var en=existsName[name]=(existsName[name]||0)+1;
 		if(en>1){
 			name=name+" ["+en+"]";
@@ -128,11 +141,64 @@ var drawMap=function(){
 	};
 	end();
 };
+var rawName=function(raw){
+	var name=raw[nameKey];
+	if(name==null){
+		name="[数据中无"+nameKey+"字段]";
+	}else{
+		name=name||"[无名称]";
+	}
+	return name;
+};
 
 
 
+//转换坐标系
+var translateGCSFeature=function(feature){
+	if(srcGCS=="gcj02"){
+		return;
+	}
+	var geom=feature.geometry,arr0=geom.coordinates;
+	if(geom.type=="Point"){
+		translateGCS(arr0);
+		return;
+	}
+	if(geom.type=="Polygon"){
+		arr0=[arr0];
+	}
+	if(geom.type=="Polygon" || geom.type=="MultiPolygon"){
+		for(var i0=0;i0<arr0.length;i0++){
+			var arr1=arr0[i0];
+			for(var i1=0;i1<arr1.length;i1++){
+				var arr2=arr1[i1];
+				for(var i2=0;i2<arr2.length;i2++){
+					translateGCS(arr2[i2]);
+				}
+			}
+		}
+		return;
+	}
+	console.log(feature);
+	throw new Error("translateGCSFeature");
+};
+var translateGCS=function(point){
+	if(srcGCS=="gcj02"){
+		return;
+	}
+	var obj,lng=point[0],lat=point[1];
+	if(srcGCS=="bd09"){
+		obj=PointConvert.bd_decrypt(lat,lng);
+	}else if(srcGCS=="wgs84" || srcGCS=="cgcs2000"){
+		obj=PointConvert.gcj_encrypt(lat,lng);
+	}else{
+		throw new Error("translateGCS "+srcGCS);
+	}
+	point[0]=obj.lon;
+	point[1]=obj.lat;
+};
 
 
+//从输入的wkt文本提取图形
 var readChoiceWKT=function(txt){
 	var lines=[];
 	txt=txt.trim();
@@ -144,52 +210,74 @@ var readChoiceWKT=function(txt){
 	console.log("WKT文本行",lines);
 	
 	choiceID++;
-	var polygonCount=0,errCount=0,isCSV=0,oneLineErr=0;
+	var polygonCount=0,pointCount=0,errCount=0,isCSV=0,oneLineErr=0;
 	for(var idx=0;idx<lines.length;idx++){
 		var line=lines[idx];
-		var m=/^(.*?)(POLYGON\s*\(\(.+?\)\)|MULTIPOLYGON\s*\(\(\(.+?\)\)\))/i.exec(line);
+		var exp=/(.*?)(POINT\s*\(.+?\)|POLYGON\s*\(\(.+?\)\)|MULTIPOLYGON\s*\(\(\(.+?\)\)\))/ig;
+		var m=exp.exec(line);
 		if(!m){
 			if(idx==0)oneLineErr=1;
 			errCount++;
 			log("第"+(idx+1)+"行未发现WKT数据: "+FormatText(line.substr(0,50)),1);
 			continue;
 		}
-		var leftTxt=m[1],wkt=m[2],name="";
+		var wkts=[],name="";
 		
-		//提取左边的名称
-		if(/'([^']+)'\s*,\s*(\s*[`\[\]\w]+\s*[=\(])*\s*'$/.test(leftTxt)){//SQL Insert Update ST_GeomFromText(
-			name=RegExp.$1;
-		}else if(/([\s,])["']?$/.test(leftTxt)){//分隔符类的，csv
-			var arr=leftTxt.split(RegExp.$1);
-			name=arr[arr.length-2].replace(/["']/g,"");
-			isCSV=1;
-		}
-		name=name.trim();
-		
-		var raw={
-			id:(choiceID*-1e8)+choiceFeatures.length
-		};raw[nameKey]=name;
-		var prop={
-			isTemp:true
-			,id:raw.id
-			,raw:raw
+		while(m){
+			//提取左边的名称
+			if(!name){
+				var leftTxt=m[1];
+				if(/'([^']+)'\s*,\s*(\s*[`\[\]\w]+\s*[=\(])*\s*'$/.test(leftTxt)){//SQL Insert Update ST_GeomFromText(
+					name=RegExp.$1;
+				}else if(/([\s,])["']?$/.test(leftTxt)){//分隔符类的，csv
+					var arr=leftTxt.split(RegExp.$1);
+					name=arr[arr.length-2].replace(/["']/g,"");
+					isCSV=1;
+				}
+				name=name.trim();
+			};
+			wkts.push(m[2]);
+			m=exp.exec(line);
 		};
 		
-		var feature=geoEChartsLib.WKT2Feature(prop,wkt);
-		if(!feature.geometry.coordinates.length){
-			errCount++;
-			log("第"+(idx+1)+"行WKT解析后没有坐标数据: "+FormatText(line.substr(0,50)),1);
-			continue;
-		}
-		
-		polygonCount++;
-		choiceFeatures.push(feature);
+		for(var wi=0;wi<wkts.length;wi++){
+			var wkt=wkts[wi];
+			//point
+			if(/^POINT\s*\((.+?) (.+?)\)/i.test(wkt)){
+				pointCount++;
+				var p=[+RegExp.$1||0, +RegExp.$2||0];
+				translateGCS(p);
+				mapPointAdd(name,p[0],p[1]);
+				continue;
+			}
+			
+			//polygon
+			var raw={
+				id:(choiceID*-1e8)+choiceFeatures.length
+			};raw[nameKey]=name;
+			var prop={
+				isTemp:true
+				,id:raw.id
+				,raw:raw
+			};
+			
+			var feature=geoEChartsLib.WKT2Feature(prop,wkt);
+			if(!feature.geometry.coordinates.length){
+				errCount++;
+				log("第"+(idx+1)+"行WKT解析后没有坐标数据: "+FormatText(line.substr(0,50)),1);
+				continue;
+			}
+			
+			polygonCount++;
+			translateGCSFeature(feature);
+			choiceFeatures.push(feature);
+		};
 	};
-	if(isCSV && oneLineErr && polygonCount){
+	if(isCSV && oneLineErr && polygonCount+pointCount){
 		errCount--;
 	}
 	
-	var msg="已处理完所有WKT数据行，新增"+polygonCount+"个边界，共"+choiceFeatures.length+"个边界"
+	var msg="已处理完所有WKT数据行，新增"+polygonCount+"个边界、"+pointCount+"个点，共"+choiceFeatures.length+"个边界、"+mapPointList.length+"个点"
 		+(errCount?"，有"+errCount+"行WKT数据处理出错":"")
 		+"。";
 	log(msg,errCount?1:2);
@@ -200,6 +288,7 @@ var readChoiceWKT=function(txt){
 
 
 
+//从geojson文件中提取图形
 var readChoiceFile=function(files){
 	if(!files.length){
 		return;
@@ -213,7 +302,7 @@ var readChoiceFile=function(files){
 		idx++;
 		if(idx>=files.length){
 			PageModule.closeMask();
-			var msg="已处理完所有文件，共"+choiceFeatures.length+"个边界"
+			var msg="已处理完所有文件，共"+choiceFeatures.length+"个边界、"+mapPointList.length+"个点"
 				+(errCount?"，有"+errCount+"个文件处理出错":"")
 				+"。";
 			log(msg,errCount?1:2);
@@ -240,22 +329,33 @@ var readChoiceFile=function(files){
 				if(!features.length){
 					throw new Error("没有一个feature，空文件无需处理");
 				}
-				var polygonCount=0;
+				var polygonCount=0,pointCount=0,otherCount=0;
 				for(var i=0;i<features.length;i++){
 					var o=features[i]||{},geom=o.geometry||{};
+					var prop=o.properties||{};
 					if(geom.type=="Polygon" || geom.type=="MultiPolygon"){
 						polygonCount++;
+						translateGCSFeature(o);
 						choiceFeatures.push(o);
 						
-						var prop=o.properties||{};
 						o.properties={
 							isTemp:true
 							,id:(fileID*-1e8)+choiceFeatures.length
 							,raw:prop
 						};
+					}else if(geom.type=="Point"){
+						pointCount++;
+						translateGCSFeature(o);
+						var p=geom.coordinates;
+						mapPointAdd(rawName(prop),p[0],p[1]);
+					}else{
+						otherCount++;
 					}
 				}
-				log("文件："+file.name+" 解析成功，发现："+polygonCount+"个边界"+(polygonCount!=features.length?"，"+(features.length-polygonCount)+"个其他数据":""),2);
+				log("文件："+file.name+" 解析成功，发现："
+					+(polygonCount||!pointCount?polygonCount+"个边界 ":"")
+					+(pointCount?pointCount+"个点 ":"")
+					+(otherCount?otherCount+"个其他数据":""),2);
 				
 				run();
 			}catch(e){
@@ -295,8 +395,8 @@ $(".mapPointView").html(`
 	<div style="font-size:13px">
 		坐标
 		<input class="mapPointTxt" placeholder="单击高德地图|填：经度 纬度" style="width:170px;font-size:13px;height:16px;">
-		<span class="Btn BtnMin" onclick="mapPointShowClick()">标注</span>
-		<span class="Btn BtnMin mapPointClearBtn" onclick="mapPointReview(1)" style="display:none">清空</span>
+		<span class="Btn BtnMin" onclick="mapMarkerShowClick()">标注</span>
+		<span class="Btn BtnMin mapPointClearBtn" onclick="mapPointClearClick()" style="display:none">清空</span>
 	</div>
 	<div class=""></div>
 	<div class="FlexItem"></div>
@@ -310,7 +410,7 @@ map.on("click",function(e){
 var log=function(msg,color){
 	$(".mapPointLogs").prepend('<div style="padding-left:25px;border-top: 1px solid #eee;color:'+(!color?"":color==1?"red":color==2?"#0b1":color)+'">'+msg+'</div>');
 };
-window.mapPointShowClick=function(){
+window.mapMarkerShowClick=function(){
 	var val=$(".mapPointTxt").val().trim();
 	if(!val){
 		return Toast("请填写坐标",1);
@@ -348,28 +448,111 @@ window.mapPointShowClick=function(){
 	];
 	for(var i=0;i<arr.length;i++){
 		var o=arr[i];
-		markerList.push(new AMap.Marker({ position: o.p,
-			label:{
-				offset: new AMap.Pixel(2, -5), direction: "right",
-				content: '<div style="padding:3px 5px;border-radius:4px;color:#fff;background:'+o.c+'">'+tag+o.t+'</div>'
-			}
-		}));
+		addMarker(markerList, o.p, tag+o.t, o.c);
 	};
 	$(".mapPointClearBtn").show();
 	mapPointReview();
 };
+//标注数据
 var markerList=[],tagIdx=0;
-window.mapPointAdd=function(marker){
-	markerList.push(marker);
+var addMarker=function(arr, pos, name, color){
+	var m=new AMap.Marker({ position: pos,
+		label:name?{
+			offset: new AMap.Pixel(2, -5), direction: "right",
+			content: '<div style="padding:3px 5px;border-radius:4px;color:#fff;background:'+color+'">'+name+'</div>'
+		}:null
+	});
+	m._Pos=pos;
+	m._Name=name;
+	arr.push(m);
 };
-window.mapPointReview=function(clear){
-	for(var i=0;i<markerList.length;i++){
-		markerList[i].setMap(clear?null:map);
+window.mapPointClearClick=function(){
+	markerClear(markerList);
+	markerList=[];tagIdx=0;
+	$(".mapPointLogs").html("");
+	
+	mapPointClear();
+};
+var markerClear=function(arr){
+	for(var i=0;i<arr.length;i++){
+		arr[i].setMap(null);
 	}
-	if(clear){
-		markerList=[];tagIdx=0;
-		$(".mapPointLogs").html("");
+};
+
+
+//坐标点数据
+window.mapPointList=[];
+window.mapPointAdd=function(name,lng,lat){
+	addMarker(mapPointList, [lng,lat], name, "#0b0");
+};
+window.mapPointClear=function(){
+	markerClear(mapPointList);
+	mapPointList=[];
+	mapPointReview();
+};
+
+//显示标注和坐标点
+var oldDatas=[];
+window.mapPointReview=function(){
+	var datas=[],idx=0;
+	for(var n=0;n<2;n++){
+		var list=n==0?mapPointList:markerList;
+		for(var i=0;i<list.length;i++){
+			var m=list[i];
+			m.setMap(map);
+			
+			var pos=m._Pos;
+			datas.push({
+				id:++idx
+				,name:m._Name
+				,value:[pos[0],pos[1], 0]
+			});
+		}
 	}
+	
+	//显示清除按钮
+	if(datas.length){
+		$(".mapPointClearBtn").show();
+	}
+	
+	//显示ecahrts坐标点
+	if(!datas.length && !oldDatas.length)return;
+	oldDatas=datas;
+	var chart=$(".echartsView")[0].chartView;
+	if(!chart)return;
+	var config=geoECharts.drawArgs.config;
+	chart.setOption({
+		series:[{}, //map图层 不动
+			{ //增加散点图
+				type: 'scatter'
+				,coordinateSystem: 'geo'
+				,data: datas
+				,encode: { value: 2 }
+				,symbolSize:10*(+config.txtSize||12)/12
+				,label: {
+					normal: {
+						formatter: '{b}'
+						,position: 'right'
+						,color: config.txtColor||'#000'
+						,fontSize: +config.txtSize||12
+						,textShadowColor: config.txtShadow
+						,textShadowBlur:3
+						,show: true
+					}
+					,emphasis: { color: '#3e95fa',textShadowColor:"#fff" }
+				}
+				,itemStyle: {
+					normal: {
+						color: '#0b0'
+						,opacity:1
+						,shadowBlur:2
+						,shadowColor:"#bbb"
+					}
+					,emphasis: { color: '#3e95fa' }
+				}
+			}
+		]
+	});
 };
 
 
@@ -555,7 +738,7 @@ $(function(){
 [MSSQL] select id,ext_path,polygon.STAsText() as polygon from AreaCity_Geo where id=11
 
 
-【采样抽稀】省市区三级边界数据，一半以上边界的坐标点超过1000个点，超过1万个坐标点边界有80个，超过3万个坐标点的边界有11个；内蒙的边界坐标点数最多（5万个点），转成文本后超过1MB大小，重采样成600个点后变成16KB大小；在大部分ECharts显示场合，重采样抽稀后边界外观基本上是一致的（下面源码中有一段边界质量优化的代码对超大的边界进行了增强处理），数据量已经大幅减少；本算法仅为简单的对一个环进行坐标删除，未考虑相邻区域的拓扑结构，如需高质量的精简+保持拓扑结构，可以参考MapShaper的simplify实现：https://github.com/mbloch/mapshaper/tree/master/src/simplify
+【重采样简化】省市区三级边界数据，一半以上边界的坐标点超过1000个点，超过1万个坐标点边界有80个，超过3万个坐标点的边界有11个；内蒙的边界坐标点数最多（5万个点），转成文本后超过1MB大小，重采样成600个点后变成16KB大小；在大部分ECharts显示场合，重采样简化后边界外观基本上是一致的（下面源码中有一段边界质量优化的代码对超大的边界进行了增强处理），数据量已经大幅减少；本算法仅为简单的对一个环进行坐标删除，未考虑相邻区域的拓扑结构，如需高质量的精简+保持拓扑结构，可以参考MapShaper的simplify实现：https://github.com/mbloch/mapshaper/tree/master/src/simplify
 
 【GeoZip压缩、解压】本代码内实现了一套压缩解压的代码，6位小数精度下可压缩到 1/3 - 1/5 大小。压缩代码参考自echarts（ZigZag算法）：https://github.com/apache/echarts/blob/8eeb7e5abe207d0536c62ce1f4ddecc6adfdf85e/src/util/mapData/rawData/encode.js
 *************************/
@@ -838,13 +1021,13 @@ $(function(){
 			return str.ToString();
 		}
 		static private readonly Regex
-			Exp_1 = new Regex(@"^POLYGON\s*\(\(|\)\)$")
-			, Exp_2 = new Regex(@"^MULTIPOLYGON\s*\(\(\(|\)\)\)$")
-			, Exp_3 = new Regex(@"\)\)\s*,\s*\(\(")
-			, Exp_4 = new Regex(@"\)\s*,\s*\(")
-			, Exp_5 = new Regex(@"\s*,\s*")
+			Exp_1 = new Regex("^POLYGON\\s*\\(\\(|\\)\\)$")
+			, Exp_2 = new Regex("^MULTIPOLYGON\\s*\\(\\(\\(|\\)\\)\\)$")
+			, Exp_3 = new Regex("\\)\\)\\s*,\\s*\\(\\(")
+			, Exp_4 = new Regex("\\)\\s*,\\s*\\(")
+			, Exp_5 = new Regex("\\s*,\\s*")
 
-			, Exp_Host = new Regex(@"(?:\.(?:gitee|github)\.io)(?:\:\d+)?$")
+			, Exp_Host = new Regex("(?:\\.(?:gitee|github)\\.io)(?:\\:\\d+)?$")
 			;
 
 

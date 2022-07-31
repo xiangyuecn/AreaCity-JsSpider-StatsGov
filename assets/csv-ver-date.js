@@ -34,7 +34,7 @@ var CsvPubDate=window.CsvPubDate={
 	
 	,Geo4:{
 		name:"乡镇第4级坐标边界数据"
-		,desc:'['+Url("下载",UrlRoot+"assets/geo-level4.html")+']['+Url("在线预览",UrlEcharts)+'][<span style="color:#fa0">付费数据</span>] 文件大小：90MB+压缩包，导出后300M+；包含字段：矢量边界polygon、中心坐标centroid_geo、编号id、上级区县pid、乡镇名称name；'+GeoTips+'。本数据源自：第三方购买 + 公开数据源整合；部分省份由于没有最新的数据源，但上级区县变更往往会囊括原有的乡镇，乡镇边界一般少有大的变化，所以乡镇边界与压缩包内最新版的省市区行政区划、边界均可进行关联匹配。下表中的省份年月为一个大概的值（不一定准确），仅用于参考。'
+		,desc:'['+Url("下载",UrlRoot+"assets/geo-level4.html#xz")+']['+Url("在线预览",UrlEcharts)+'][<span style="color:#fa0">付费数据</span>]['+Url("文档",UrlRoot+"assets/geo-level4.html")+'] 文件大小：90MB+压缩包，导出后300M+；包含字段：矢量边界polygon、中心坐标centroid_geo、编号id、上级区县pid、乡镇名称name；'+GeoTips+'。本数据源自：第三方购买 + 公开数据源整合；部分省份由于没有最新的数据源，但上级区县变更往往会囊括原有的乡镇，乡镇边界一般少有大的变化，所以乡镇边界与压缩包内最新版的省市区行政区划、边界均可进行关联匹配。下表中的省份年月为一个大概的值（不一定准确），仅用于参考。'
 		,file:"ok_geo4_ETD220408.csv"
 		,version:"ETD220408"
 		,dates:{//年-月 A排序年.月
@@ -185,6 +185,30 @@ if(set.geo4){
 </div>');
 	return html.join("\n");
 };
+
+
+
+
+
+
+window.QQGroupList={
+	List:[{name:"①群",qq:"484560085"},{name:"②群",qq:"626141661"}]
+	,HTML_i:function(cls){
+		var html=[];
+		for(var i=0;i<this.List.length;i++){
+			var o=this.List[i];
+			html.push(o.name+' <i class="i">'+o.qq+'</i>');
+		}
+		html=html.join("、")+'，口令<i class="i">areacity</i>';
+		if(cls){
+			document.querySelector(cls).innerHTML=html;
+		}
+		return html;
+	}
+};
+
+
+
 
 
 })();

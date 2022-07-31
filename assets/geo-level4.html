@@ -361,6 +361,12 @@ img{
 				
 				<div style="margin-top:20px;">SQL如何查询空间数据、查询出WKT文本、其他数据库的支持，均请阅读上面转换工具使用教程文档，在转成sql文件这一章节。</div>
 				
+				<div style="margin-top:8px;color:#0b1;font-size:13px;word-break: break-all;">
+					查询性能：数据库查询一个坐标对应的城市性能一般比较低，可以使用 AreaCity-Query-Geometry 开源库，支持Java调用或HTTP API接口调用，内存占用低，1秒可查1万个以上坐标对应的城市信息。
+					
+					详细请阅读<a href="AreaCity-Geo-Transform-Tools.html#aqg" target="_blank">FAQ</a>。
+				</div>
+				
 				<div style="margin-top:8px;color:#f60;font-size:13px;word-break: break-all;">注意：MySQL 5.* 中进行空间计算查询时，不带ST_打头的函数均为采用Polygon的外接矩形计算，会导致结果不准确，应当使用带ST_打头的方法来进行查询。
 				
 				MySQL的空间索引很难生效 <a href="https://dev.mysql.com/doc/refman/8.0/en/spatial-index-optimization.html" target="_blank">官方文档</a>，从而导致空间查询异常缓慢，可通过增加一个字段: polygon_envelope=ST_Envelope(polygon) 来自建索引，查询的时候先查 polygon_envelope ，然后再查 polygon 字段，速度就会快很多(10倍+)，也可同时切换成MyISAM引擎，会比InnoDB引擎的空间查询快很多。
@@ -517,7 +523,8 @@ img{
 			
 			<div class="h3">如何在QQ群内下载本数据？<a name="xzqq"></a></div>
 			<div class="desc">
-				加入QQ群：①群 <i class="i">484560085</i>、②群 <i class="i">626141661</i>，口令<i class="i">areacity</i>，然后到群文件中下载。
+				加入QQ群：<span class="qqGroupList"></span>，然后到群文件中下载。
+				<script>QQGroupList.HTML_i(".qqGroupList")</script>
 			</div>
 			
 			<div class="h3">购买数据能砍价吗？</div>

@@ -203,6 +203,7 @@ img{
 				<li>自动校验坐标和边界矢量数据的有效性。</li>
 				<li>可执行自定义 JavaScript 脚本，可扩展出丰富功能。</li>
 				<li>转换精度高，速度快，内存占用小，3-5分钟左右可转换完所有数据。</li>
+				<li>配套提供坐标数据、边界数据查询工具：<a href="https://github.com/xiangyuecn/AreaCity-Query-Geometry" target="_blank">AreaCity-Query-Geometry</a>开源库（<a href="https://gitee.com/xiangyuecn/AreaCity-Query-Geometry" target="_blank">Gitee镜像库</a>），支持Java调用或HTTP API接口调用，内存占用低，1秒可查1万个以上坐标对应的城市信息。</li>
 				<li>支持Win10、Win8、Win7，32位、64位系统使用（其他系统装虚拟机可用）。</li>
 			</ul>
 		</div>
@@ -445,6 +446,12 @@ select id,ext_path,polygon from 【此处改成你的表名】 where polygon.STI
 select id,ext_path,polygon from 【此处改成你的表名】 where ST_Intersects(polygon,ST_GeomFromText('POINT(114.044346 22.691963)',0))=1
 </textarea>
 						</div>
+					</div>
+					
+					<div style="margin-top:8px;color:#0b1;font-size:13px;word-break: break-all;">
+						查询性能：数据库查询一个坐标对应的城市性能一般比较低，可以使用 AreaCity-Query-Geometry 开源库，支持Java调用或HTTP API接口调用，内存占用低，1秒可查1万个以上坐标对应的城市信息。
+						
+						详细请阅读<a href="#aqg">FAQ</a>。
 					</div>
 					
 					<div style="margin-top:8px;color:#f60;font-size:13px;word-break: break-all;">注意：MySQL 5.* 中进行空间计算查询时，不带ST_打头的函数均为采用Polygon的外接矩形计算，会导致结果不准确，应当使用带ST_打头的方法来进行查询。
@@ -763,9 +770,17 @@ select id,ext_path,polygon from 【此处改成你的表名】 where ST_Intersec
 		and ST_Intersects(polygon,ST_GeomFromText('POINT(114.044346 22.691963)',0))=1</i>；也可同时切换成MyISAM引擎，会比InnoDB引擎的空间查询快很多。</p>
 			</div>
 			
+			<div class="h3">高性能：如何做到1秒查询1万个以上坐标对应的城市信息？<a name="aqg"></a></div>
+			<div class="desc">
+				<p>使用配套提供的坐标数据、边界数据查询工具：<a href="https://github.com/xiangyuecn/AreaCity-Query-Geometry" target="_blank">AreaCity-Query-Geometry</a>开源库（<a href="https://gitee.com/xiangyuecn/AreaCity-Query-Geometry" target="_blank">Gitee镜像库</a>），支持Java调用或HTTP API接口调用，内存占用低，1秒可查1万个以上坐标对应的城市信息。</p>
+				
+				<p>使用方法：先使用转换工具将 ok_geo.csv 转换成 geojson格式；然后打开查询工具并使用此geojson文件进行初始化，然后根据菜单启动HTTP API服务，就能调用API进行查询了；或者直接编写Java代码，代码中使用此geojson文件进行初始化，然后调用对应的查询方法进行查询。</p>
+			</div>
+			
 			<div class="h3">如何在QQ群内下载本工具？<a name="xzqq"></a></div>
 			<div class="desc">
-				加入QQ群：①群 <i class="i">484560085</i>、②群 <i class="i">626141661</i>，口令<i class="i">areacity</i>，然后到群文件中下载。
+				加入QQ群：<span class="qqGroupList"></span>，然后到群文件中下载。
+				<script>QQGroupList.HTML_i(".qqGroupList")</script>
 			</div>
 			
 			<div class="h3">Mac OS等非Windows系统上如何使用本工具？<a name="otherSys"></a></div>

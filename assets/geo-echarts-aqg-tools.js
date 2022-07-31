@@ -99,7 +99,7 @@ var pointQuery=function(url,args){
 	url+="?lng="+lng+"&lat="+lat+"&returnWKTKey=polygon";
 	var t1=Date.now();
 	geoEChartsLib.Post(url,{},function(data){
-		mapPointAdd(new AMap.Marker({ position: [lng,lat] }));
+		mapPointAdd("查询坐标点",lng,lat);
 		addFeatures(Date.now()-t1,data);
 	},function(err){
 		log(err,1);
@@ -126,7 +126,7 @@ var extPathQuery=function(url,args){
 
 var Features=[],QueryID=0;
 var clearFeatures=function(){
-	mapPointReview(true);
+	mapPointClear();
 	Features=[];
 };
 var addFeatures=function(loadMs,data){

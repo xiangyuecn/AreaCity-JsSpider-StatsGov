@@ -85,7 +85,9 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 					dataProcess: fn(call:fn(next)) 自行处理函数，如果调用了本方法，代表你要自己处理数据，比如修改tips
 						next:fn() 处理完成后调用本方法继续后续图形绘制
 				*/
-				
+			
+			,onDraw:NOOP //echarts绘制完成时回调，重绘时也会回调
+			
 			,reqPost:lib.Post //post请求实现方法，默认使用普通的ajax实现
 		};
 		for(var k in set){
@@ -493,20 +495,25 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 				for(var i=0;i<data.length;i++){
 					var o=data[i];
 					o.value=+o.id||0;
-					if(!config.rndAreaColorMp[o.value]){
+					var o2=config.rndAreaColorMp[o.value];
+					if(!o2){
 						if(!rndArr.length)rndArr=This.ColorRamp.split(",");
 						var color=rndArr.splice(~~(Math.random()*rndArr.length),1)[0];
-						var o2={
+						o2={
 							value:o.value
 							,color:"#"+color
 						};
-						config.rndAreaColorVals.push(o2);
+						config.rndAreaColorVals.push(o2); //以前用于visualMap 给map图层用
 						config.rndAreaColorMp[o.value]=o2;
 					};
+					o.itemStyle={areaColor:o2.color};
 				}
 			}else{
 				config.rndAreaColorVals=null;
 				config.rndAreaColorMp=null;
+				for(var i=0;i<data.length;i++){
+					delete data[i].itemStyle;
+				}
 			};
 			
 			
@@ -520,10 +527,12 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 			chartView.on("click",function(e){
 				console.log("map click",e);
 				var o=e.data;
-				if(o.isTemp){
-					set.showLog("临时数据，不支持进入下级");
-				}else{
-					This.load({id:o.id, level:o.level, name:o.name});
+				if(e.seriesIndex==0){//只处理map图层的点击，或e.componentType=="geo"
+					if(o.isTemp){
+						set.showLog("临时数据，不支持进入下级");
+					}else{
+						This.load({id:o.id, level:o.level, name:o.name});
+					};
 				};
 			});
 			chartView.on("dblclick",function(e){
@@ -548,49 +557,47 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 					}
 				},
 				
-				visualMap:config.rndAreaColor?{
-					show:false,
-					pieces:config.rndAreaColorVals
-				}:null,
-				
-				series: [
-					{
-						type: 'map'
-						,mapType: 'City'+id
-						,scaleLimit:{ min:1 }
-						,zoom:set.zoom
-						,label: {
-							show:!!+config.txtSize
-							,textStyle: {
-								color: config.txtColor
-								,fontSize: +config.txtSize
-								,textShadowColor: config.txtShadow
-								,textShadowBlur: Math.max(3,~~(+config.txtSize/6))
-							}
+				geo: { //使用地理坐标系组件来显示地图，这样series里面才能放置散点图、线图
+					map: 'City'+id
+					,scaleLimit:{ min:1 }
+					,zoom:set.zoom
+					,label: {
+						show:!!+config.txtSize
+						,textStyle: {
+							color: config.txtColor
+							,fontSize: +config.txtSize
+							,textShadowColor: config.txtShadow
+							,textShadowBlur: Math.max(3,~~(+config.txtSize/6))
 						}
-						,emphasis:{
-							label: {
-								color: config.rndAreaColor?"#fff":"#fa0"
-								,textShadowColor: "#000"
-							}
+					}
+					,emphasis:{//高亮样式
+						label: {
+							color: config.rndAreaColor?"#fff":"#fa0"
+							,textShadowColor: "#000"
 						}
 						,itemStyle: {
-							normal: {
-								areaColor: config.areaColor||"rgba(0,0,0,0)",
-								borderColor: config.borderColor,
-								borderWidth: config.borderColor?+config.borderSize||0:0, //设置外层边框
-							},
-							emphasis: {
-								areaColor: "#184cff",
-								borderColor: "#184cff",
-							}
+							areaColor: "#184cff",
+							borderColor: "#184cff"
 						}
-						,roam:true
-						,data: data
+					}
+					,itemStyle: {
+						areaColor: config.areaColor||"rgba(0,0,0,0)",
+						borderColor: config.borderColor,
+						borderWidth: config.borderColor?+config.borderSize||0:0 //设置外层边框
+					}
+					,roam:true
+					,regions:data
+				},
+				series: [ //这里面可以放任意散点图、线图
+					{ //geo在5.1之前要放一个map图层，不然要5.1+才支持tooltip
+						type: 'map'
+						,geoIndex:0
+						,data:data
 					}
 				]
 			};
 			chartView.setOption(option);
+			set.onDraw();
 			return option;
 		}
 	};

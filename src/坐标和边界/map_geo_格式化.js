@@ -200,10 +200,11 @@ for(var k=0;k<DATA_GEO.length;k++){
 			};
 			
 			//找到最小的一个坐标，环从这个坐标开始，免得每次采集起点不一样导致差异
-			var min=999.999999,idx=0;
+			var minX=999.999999,minY=minX,idx=0;
 			for(var i=0;i<arr.length;i++){
-				if(arr[i][0]<min){
-					min=arr[i][0];
+				var x=arr[i][0],y=arr[i][1];
+				if(x<minX || (x==minX && y<minY)){
+					minX=x;minY=y;
 					idx=i;
 				}
 			};

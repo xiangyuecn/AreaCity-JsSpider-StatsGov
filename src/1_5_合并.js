@@ -126,8 +126,8 @@ var amapDifference={
 
 //和高德对比完后qq地图数据替换处理
 var fixQQmapReplaceFillAfterAmap={
-	//修正前缀和统计局一致
-	620200:{name:"嘉峪关市",level:3,replaceAs:{codePrefix:"620201",name:"市辖区"}}
+	//修正前缀和其他直筒子市一致 00结尾，统计是01结尾
+	620200:{name:"嘉峪关市",level:3,replaceAs:{codePrefix:"620200",name:"市辖区"}}
 };
 
 //qq地图数据和统计局+MCA前三级数据有效的差异 和处理方式
@@ -174,6 +174,8 @@ var gov3Difference={
 	,232718:{name:"加格达奇区",asID:"232761"}
 	,632825:{name:"大柴旦行政委员会",asID:"632857"}
 	
+	,620200:{name:"市辖区",asID:"620201"} //嘉峪关市 使用00结尾 统计局是01
+	
 	//MCA和qq id相同，但名称不同的，这里明确取qq的名称
 	//,431121:{name:"祁阳市",useQQ:true}
 	
@@ -203,7 +205,7 @@ function SCode(itm,level){
 		level=1;
 		var cur=itm,p=cur.parent;
 		while(p){
-			if(p.code!=cur.code){
+			if(p.code!=cur.code || p.name!=cur.name){
 				level++;
 			};
 			cur=p;

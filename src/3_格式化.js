@@ -74,7 +74,7 @@ function add(txt){
 		"P2":  val[4],
 		
 		"ext_id": 0
-		,"ext_name": ""
+		,"ext_name": val[3]
 		
 		,isExt:true
 	});
@@ -96,6 +96,10 @@ for(var i=0;i<pinyinList.length;i++){
 		console.error("存在重复ID",o);
 		throw new Error();
 	};
+	if(!/^[2469]$/.test((o.id+"").length)){
+		console.error("ID非预期",o);
+		throw new Error();
+	}
 	idMP[o.id]=o;
 };
 
@@ -114,7 +118,7 @@ for(var i=0;i<pinyinList.length;i++){
 		idMP[o.pid].child.push(o);
 	};
 	
-	o.ext_name=o.isExt?"":(o.ext_name||o.name);
+	o.ext_name=o.ext_name||o.name;
 	o.name2=o.name;
 	if(!o.isExt){
 		if(o.ext_id==0){

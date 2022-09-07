@@ -8,11 +8,12 @@
 
 注：本来想采百度的，但经过使用发现百度数据有严重问题，参考 肃宁县、路南区 边界，百度数据大量线段交叉的无效polygon（百度已更新，不能复现了），没有人工无法修正；并且高德对镂空性质(Hole)的地块处理比百度强，参考池州市对铜陵市的飞地处理。所以放弃使用百度地图数据。
 附百度测试以防忘记：https://lbsyun.baidu.com/jsdemo.htm#c1_10 唐山在天津的飞地好像被百度干掉了就算了，观察铜陵市飞地处理（铜陵市、池州市、安庆市）；比如池州市的两个polygon，如果不计算位置关系，是完全不知道应该进行Union操作还是Difference操作。
+采集百度的源码于2019-10-19 20:07 SVN:71删除
 
 
 
 
-在高德地图测试页面，选到iframe上下文中执行
+在高德地图测试页面，选到demo_iframe上下文中执行
 https://lbs.amap.com/api/javascript-api/example/district-search/draw-district-boundaries
 
 加载数据
@@ -22,6 +23,7 @@ https://lbs.amap.com/api/javascript-api/example/district-search/draw-district-bo
 	var s=document.createElement("script");s.src=url+"Step2_2_Pinyin_WebApi.txt?t="+Date.now();document.body.appendChild(s)
 	
 然后再次运行本代码，如果中途因错误停止，根据提示重复运行
+2022-9-7 此页面接口已出现滑动验证码，需要手动处理，似乎是500次弹一次验证码
 */
 "use strict";
 AMap.LngLat;
@@ -38,7 +40,7 @@ var Load_Thread_Count=4;//模拟线程数
 
 
 var logX=top.document.createElement("div");
-logX.innerHTML='<div class="LogX" style="position: fixed;bottom: 80px;right: 100px;padding: 50px;background: #0ca;color: #fff;font-size: 16px;width: 600px;z-index:9999999"></div>';
+logX.innerHTML='<div class="LogX" style="position: fixed;top: 10px;right: 10px;padding: 50px;background: #0ca;color: #fff;font-size: 16px;width: 600px;z-index:9999999"></div>';
 top.document.body.appendChild(logX);
 logX=top.document.querySelectorAll(".LogX");
 logX=logX[logX.length-1];
@@ -51,7 +53,7 @@ function LogX(txt){
 }
 if(!top.document.querySelector(".DataTxt")){
 	var div=top.document.createElement("div");
-	div.innerHTML=('<div style="position: fixed;bottom: 80px;left: 100px;padding: 20px;background: #0ca;z-index:9999999">输入'+PinyinWebApiSaveName+'.txt<textarea class="DataTxt"></textarea></div>');
+	div.innerHTML=('<div style="position: fixed;top: 10px;left: 100px;padding: 20px;background: #0ca;z-index:9999999">输入'+PinyinWebApiSaveName+'.txt<textarea class="DataTxt"></textarea></div>');
 	top.document.body.appendChild(div);
 };
 

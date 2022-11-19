@@ -381,8 +381,6 @@ var readChoiceFile=function(files){
 
 //地图坐标显示
 $(function(){
-if(!window.map)return;
-
 $(".mapPointView").html(`
 <style>
 .mapView .amap-marker-label{
@@ -403,7 +401,7 @@ $(".mapPointView").html(`
 </div>
 <div class="mapPointLogs"></div>
 `);
-map.on("click",function(e){
+window.map&&map.on("click",function(e){
 	$(".mapPointTxt").val(e.lnglat.lng+" "+e.lnglat.lat);
 });
 
@@ -456,12 +454,15 @@ window.mapMarkerShowClick=function(){
 //标注数据
 var markerList=[],tagIdx=0;
 var addMarker=function(arr, pos, name, color){
-	var m=new AMap.Marker({ position: pos,
-		label:name?{
-			offset: new AMap.Pixel(2, -5), direction: "right",
-			content: '<div style="padding:3px 5px;border-radius:4px;color:#fff;background:'+color+'">'+name+'</div>'
-		}:null
-	});
+	var m={};
+	if(window.map){
+		m=new AMap.Marker({ position: pos,
+			label:name?{
+				offset: new AMap.Pixel(2, -5), direction: "right",
+				content: '<div style="padding:3px 5px;border-radius:4px;color:#fff;background:'+color+'">'+name+'</div>'
+			}:null
+		});
+	};
 	m._Pos=pos;
 	m._Name=name;
 	arr.push(m);
@@ -475,7 +476,7 @@ window.mapPointClearClick=function(){
 };
 var markerClear=function(arr){
 	for(var i=0;i<arr.length;i++){
-		arr[i].setMap(null);
+		arr[i].setMap&&arr[i].setMap(null);
 	}
 };
 
@@ -499,7 +500,7 @@ window.mapPointReview=function(){
 		var list=n==0?mapPointList:markerList;
 		for(var i=0;i<list.length;i++){
 			var m=list[i];
-			m.setMap(map);
+			m.setMap&&m.setMap(map);
 			
 			var pos=m._Pos;
 			datas.push({

@@ -195,7 +195,7 @@ body::-webkit-scrollbar-thumb{
 		<div class2="Hide2" style="padding-top:20px;">
 			<div>
 				<span class="mainTitle">自定义数据源 - 文本文件</span>
-				<span style="color:#999;font-size:14px;margin-left:10px">json、wkt，支持图形：Point、Polygon、MultiPolygon</span>
+				<span style="color:#999;font-size:14px;margin-left:10px">geojson、wkt，支持图形：Point、Polygon、MultiPolygon</span>
 			</div>
 			
 			<div class="dropChoiceBox" style="padding-top:5px"></div>
@@ -314,20 +314,24 @@ var Toast=function(msg,color){
 
 
 
-<script src="https://webapi.amap.com/maps?v=1.4.15"></script>
+<script src="https://webapi.amap.com/maps?v=1.4.15&key=31e67b3692b5b01cf19d8e30104e8218"></script>
 <script>
 var geoEChartsLib=GeoECharts.GeoEChartsLib();
 
 $(".mapView,.echartsView").css({height:IsWidget?200:$(window).height()-130+"px"});
 var map=0;
 if(!IsWidget){
-	map=new AMap.Map($(".mapView")[0]);
+	if(window.AMap){
+		map=new AMap.Map($(".mapView")[0]);
 
-	AMap.plugin([ 'AMap.ToolBar', 'AMap.Scale', 'AMap.MapType' ], function(){
-		map.addControl(new AMap.ToolBar());
-		map.addControl(new AMap.Scale());
-		map.addControl(new AMap.MapType({defaultType:0, showRoad:true}));
-	});
+		AMap.plugin([ 'AMap.ToolBar', 'AMap.Scale', 'AMap.MapType' ], function(){
+			map.addControl(new AMap.ToolBar());
+			map.addControl(new AMap.Scale());
+			map.addControl(new AMap.MapType({defaultType:0, showRoad:true}));
+		});
+	}else{
+		$(".mapView").html('<div style="color:red;text-align:center;font-size:24px">高德地图js加载失败</div>');
+	}
 };
 
 

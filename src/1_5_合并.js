@@ -43,7 +43,7 @@ var fixQQmapAddGovBeforeAmp={
 	/*130502:{
 		name:"襄都区",pid:1305
 	}*/
-	659011:{name:"新星市",pid:65,childCopySelf:true} //还要复制一份当子级 直辖市
+	//659011:{name:"新星市",pid:65,childCopySelf:true} //还要复制一份当子级 直辖市
 };
 //和高德数据对比前qq替换统计局数据，就是这些id对应的数据都采用统计局的数据
 var fixQQmapReplaceGovBeforeAmp={
@@ -52,10 +52,7 @@ var fixQQmapReplaceGovBeforeAmp={
 	}*/
 	
 	//qq升级数据后，这些没有下级，用老id才能查出下级，直接换统计的数据
-	 350405:{name:"沙县区",level:3,whereEmptyChild:true,msg:"emptyChild"}
-	,431181:{name:"祁阳市",level:3,whereEmptyChild:true,msg:"emptyChild"}
-	,513402:{name:"会理市",level:3,whereEmptyChild:true,msg:"emptyChild"}
-	,532302:{name:"禄丰市",level:3,whereEmptyChild:true,msg:"emptyChild"}
+	//350405:{name:"沙县区",level:3,whereEmptyChild:true,msg:"emptyChild"}
 };
 //qq地图数据用上级替换，表现为下级和上级的编号前缀不匹配，主要是那几个直筒子市是qq自定义的99结尾
 var fixQQmapReplaceFill={
@@ -66,8 +63,8 @@ var fixQQmapReplaceFill={
 	,620299:{name:"嘉峪关市",childReplace:true} //统计局嘉峪关还有一个市辖区，上面三个没有
 	
 	//qq编号名称有问题的，直接替换掉当前级和下级编号，一般新的为高德的
-	,350403:{name:"三元区",level:3,replaceAs:{codePrefix:"350404",name:"三元区"}}
-	,350402:{name:"梅列区",remove:true} //已撤销的，删除qq的
+	//,350403:{name:"三元区",level:3,replaceAs:{codePrefix:"350404",name:"三元区"}}
+	//,350402:{name:"梅列区",remove:true} //已撤销的，删除qq的
 	
 	
 	//添加明确缺失的子级
@@ -98,7 +95,7 @@ var fixQQmapReplaceFill={
 	,460321:{name:"西沙群岛",remove:true}
 	,460322:{name:"南沙群岛",remove:true}
 	,460323:{name:"中沙群岛",remove:true}
-	,460324:{name:"东沙群岛",remove:true}
+	//,460324:{name:"东沙群岛",remove:true}
 };
 
 //qq地图数据和高德地图前三级数据有效的差异

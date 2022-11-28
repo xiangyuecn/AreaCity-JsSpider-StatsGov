@@ -319,18 +319,25 @@ var Toast=function(msg,color){
 var geoEChartsLib=GeoECharts.GeoEChartsLib();
 
 $(".mapView,.echartsView").css({height:IsWidget?200:$(window).height()-130+"px"});
-var map=0;
+var map=0, mapErr="";
 if(!IsWidget){
-	if(window.AMap){
-		map=new AMap.Map($(".mapView")[0]);
+	try{
+		if(window.AMap){
+			map=new AMap.Map($(".mapView")[0]);
 
-		AMap.plugin([ 'AMap.ToolBar', 'AMap.Scale', 'AMap.MapType' ], function(){
-			map.addControl(new AMap.ToolBar());
-			map.addControl(new AMap.Scale());
-			map.addControl(new AMap.MapType({defaultType:0, showRoad:true}));
-		});
-	}else{
-		$(".mapView").html('<div style="color:red;text-align:center;font-size:24px">高德地图js加载失败</div>');
+			AMap.plugin([ 'AMap.ToolBar', 'AMap.Scale', 'AMap.MapType' ], function(){
+				map.addControl(new AMap.ToolBar());
+				map.addControl(new AMap.Scale());
+				map.addControl(new AMap.MapType({defaultType:0, showRoad:true}));
+			});
+		}else{
+			mapErr="高德地图js加载失败";
+		}
+	}catch(e){
+		map=0; console.error(e); mapErr="高德地图创建失败："+e.message;
+	}
+	if(mapErr){
+		$(".mapView").html('<div style="color:red;text-align:center;font-size:24px">'+mapErr+'</div>');
 	}
 };
 
@@ -447,10 +454,10 @@ var geoECharts=geoEChartsLib.Create({
 		var tips="单击地图进入下一级"+(IsWidget?"":"，点击下载按钮保存png图片")+"，当前路径："+html.join(" > ");
 		
 		if(cur.level==3 && !/^(8|4420|4403)/.test(cur.id)){
-			var msg='当前为乡镇级别边界（付费数据），只有是最后一个乡镇【'+mapDatas[mapDatas.length-1].name+'】是最高80个采样数的粗略边界，其他的乡镇均为边界外接矩形（4个坐标点），仅供测试（深圳、中山、香港、澳门无此限制）';
+			var msg='当前是乡镇级别边界，为付费数据，购买后才可显示正常完整的数据。演示版只有最后一个乡镇【'+mapDatas[mapDatas.length-1].name+'】是最高80个采样数的粗略边界，其他的乡镇均限制为边界的外接矩形（4个坐标点）；可进入免费测试数据：深圳、中山、香港、澳门，无此限制。';
 			Toast(msg,2);
 			
-			tips+='<div style="color:#fa0">'+msg+'，如需完整的乡镇边界数据，<a href="geo-level4.html" target="_blank">可以到此下载和购买</a>。</div>';
+			tips+='<div style="color:#fa0">'+msg+'如需完整的乡镇边界数据，<a href="geo-level4.html" target="_blank">可以到此下载和购买</a>。</div>';
 		}
 		$(".statusView").html(tips);
 		

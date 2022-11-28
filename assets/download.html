@@ -7,10 +7,6 @@
 
 <title>AreaCity 省市区镇+坐标边界 数据下载</title>
 
-<script>
-var AllowAccessFolder="/src/采集到的数据";
-var AllowAccessFiles={level3:"ok_data_level3.csv",level4:"ok_data_level4.csv",geo:"ok_geo.csv.7z"};
-</script>
 <script src="https://xiangyuecn.gitee.io/recorder/assets/ztest-jquery.min-1.9.1.js"></script>
 
 <style>
@@ -46,33 +42,38 @@ a:hover{
 }
 
 
-.mainBtn{
-	display: inline-block;
-	cursor: pointer;
-	border: none;
-	border-radius: 3px;
-	background: #15822E;
-	color:#fff;
-	padding: 0 15px;
-	margin-right:20px;
-	line-height: 36px;
-	height: 36px;
-	overflow: hidden;
-	vertical-align: middle;
-}
-.mainBtn:hover{
-	background: #165d26;
-	color:#fff;
-}
-.Btn_Yellow{
-	background:#fb0;
-}
-.Btn_Yellow:hover{
-	background:#fa0;
-}
 
 .downTips{
-	font-size:12px
+	font-size:12px;
+	color:#999;
+	margin-top:5px
+}
+
+.table{
+	border-collapse: collapse;
+	min-width:100%;
+	
+	text-align:center;
+}
+.table .left{
+	text-align:left;
+}
+.table .right{
+	text-align:right;
+}
+.table thead{
+	color:#333;
+}
+.table thead tr{
+	background:#f0f0f0;
+}
+.table tr:nth-child(2n){
+	background:#f9faf4;
+}
+.table th,.table td{
+	word-break: break-all;
+	padding:10px 10px;
+	border:1px solid #ddd;
 }
 </style>
 </head>
@@ -86,48 +87,65 @@ a:hover{
 		<a href="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov">Gitee >></a>
 	</div>
 	
-	<div class="mainBox downArea" downkey="level3">
-		<div class="mainCodeBtn">
-			【免费开源】【三级】省市区 行政区划 数据
-			<a class="downBtn mainBtn">下载</a>
-			<span class="downTips">
-				文件路径：<span class="downPath"></span>
-				(200KB+)
-			</span>
-		</div>
-	</div>
-	
-	<div class="mainBox downArea" downkey="level4">
-		<div class="mainCodeBtn">
-			【免费开源】【四级】省市区镇 行政区划 数据
-			<a class="downBtn mainBtn">下载</a>
-			<span class="downTips">
-				文件路径：<span class="downPath"></span>
-				(3MB+)
-			</span>
-		</div>
-	</div>
-	
-	<div class="mainBox downArea" downkey="geo">
-		<div class="mainCodeBtn">
-			【免费开源】【GEO三级】省市区 坐标和边界 数据
-			<a class="downBtn mainBtn">下载</a>
-			<span class="downTips">
-				文件路径：<span class="downPath"></span>
-				(13MB+压缩包 解压后130M+)
-			</span>
-		</div>
-	</div>
-	
 	<div class="mainBox">
-		<div class="mainCodeBtn">
-			<span style="color:#fa0">【付费数据】【GEO四级】乡镇 坐标和边界 数据</span>
-			<a class="mainBtn Btn_Yellow" href="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-level4.html">下载</a>
-			<span class="downTips">
-				<span style="color:#fa0">乡镇第4级坐标边界数据 ok_geo4_*.csv，</span>
-				(90MB+压缩包 导出后300M+)
-			</span>
+		<div style="padding-bottom:10px">
+			<span style="font-size: 24px;font-weight: bold;padding-bottom:10px;margin-right:20px">数据下载</span>
+			<span class="dataVer" style="color:#999"></span>
 		</div>
+		<table class="table">
+			<thead>
+				<tr>
+					<th style="width:20%">文件名</th>
+					<th style="width:10%">大小</th>
+					<th>描述</th>
+					<th style="width:20%">下载</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>ok_data_level3.csv</td>
+					<td style="color:#999">230KB</td>
+					<td class="left">
+						【免费开源】【区划三级】省市区 三级行政区划 数据
+						<div class="downTips">- 支持在线预览、生成多级联动js代码，可用转换工具导入数据库、转成sql</div>
+					</td>
+					<td rowspan="2">
+						<a href="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_data_level3-4.csv.7z" target="_blank">线路一</a>
+						| <a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_data_level3-4.csv.7z" target="_blank">线路二</a>
+					</td>
+				</tr>
+				<tr>
+					<td>ok_data_level4.csv</td>
+					<td style="color:#999">3MB</td>
+					<td class="left">
+						【免费开源】【区划四级】省市区乡镇 四级行政区划 数据
+						<div class="downTips">- 支持在线预览、生成多级联动js代码，可用转换工具导入数据库、转成sql</div>
+					</td>
+				</tr>
+				<tr>
+					<td>ok_geo.csv.7z</td>
+					<td style="color:#999">13MB</td>
+					<td class="left">
+						【免费开源】【边界三级】省市区 坐标和边界 数据，解压后130M+
+						<div class="downTips">- 支持在线预览，可用转换工具转成shp、geojson、sql格式、转换坐标系</div>
+						<div class="downTips">- 使用本库开源的高性能查询工具，1秒可查1万个以上坐标对应的城市信息</div>
+					</td>
+					<td>
+						<a href="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_geo.csv.7z" target="_blank">线路一</a>
+						| <a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_geo.csv.7z" target="_blank">线路二</a>
+					</td>
+				</tr>
+				<tr style="color:#fa0">
+					<td>ok_geo4_*.csv</td>
+					<td style="color:#999">109MB</td>
+					<td class="left">
+						【付费数据】【边界四级】乡镇级 坐标和边界 数据，导出后300M+
+						<div class="downTips">- 支持在线预览，提供了部分免费数据供测试</div>
+					</td>
+					<td><a href="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-level4.html#xz" target="_blank">点此下载</a></td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
 	
 	<div class="mainBox mainLogBox">
@@ -152,28 +170,12 @@ function mainLog(s,color){
 	$(".mainLog").prepend('<div style="color:'+(color==1?"red":color==2?"green":color)+'">['+t+']'+s+'</div>');
 };
 
-(function(){
+mainLog('高性能：如何做到1秒查询1万个以上坐标对应的城市信息？使用配套提供的坐标数据、边界数据查询工具：<a href="https://github.com/xiangyuecn/AreaCity-Query-Geometry" target="_blank">AreaCity-Query-Geometry</a>开源库（<a href="https://gitee.com/xiangyuecn/AreaCity-Query-Geometry" target="_blank">Gitee镜像库</a>），支持Java调用或HTTP API接口调用，内存占用低，1秒可查1万个以上坐标对应的城市信息',"#000;font-weight:bold;font-size:24px;padding-top:20px");
+mainLog('坐标和边界数据为csv格式，需自行解析提取。或者使用《<a href="AreaCity-Geo-Transform-Tools.html" target="_blank">AreaCity-Geo格式转换工具软件</a>》快速的转换成shp、geojson、sql、导入数据库、转换坐标系，本工具也支持将行政区划数据导入数据库',"#f60;font-weight:bold;font-size:24px;padding-top:20px");
+mainLog('点击上方下载链接即可下载csv格式数据，行政区划数据如果需要其他格式，<a href="../" target="_blank">可点此在线转换</a>',"#0b1;font-weight:bold;font-size:24px;padding-top:20px");
+mainLog('如果上面线路一和线路二都无法下载：可以到 <a href="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases" target="_blank">Gitee Releases</a> 下载，或到 <a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases" target="_blank">GitHub Releases</a> 下载最新发布数据文件；对应的csv文件在仓库源码的 `src/采集到的数据` 文件夹内。');
 
-$(".downArea").each(function(k,v){
-	v=$(v);
-	var file=AllowAccessFiles[v.attr("downkey")];
-	var path=AllowAccessFolder+"/"+file;
-	v.find(".downPath").html('<a href="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master'+path+'" target="_blank">'+path+'</a>');
-	v.find(".downBtn").attr("href","https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master"+path);
-});
-
-
-var file=decodeURIComponent((/file=([^&]+)/.exec(location.href)||[])[1]||"");
-if(file){
-	mainLog("发现"+file,2);
-};
-
-mainLog('高性能：如何做到1秒查询1万个以上坐标对应的城市信息？使用配套提供的坐标数据、边界数据查询工具：<a href="https://github.com/xiangyuecn/AreaCity-Query-Geometry" target="_blank">AreaCity-Query-Geometry</a>开源库（<a href="https://gitee.com/xiangyuecn/AreaCity-Query-Geometry" target="_blank">Gitee镜像库</a>），支持Java调用或HTTP API接口调用，内存占用低，1秒可查1万个以上坐标对应的城市信息',"#000;font-weight:bold;font-size:24px");
-mainLog('坐标和边界数据为csv格式，需自行解析提取。或者使用《<a href="AreaCity-Geo-Transform-Tools.html" target="_blank">AreaCity-Geo格式转换工具软件</a>》快速的转换成shp、geojson、sql、导入数据库、转换坐标系，本工具也支持将行政区划数据导入数据库',"#f60;font-weight:bold;font-size:24px");
-mainLog('点击上方下载按钮即可下载csv格式数据，行政区划数据如果需要其他格式，<a href="../" target="_blank">可点此在线转换</a>',"#0b1;font-weight:bold;font-size:24px");
-mainLog('GitHub Releases中提供的下载连接可能下载缓慢，因此提供本Gitee Pages外链下载，速度会快很多~');
-
-})();
+$(".dataVer").html('当前最新版本：'+CsvPubDate.Level4.version+' &nbsp;&nbsp;&nbsp;&nbsp; 此数据更新于：'+CsvPubDate.Level4.date);
 </script>
 
 
@@ -181,12 +183,12 @@ mainLog('GitHub Releases中提供的下载连接可能下载缓慢，因此提�
 	<img src="https://ia.51.la/go1?id=20807127&pvFlag=1">
 </div>
 
-<!-- 加载打赏挂件 -->
-<script src="https://xiangyuecn.gitee.io/recorder/assets/zdemo.widget.donate.js"></script>
+<!-- 加载echarts map测试挂件 -->
+<script src="geo-echarts.js"></script>
+<div class="GeoEChartsView"></div>
 <script>
-DonateWidget({
-	log:function(msg){mainLog(msg)}
-	,mobElem:$(".DonateView")[0]
+GeoECharts.CreateWidget({
+	mobElem:document.querySelector(".GeoEChartsView")
 });
 </script>
 

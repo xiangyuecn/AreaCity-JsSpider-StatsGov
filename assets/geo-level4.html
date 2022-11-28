@@ -162,7 +162,7 @@ img{
 		
 		<div class="content">
 			<div class="h3">整体数据预览：</div>
-			<div>点击图片查看大图(4000x3000)；图片中红色区域为此区域暂时缺失对应乡镇边界数据；图片中间部分和靠沿海地区乡镇密集区域中凸显的大块绿色代表此区域极有可能也缺失对应的乡镇边界数据，但已填充了一块和区县大小一致的数据作为乡镇级数据。</div>
+			<div>点击图片查看大图(4000x3000)；注：图片中红色区域为此区域暂时缺失对应乡镇边界数据。</div>
 			<div class="Center">
 				<a href="geo-level4/preview.png" target="_blank">
 					<img src="geo-level4/preview.png">
@@ -238,12 +238,17 @@ img{
 					<tr>
 						<td class="right">cid</td>
 						<td style="color:#999">int</td>
-						<td class="left">序号id，在同一个上级中这是第几个乡镇（根据名称排序得到的编号），普通数据cid值&lt;100；cid=301时（少量），代表此数据是使用区县填充的唯一的一个子级；cid&gt;400 && cid&lt;500时（少量），代表此数据是由数据源无法映射到 ok_data_level*.csv 中的上级区县时，通过区县边界来匹配到的一个上级，此种数据的准确性比cid&lt;100的要低很多</td>
+						<td class="left">标记ID，取值范围：<i class="i">0</i>、<i class="i">301-399</i>、<i class="i">601-799</i>，代表unique_id编号的来源，取值越小unique_id是行政区划编号的准确性越高；
+							<div style="padding-top:10px"><i class="b">cid=0</i> 时（占50%以上）：代表unique_id为原始的行政区划编号数值，可直接认为是区划编号；</div>
+							<div style="padding-top:10px"><i class="b">cid=301</i> 时（极少量）：代表此数据是使用区县填充的唯一的一个子级（此区县下无乡镇数据）。</div>
+							<div style="padding-top:10px"><i class="b">cid&gt;=302 && cid&lt;=399</i> 时（占40%以上）：代表unique_id是从ok_data_level*.csv中使用名称匹配到的同一个区县下的乡镇id值；cid越小两者的名称相似度越高（302时名称完全相等），unique_id是行政区划编号的准确性越高。</div>
+							<div style="padding-top:10px"><i class="b">cid&gt;=601 && cid&lt;=799</i> 时（占约3%）：代表unique_id是自定义编号，和行政区划编号无关（无法在此区县下找到本乡镇对应的区划编号，一般是由于乡镇区划发生了变更但乡镇边界数据还未更新导致）。</div>
+						</td>
 					</tr>
 					<tr>
 						<td class="right">unique_id</td>
 						<td style="color:#999">int</td>
-						<td class="left">唯一id，和省市区的id无关联，性质也完全不一样，可以当做是自定义编号来对待</td>
+						<td class="left">唯一ID编号，绝大部分等同于乡镇行政区划编号，少部分为自定义编号（约3%，详情请参考cid）；本编号和行政区划表 ok_data_level_*.csv 中的乡镇id大约有85%相同（剩余15%主要是由于乡镇区划变更但边界数据未更新导致的差异），使用时应当注意此差异</td>
 					</tr>
 					<tr>
 						<td class="right">name</td>
@@ -268,7 +273,7 @@ img{
 					<tr>
 						<td class="right">polygon</td>
 						<td style="color:#999">string</td>
-						<td class="left">区域边界，GCJ-02火星坐标系。格式："lng lat,...~lng lat,...;lng lat,..." or "EMPTY"，EMPTY代表此乡镇没有边界信息（暂无此值的数据）；存在多个地块(如飞地)时用;分隔，每个地块的坐标点用,分隔，如果某个地块中需要抠除一个小地块会存在~分隔符，特别要注意：多个地块组合在一起可能是MULTIPOLYGON或者POLYGON，需用工具进行计算和对数据进行验证</td>
+						<td class="left">区域边界，GCJ-02火星坐标系。格式："lng lat,...~lng lat,...;lng lat,..." or "EMPTY"，EMPTY代表此乡镇没有边界信息（暂无此值的数据）；存在多个地块(如海岛、飞地)时用;分隔，每个地块的坐标点用,分隔，如果某个地块中需要抠除一个孔洞小地块会存在~分隔符，特别要注意：多个地块组合在一起可能是MULTIPOLYGON或者POLYGON，需用工具进行计算和对数据进行验证</td>
 					</tr>
 				</tbody>
 			</table>
@@ -291,7 +296,7 @@ img{
 				
 				<div>
 					<i class="b">乡镇 坐标+边界范围</i>
-					(ok_geo4_*.csv，90MB+压缩包 导出后300M+)：[ <a href="#xzqq">QQ群内下载</a> ]
+					(ok_geo4_*.csv，109MB+压缩包 导出后300M+)：[ <a href="#xzqq">QQ群内下载</a> ]
 					、[ <a href="https://pan.baidu.com/s/14LsvF_PuPOEiOXgGAWI20w?pwd=b6ct" target="_blank">百度网盘下载</a> 提取码: b6ct 进入到 <i class="i">AreaCity Geo格式转换工具/乡镇第4级坐标边界数据</i> 目录内下载]
 					<span style="color:#fa0">乡镇第4级坐标边界数据为付费数据，压缩包内提供了部分数据供免费体验，其他乡镇第4级坐标边界数据需付费购买 。</span>
 				</div>
@@ -432,7 +437,7 @@ img{
 			<div class="desc">
 				<div>
 					价格：
-					<span style="font-size:32px;color:#04f;">¥1389</span> / 套
+					<span style="font-size:32px;color:#04f;">¥1498</span> / 套
 					
 					<span style="margin-left:30px;">工具激活密钥：</span>
 					<span style="color:#04f">赠送30天有效期</span>
@@ -447,7 +452,7 @@ img{
 			<div class="desc">
 				<div>
 					价格：
-					<span style="font-size:32px;color:#04f;">¥89</span> / 个省
+					<span style="font-size:32px;color:#04f;">¥98</span> / 个省
 					
 					<span style="margin-left:30px;">工具激活密钥：</span>
 					<span style="color:#04f">每个省赠送1天有效期（多个累加）</span>

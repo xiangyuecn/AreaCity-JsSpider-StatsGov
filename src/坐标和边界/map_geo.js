@@ -32,7 +32,7 @@ var PinyinWebApiSaveName="Step2_2_Pinyin_WebApi";
 
 var GeoStop=false;
 
-var Load_Thread_Count=4;//模拟线程数
+var Load_Thread_Count=1;//模拟线程数 （4->1 : 2022-11-25 慢一点 不然可能验证码都没有）
 
 
 

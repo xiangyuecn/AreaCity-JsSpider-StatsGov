@@ -147,24 +147,6 @@ var gov3Difference={
 	,460322:{lostName:"南沙群岛"}
 	,460323:{lostName:"中沙群岛的岛礁及其海域"}
 	
-	,330103:{lostName:'下城区'} //已被合并到其他新区
-	,330104:{lostName:'江干区'}
-	,350402:{lostName:'梅列区'}
-	,350427:{lostName:'沙县'}
-	,350625:{lostName:'长泰县'}
-	,350681:{lostName:'龙海市'}
-	,410306:{lostName:'吉利区'}
-	,410322:{lostName:'孟津县'}
-	,410381:{lostName:'偃师市'}
-	,431121:{lostName:'祁阳县'}
-	,450127:{lostName:'横县'}
-	,513425:{lostName:'会理县'}
-	,520522:{lostName:'黔西县'}
-	,532331:{lostName:'禄丰县'}
-	,610322:{lostName:'凤翔县'}
-	,610928:{lostName:'旬阳县'}
-	,654223:{lostName:'沙湾县'}
-
 	
 	//MCA和qq名称称相同但id不同的，但qq和高德相同，暂采用qq和高德的便于数据处理
 	//,0:{name:"",asID:00}
@@ -957,6 +939,11 @@ var compareGov3=function(parent,qqmapArr,govArrSrc,level){
 			};
 			continue;
 		};
+		if(/(新区|新城|新城区|实验区|保税区|开发区|管理区|食品区|园区|产业园|名胜区|示范区)$/.test(itm.name)){
+			//和步骤 1_2 中的代码一致，当没有合并MAC的数据时，不会有notFindsIgnore
+			qq_gov3_MCAIgnore.push(lost);
+			continue for1;
+		}
 		for(var i=0;i<govData.notFindsIgnore.length;i++){
 			if(itm.code==govData.notFindsIgnore[i].code){
 				qq_gov3_MCAIgnore.push(lost);

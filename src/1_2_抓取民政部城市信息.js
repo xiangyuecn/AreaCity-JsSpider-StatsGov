@@ -6,7 +6,7 @@ http://www.mca.gov.cn/article/sj/xzqh/中打开最新行政区划代码链接
 
 先加载jQuery
 var s=document.createElement("script");
-s.src="https://cdn.bootcss.com/jquery/1.9.1/jquery.min.js";
+s.src="https://cdn.bootcdn.net/ajax/libs/jquery/1.9.1/jquery.min.js";
 document.body.append(s);
 
 加载数据
@@ -17,6 +17,9 @@ document.body.append(s);
 */
 "use strict";
 jQuery;
+
+//如果民政部的数据比统计局的旧，就设为true，忽略民政部的数据，只生成结果文件
+var MCA_IsOld=true;
 
 var SaveName="Step1_2_Merge_MCA"
 var PrevSaveName="Step1_1_StatsGov";
@@ -73,10 +76,13 @@ var fixParent={
 	,4690:{name:"省直辖县级行政区划"}//海南省
 	,6590:{name:"自治区直辖县级行政区划"}//新疆
 };
-//人工修正数据，移除统计局或者mca的数据，mca新数据已撤销的市，统计局滞后
+//mca原始数据处理
+var fixRawMCA={
+	350403:{name:"三元区", replaceAs:{code:"350404",name:"三元区"}}
+};
+//人工修正数据，移除统计局的数据，mca新数据已撤销的市，统计局滞后
 var fixRemove={
-	340203:{name:"弋江区"}, //统计局老的id移除掉，新id为340209
-	320602:{name:"崇川区"}, //统计局老的id移除掉，新id为320613
+	//320602:{name:"崇川区"}, //统计局老的id移除掉，新id为320613
 	
 	//移除单独的港澳台，mca这些没有下级并且统计局没有这些
 	71:{name:"台湾省"}
@@ -91,6 +97,22 @@ var fixRename={
 var list=[];
 for(var i=0;i<arr.length;i++){
 	var o=arr[i];
+	var fix=fixRawMCA[o.code];
+	if(fix){
+		if(fix.remove){
+			fix.fix=true;
+			delete data[o.code];
+			continue;
+		}else if(fix.replaceAs){
+			fix.fix=true;
+			delete data[o.code];
+			o.code=fix.replaceAs.code||o.code;
+			o.name=fix.replaceAs.name||o.name;
+			data[o.code]=o;
+		}else{
+			throw new Error("无效的fixRawMCA",fix,o);
+		}
+	};
 	if(o.code.length==2){
 		list.push(o);
 	}else{
@@ -120,6 +142,12 @@ for(var i=0;i<arr.length;i++){
 			throw new Error("没有上级，请添加fixParent");
 		};
 		parent.child.push(o);
+	};
+};
+for(var k in fixRawMCA){
+	if(!fixRawMCA[k].fix){
+		console.error("存在未被匹配的预定义fixRawMCA",k,fixRawMCA[k]);
+		throw new Error();
 	};
 };
 console.log("民政部数据准备完成",list);
@@ -218,28 +246,33 @@ function merge(arr1,arr2,deep){
 		};
 	};
 };
-merge(cityList,list,0);
+if(!MCA_IsOld){
+	merge(cityList,list,0);
 
-if(notfinds.length){
-	console.warn("发现"+notfinds.length+"条民政部没有的统计局多余项", notfinds);
-};
-if(notfindsIgnore.length){
-	console.log("忽略"+notfindsIgnore.length+"条民政部没有的统计局多余项", notfindsIgnore);
-};
-for(var k in fixRemove){
-	if(!fixRemove[k].fix){
-		console.error("存在未被匹配的预定义fixRemove",k,fixRemove[k]);
-		throw new Error();
+	if(notfinds.length){
+		console.warn("发现"+notfinds.length+"条民政部没有的统计局多余项", notfinds);
 	};
-};
-for(var k in fixRename){
-	if(!fixRename[k].fix){
-		console.error("存在未被匹配的预定义fixRename",k,fixRename[k]);
-		throw new Error();
+	if(notfindsIgnore.length){
+		console.log("忽略"+notfindsIgnore.length+"条民政部没有的统计局多余项", notfindsIgnore);
 	};
-};
+	for(var k in fixRemove){
+		if(!fixRemove[k].fix){
+			console.error("存在未被匹配的预定义fixRemove",k,fixRemove[k]);
+			throw new Error();
+		};
+	};
+	for(var k in fixRename){
+		if(!fixRename[k].fix){
+			console.error("存在未被匹配的预定义fixRename",k,fixRename[k]);
+			throw new Error();
+		};
+	};
 
-console.log("合并完成", cityList);
+	console.log("合并完成", cityList);
+}else{
+	maxDeep=3;
+	console.warn("MCA_IsOld，丢弃民政部数据");
+}
 
 
 

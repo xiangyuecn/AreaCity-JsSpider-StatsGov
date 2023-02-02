@@ -4,6 +4,8 @@
 在以下页面执行
 http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/
 
+采集中途失败了，直接刷新页面重新采集，浏览器有页面缓存，恢复速度极快
+【如果乱码】2021版页面已是 utf-8 无乱码
 可能需要低版本chrome，不然他们网页gbk格式的请求会乱码，chrome 41没有乱码，Chrome 46这版本win10能用。或者篡改Content-Type响应头为Content-Type: text/html; charset=gb2312也可解决新版Chrome乱码问题，比如：FildderScript OnBeforeResponse中添加：
 ```
 if (oSession.HostnameIs("www.stats.gov.cn")){
@@ -14,7 +16,7 @@ if (oSession.HostnameIs("www.stats.gov.cn")){
 ```
 */
 (function(){
-var Year=2020;
+var Year=2022;
 var LoadMaxLevel=4;//采集几层
 var SaveName="Step1_1_StatsGov";
 var Level={
@@ -46,7 +48,11 @@ function ajax(url,True,False){
 	ajax.onreadystatechange=function(){
 		if(ajax.readyState==4){
 			if(ajax.status==200){
-				True(ajax.responseText);
+				True(ajax.responseText
+					.replace(/[\r\n]+/g," ") //单行处理
+					.replace(/"/g,"'") //引号全部统一
+					.replace(/>\s+</g,"><") //去掉标签中间的空白
+				);
 			}else{
 				False();
 			}
@@ -160,15 +166,20 @@ function load_x_childs(itm, next){
 			};
 			
 			//villagetr直接非法
-			var reg2=/class='(citytr|countytr|towntr)'.+?<td>(?:<a href='(.+?)'>)?(.+?)<.+?>([^<>]+)(?:<\/a>)?<\/td><\/tr>/ig;
+			var reg2=/class='(citytr|countytr|towntr)'.+?<td>(?:<a href='(.+?)'>)?(.+?)<.+?>([^<>]+)(?:<\/a>)?<\/td>\s*<\/tr>/ig;
 			var match2;
 			if(match2=reg2.exec(match[0])){
 				var url=match2[2]||"";
 				if(url && url.indexOf("//")==-1 && url.indexOf("/")!=0){
 					url=city.url.substring(0,city.url.lastIndexOf("/"))+"/"+url;
 				}
-				var code=match2[3]||match2[5];
-				var name=match2[4]||match2[6];
+				var code=(match2[3]||match2[5]).trim();
+				var name=(match2[4]||match2[6]).trim();
+				if(!code||!name){
+					console.log(match2[0]);
+					err("未提取到name或code");
+					return;
+				}
 				
 				//如果是镇，上级为市，越过了区，追加一个区，code为上级code+00，保持兼容，如：东莞
 				if(itm.level==2 && match2[1]=="towntr"){

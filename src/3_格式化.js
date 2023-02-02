@@ -180,6 +180,11 @@ for(var i=0;i<pinyinList.length;i++){
 		o.P&&(o.P=o.P.replace(/qia/g,"ka"));
 		o.P2&&(o.P2=o.P2.replace(/qia/g,"ka"));
 	};
+	//fix QQ 85005150 2022-12-14
+	if(o.id==511424 && /丹棱县/.test(o.name)){
+		o.P&&(o.P=o.P.replace(/leng/g,"ling"));
+		o.P2&&(o.P2=o.P2.replace(/leng/g,"ling"));
+	};
 	
 	
 	if(/lve/.test(o.P)){

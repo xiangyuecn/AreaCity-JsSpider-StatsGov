@@ -7,7 +7,7 @@
 
 <title>AreaCity 省市区镇+坐标边界 数据下载</title>
 
-<script src="https://xiangyuecn.gitee.io/recorder/assets/ztest-jquery.min-1.9.1.js"></script>
+<script>document.write('<scr\ipt src="csv-ver-date.js?t='+Date.now()+'"></scr\ipt>')</script>
 
 <style>
 body{
@@ -110,7 +110,7 @@ a:hover{
 						<div class="downTips">- 支持在线预览、生成多级联动js代码，可用转换工具导入数据库、转成sql</div>
 					</td>
 					<td rowspan="2">
-						<a href="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_data_level3-4.csv.7z" target="_blank">线路一</a>
+						<a class="giteeOKData" href="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_data_level3-4.csv.7z" target="_blank">线路一</a>
 						| <a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_data_level3-4.csv.7z" target="_blank">线路二</a>
 					</td>
 				</tr>
@@ -131,7 +131,7 @@ a:hover{
 						<div class="downTips">- 使用本库开源的高性能查询工具，1秒可查1万个以上坐标对应的城市信息</div>
 					</td>
 					<td>
-						<a href="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_geo.csv.7z" target="_blank">线路一</a>
+						<a class="giteeOKGeo" href="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_geo.csv.7z" target="_blank">线路一</a>
 						| <a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_geo.csv.7z" target="_blank">线路二</a>
 					</td>
 				</tr>
@@ -156,10 +156,22 @@ a:hover{
 	<div class="mainBox">
 		<div style="font-size: 24px;font-weight: bold;padding-bottom:10px">数据版本</div>
 		<div class="geoVerDateView"></div>
-		<script src="csv-ver-date.js"></script>
 		<script>document.querySelector(".geoVerDateView").innerHTML=CsvPubDate.TableHTML({level4:true,geo:true,geo4:true});</script>
 	</div>
 </div>
+
+<script>
+(function(){
+var setX=function(cls,url){
+	var els=document.querySelectorAll(cls);
+	for(var i=0;i<els.length;i++)els[i].setAttribute("href",url);
+};
+setX(".giteeOKData","https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases/download/"+CsvPubDate.Level4.version+"/ok_data_level3-4.csv.7z");
+setX(".giteeOKGeo","https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases/download/"+CsvPubDate.Level4.version+"/ok_geo.csv.7z");
+})();
+
+document.querySelector(".dataVer").innerHTML=('当前最新版本：'+CsvPubDate.Level4.version+' &nbsp;&nbsp;&nbsp;&nbsp; 此数据更新于：'+CsvPubDate.Level4.date);
+</script>
 
 <script>
 function mainLog(s,color){
@@ -167,15 +179,16 @@ function mainLog(s,color){
 	var t=("0"+now.getHours()).substr(-2)
 		+":"+("0"+now.getMinutes()).substr(-2)
 		+":"+("0"+now.getSeconds()).substr(-2);
-	$(".mainLog").prepend('<div style="color:'+(color==1?"red":color==2?"green":color)+'">['+t+']'+s+'</div>');
+	var el=document.querySelector(".mainLog");
+	var div=document.createElement("div");
+	div.innerHTML='<div style="color:'+(color==1?"red":color==2?"green":color)+'">['+t+']'+s+'</div>';
+	if(el.prepend)el.prepend(div); else el.appendChild(div);
 };
 
 mainLog('高性能：如何做到1秒查询1万个以上坐标对应的城市信息？使用配套提供的坐标数据、边界数据查询工具：<a href="https://github.com/xiangyuecn/AreaCity-Query-Geometry" target="_blank">AreaCity-Query-Geometry</a>开源库（<a href="https://gitee.com/xiangyuecn/AreaCity-Query-Geometry" target="_blank">Gitee镜像库</a>），支持Java调用或HTTP API接口调用，内存占用低，1秒可查1万个以上坐标对应的城市信息',"#000;font-weight:bold;font-size:24px;padding-top:20px");
 mainLog('坐标和边界数据为csv格式，需自行解析提取。或者使用《<a href="AreaCity-Geo-Transform-Tools.html" target="_blank">AreaCity-Geo格式转换工具软件</a>》快速的转换成shp、geojson、sql、导入数据库、转换坐标系，本工具也支持将行政区划数据导入数据库',"#f60;font-weight:bold;font-size:24px;padding-top:20px");
 mainLog('点击上方下载链接即可下载csv格式数据，行政区划数据如果需要其他格式，<a href="../" target="_blank">可点此在线转换</a>',"#0b1;font-weight:bold;font-size:24px;padding-top:20px");
 mainLog('如果上面线路一和线路二都无法下载：可以到 <a href="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases" target="_blank">Gitee Releases</a> 下载，或到 <a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases" target="_blank">GitHub Releases</a> 下载最新发布数据文件；对应的csv文件在仓库源码的 `src/采集到的数据` 文件夹内。');
-
-$(".dataVer").html('当前最新版本：'+CsvPubDate.Level4.version+' &nbsp;&nbsp;&nbsp;&nbsp; 此数据更新于：'+CsvPubDate.Level4.date);
 </script>
 
 

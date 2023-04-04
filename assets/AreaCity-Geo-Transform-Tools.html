@@ -157,6 +157,7 @@ img{
 					<li style="margin-top:8px">
 						<a href="#sy-geojson-split">GeoJSON 按省市区将下级拆分到多个文件</a></li>
 					<li><a href="#sy-geojson-merge">GeoJSON 多个文件合并成一个文件</a></li>
+					<li><a href="#sy-geojson-simplify">GeoJSON 文件简化(Simplify) 20MB变成200KB</a></li>
 					
 					<li style="margin-top:8px">
 						<a href="#sy-user-var">用户自定义控制参数</a></li>
@@ -174,7 +175,7 @@ img{
 			<a href="#xz-csv">ok_geo.csv</a>
 			省市区三级坐标和边界范围csv文件(130M+) 转成其他格式，比如：<i class="i">shp</i>、<i class="i">geojson</i>、<i class="i">sql</i>；
 			
-			或者直接导入数据库：<i class="i">SQL Server</i>、<i class="i">MySQL</i>。
+			或者直接导入数据库：<i class="i">SQL Server</i>、<i class="i">MySQL</i>、<i class="i">PostgreSQL</i>。
 			
 			支持处理<a href="#xz-csv">ok_geo4_*.csv</a>乡镇第四级坐标边界数据（付费数据）；
 			
@@ -194,8 +195,8 @@ img{
 			<ul class="c_ul" style="list-style-type: square;">
 				<li>将 ok_geo.csv坐标边界 转成 ESRI Shapefile (<i class="i">.shp</i>) 文件。</li>
 				<li>将 ok_geo.csv坐标边界 转成 GeoJSON (<i class="i">.json</i>) 文件，支持按层级拆分成多级json文件。</li>
-				<li>将 ok_geo.csv坐标边界 转成 SQL (<i class="i">.sql</i>) 文件，支持SQL Server、MySQL数据库格式。</li>
-				<li>将 ok_geo.csv坐标边界 导入 MySQL 5.0+、SQL Server 2008+ 数据库。</li>
+				<li>将 ok_geo.csv坐标边界 转成 SQL (<i class="i">.sql</i>) 文件，支持SQL Server、MySQL、PostgreSQL数据库格式。</li>
+				<li>将 ok_geo.csv坐标边界 导入 MySQL 5.0+、SQL Server 2008+、PostgreSQL 数据库。</li>
 				<li>将 ok_data_level*.csv省市区镇行政区划 转成 SQL 文件、导入 数据库；可同时将坐标、边界范围附加到同一表中。</li>
 				<li>支持限定导出数据级别，比如只导出全国所有市级数据，默认导出全部级别数据。</li>
 				<li>支持限定导出指定城市的数据，比如只导出湖北的所有城市，默认导出全国所有数据。</li>
@@ -270,9 +271,9 @@ img{
 		
 		<div class="h2">安装教程<a name="az"></a></div>
 		<div class="content">
-			<div class="h3">一、解压下载的软件zip包</div>
+			<div class="h3">一、解压下载的软件7Zip压缩包</div>
 			<div class="desc">
-				<p>按照上面下载地址下载软件包后，解压此zip包，双击 <i class="i">AreaCity-Geo-Transform.exe</i> 运行。</p>
+				<p>按照上面下载地址下载软件包后，解压此7Zip压缩包（用常见压缩软件均能解压），双击 <i class="i">AreaCity-Geo-Transform.exe</i> 运行。</p>
 				
 				<div class="Center"><img src="AGT-Images/az-1.png" style="max-height:320px"></div>
 			</div>
@@ -446,8 +447,8 @@ select id,ext_path,geo.STAsText(),polygon from 【此处改成你的表名】 wh
 -- 反解一个坐标对应的城市 SQL Server版
 select id,ext_path,polygon from 【此处改成你的表名】 where polygon.STIntersects(geometry::STGeomFromText('POINT(114.044346 22.691963)',0))=1
 
--- 反解一个坐标对应的城市 MySQL版
-select id,ext_path,polygon from 【此处改成你的表名】 where ST_Intersects(polygon,ST_GeomFromText('POINT(114.044346 22.691963)',0))=1
+-- 反解一个坐标对应的城市 MySQL版/PostgreSQL版
+select id,ext_path,polygon from 【此处改成你的表名】 where ST_Intersects(polygon,ST_GeomFromText('POINT(114.044346 22.691963)',0)) -- =1 可写可不写
 </textarea>
 						</div>
 					</div>
@@ -476,13 +477,12 @@ select id,ext_path,polygon from 【此处改成你的表名】 where ST_Intersec
 				</div>
 				
 				<div style="margin-top:20px; line-height:26px">
-					<i class="b">附：其他数据库的支持（支持空间查询的Oracle、PostgreSQL等）</i>
-					
-					<div>可尝试导出成MySQL版SQL文件，然后手动修改此SQL文件（PostgreSQL无需大的修改，<a href="https://docs.oracle.com/en/database/oracle/oracle-database/12.2/spatl/spatial-datatypes-metadata.html" target="_blank">Oracle参考文档</a>）：</div>
+					<i class="b">附：其他数据库的支持（Oracle、SQLite等任意数据库）</i>
 					<div style="padding-left:30px">
-						<div>1. 将 CREATE TABLE 语句修改成目标数据库支持的创建表语法，字段类型 geometry 替换成目标数据库对应的类型名称（如Oracle: SDO_GEOMETRY）；</div>
-						<div>2. 将 INSERT 语句内的 ST_GeomFromText 批量替换成目标数据库支持的处理函数（如Oracle: SDO_GEOMETRY）；</div>
-						<div>3. 尝试将此SQL文件导入到数据库执行，有语法错误改正再尝试。</div>
+						<div>1. 转换工具中将数据库类型设置成“自定义SQL/Oracle”；</div>
+						<div>2. 打开工具的高级自定义脚本，选择内置脚本《[插件] 通用自定义SQL配置》，然后点击应用按钮；</div>
+						<div>3. 自定义SQL配置界面中选择一个合适的模板进行填充；或者直接使用“ST_GeomFromText兼容格式”模板，把SQL语句修改成你数据库支持的格式；</div>
+						<div>4. 自定义SQL配置界面中点击“完成配置”，再点击“转成sql文件”按钮，即可生成SQL文件，最后将此SQL文件导入到你的数据库即可（不同数据库如何导入大的SQL文件，请自行查阅教程）。</div>
 					</div>
 				</div>
 			</div>
@@ -491,7 +491,7 @@ select id,ext_path,polygon from 【此处改成你的表名】 where ST_Intersec
 			<div class="h3">ok_geo.csv坐标边界 导入数据库<a name="sy-db"></a></div>
 			<div class="desc">
 				<div style="font-size:13px;color:#aaa">
-					工具目前仅支持导入到MySQL、SQL Server数据库，如果要导入到其他数据库（Oracle、PostgreSQL等），请参考上面的转成sql文件。
+					工具目前仅支持导入到MySQL、SQL Server、PostgreSQL数据库，如果要导入到其他数据库（如Oracle），请参考上面的转成sql文件。
 				</div>
 				<div style="margin-top:10px">
 					<i class="b">步骤一、步骤二、</i>
@@ -569,7 +569,7 @@ select id,ext_path,polygon from 【此处改成你的表名】 where ST_Intersec
 			<div class="h3">GeoJSON 按省市区将下级拆分到多个文件<a name="sy-geojson-split"></a></div>
 			<div class="desc">
 				<p>本拆分功能用于将一个大的 geojson 文件，根据pid、ext_path字段自动拆分成单独的小文件，子级数据默认会放在父级id命名的文件夹内。</p>
-				<p>全部数据将会拆分出：一个仅包含所有省份的文件；每个省份各一个文件，内容为此省份所有的市；每个市各一个文件，内容为此市所有的区县；每个区县各一个文件，内容为此区县所有的乡镇；[可选]每个省市区单独一个文件，内容为对应的一条边界数据；[可选]每个乡镇单独一个文件，内容为此乡镇一条边界数据。</p>
+				<p>全部数据将会拆分出：一个仅包含所有省份的文件；每个省份各一个文件，内容为此省份所有的市；每个市各一个文件，内容为此市所有的区县；每个区县各一个文件，内容为此区县所有的乡镇；[可选]每个省市区单独一个文件，内容为对应的一条边界数据；[可选]每个乡镇单独一个文件，内容为此乡镇一条边界数据；[可选]只拆分到省级或市级，此级的内容会包含所有的子级数据。</p>
 				
 				<div>
 					<i class="b">步骤一、</i>
@@ -613,6 +613,33 @@ select id,ext_path,polygon from 【此处改成你的表名】 where ST_Intersec
 					<div class="Center">
 						<img src="AGT-Images/sy-8.png">
 					</div>
+				</div>
+			</div>
+			
+			
+			<div class="h3">GeoJSON 文件简化(Simplify) 20MB变成200KB<a name="sy-geojson-simplify"></a></div>
+			<div class="desc">
+				<p>借助专业的开源在线工具<i class="i">MapShaper</i>，可以将边界的GeoJSON文件简化成很小（会保持拓扑结构），但代价是损失原有的精细度，变成粗略版的边界；下面的步骤将演示把20MB大小的全国所有省的GeoJSON文件简化成200KB大小。</p>
+				
+				<div>
+					<i class="b">步骤一、</i>
+					使用本工具将ok_geo.csv导出成GeoJSON文件，可将城市级别设置为1，即可只导出省级，导出的文件约为20MB大小，边界非常精细。
+				</div>
+				<div style="margin-top:20px">
+					<i class="b">步骤二、</i>
+					打开<a href="https://mapshaper.org/" target="_blank">https://mapshaper.org/</a>，把上一步导出的Polygon打头的json文件拖入此页面，弹出的导入对话框中保持默认设置，点击“Import”即可。
+				</div>
+				<div style="margin-top:20px">
+					<i class="b">步骤三、</i>
+					点击MapShaper页面右上角的Simplify按钮，弹出的对话框保持默认设置，点击“Apply”。
+				</div>
+				<div style="margin-top:20px">
+					<i class="b">步骤四、</i>
+					拖动Simplify的Settings滑块，将比例设置成1%，此比例可根据你的需要自行调整，越小文件也会越小（边界也会越粗略）。
+				</div>
+				<div style="margin-top:20px">
+					<i class="b">步骤五、</i>
+					点击MapShaper页面右上角的Export按钮，弹出的对话框保持默认设置，点击“Export”即可得到简化后的GeoJSON文件，约为200KB大小，边界非常粗略，放大后会明显感受到不够精细。
 				</div>
 			</div>
 			

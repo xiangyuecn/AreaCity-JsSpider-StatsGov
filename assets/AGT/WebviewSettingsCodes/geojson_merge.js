@@ -5,7 +5,7 @@
 
 本代码用于将多个小的geojson 文件合并成一个大的，比如将多个城市零散的小geojson文件合并成一个大的文件。
 
-【注意】本代码只能合并固定的换行风格的geojson文件（类似本工具导出的json文件内容风格），因为要简化对文本的处理，本代码要求所有文件内每条数据文本均独占一行，所以如果一行有多条数据、一条数据占了多行，均不支持合并到一个文件。
+【注意】本代码只能合并固定的换行风格的geojson文件（类似本工具导出的json文件内容风格），因为要简化对文本的处理，本代码要求所有文件内每条数据文本均独占一行，所以如果一行有多条数据、一条数据占了多行，默认是不支持合并的，需要勾选“每个小文件一次性读取后再解析”才能处理。
 ******************/
 (function(){
 
@@ -31,12 +31,18 @@ Runtime.Ctrls([
 	<a onclick="$(\'.fileNameExp\').val(\'^(.(?!_single))+\\\\.(geo)?json$\')"\
 		>排除_single文件</a>）\
 </div>\
+<div>\
+	<label style="cursor: pointer">\
+		<input type="checkbox" class="fileFullRead" />每个小文件一次性读取后再解析（兼容性更好，如果有超大文件请勿勾选）\
+	</label>\
+</div>\
 </div>\
 	</div>'}
 	
 	,{name:"开始合并",click:"runClick"}
 	,{html:'<span style="color:#0b1">本合并功能免费版、付费版均可无限制使用</span>'}
 ]);
+var fileFullRead;
 
 var runStartTime=0;
 var runTimeTips=function(){
@@ -56,6 +62,7 @@ window.runClick=function(){
 	};
 	runStartTime=Date.now();
 	
+	fileFullRead=$(".fileFullRead")[0].checked;
 	var fileNameExp=$(".fileNameExp").val();
 	if(fileNameExp){
 		try{
@@ -226,6 +233,37 @@ var writeFile=function(scope,Catch,OK){
 				return;
 			};
 			
+			//一次性读取文件内容，直接解析json
+			if(fileFullRead){
+				var txt=AppCmds.fileRead(read);
+				try{
+					var json=JSON.parse(txt);
+					json.features.length;
+				}catch(e){
+					throw new Error("文件数据不能解析成geojson");
+				}
+				if(scope.needHead){//geojson开头的内容
+					var headCount=0;
+					for(var k in json){
+						if(k!="features"){
+							headCount++;
+							AppCmds.fileWrite(scope.write,(headCount>1?"\n":"{\n")+'"'+k+'": '+JSON.stringify(json[k])+",");
+						}
+					}
+					if(!headCount)throw new Error("未识别到geojson数据");
+					AppCmds.fileWrite(scope.write,'\n"features": [');
+					scope.needHead=false;
+				}
+				for(var i=0;i<json.features.length;i++){
+					line=JSON.stringify(json.features[i]);
+					AppCmds.fileWrite(scope.write,(scope.count>0?",":"")+"\n"+line);
+					scope.count++;
+					count++;
+				}
+				isStart=true;
+				break;
+			};
+			
 			line=AppCmds.fileReadLine(read);
 			lineNo++;
 			if(line==null){
@@ -245,9 +283,13 @@ var writeFile=function(scope,Catch,OK){
 			}
 			if(!isStart){
 				//等待开始标志
-				if(line.indexOf('"features"')==0){
+				var fIdx=line.indexOf('"features"');
+				if(fIdx==0 || fIdx>0 && fIdx>=line.length-14){
 					if(!/\[$/.test(line)){
 						throw new Error("第"+lineNo+"行风格不对，不支持合并此文件");
+					}
+					if(fIdx!=0){//不是开头，加一个换行符
+						line=line.substr(0,fIdx)+"\n"+line.substr(fIdx);
 					}
 					isStart=true;
 				}

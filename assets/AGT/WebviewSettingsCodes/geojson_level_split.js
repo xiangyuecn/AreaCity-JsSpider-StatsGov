@@ -6,7 +6,7 @@
 本代码用于将一个大的 geojson 文件，根据pid、ext_path字段自动拆分成单独的小文件，子级数据默认会放在父级id命名的文件夹内。
 
 ``` Ref
-全部数据将会拆分出：一个仅包含所有省份的文件；每个省份各一个文件，内容为此省份所有的市；每个市各一个文件，内容为此市所有的区县；每个区县各一个文件，内容为此区县所有的乡镇；[可选]每个省市区单独一个文件，内容为对应的一条边界数据；[可选]每个乡镇单独一个文件，内容为此乡镇一条边界数据。
+全部数据将会拆分出：一个仅包含所有省份的文件；每个省份各一个文件，内容为此省份所有的市；每个市各一个文件，内容为此市所有的区县；每个区县各一个文件，内容为此区县所有的乡镇；[可选]每个省市区单独一个文件，内容为对应的一条边界数据；[可选]每个乡镇单独一个文件，内容为此乡镇一条边界数据；[可选]只拆分到省级或市级，此级的内容会包含所有的子级数据。
 
 【拆分规则演示】
 	1. 拆分出  全国  所有的省级到一个文件
@@ -24,7 +24,13 @@
 	6. [可选]拆分出 黄鹤楼街道 到单独一个文件
 			得到 420106003_single.json 只含黄鹤楼街道
 			一个乡镇边界；
-	7. 其他的省市区县乡镇按上面规则拆分得到对应文件；
+	7. [可选]只拆分到省级或市级 这级会有一个或多个文件
+			得到 42.json* 包含湖北所有子级数据
+			----或----
+			得到 42_level_1.json 包含了湖北所有的市
+			得到 42_level_2.json 包含了湖北所有的区县
+			得到 42_level_3.json 包含了湖北所有的乡镇
+	8. 其他的省市区县乡镇按上面规则拆分得到对应文件；
 	
 【拆分子目录结构】 
 	- /0.json
@@ -51,8 +57,17 @@
 			个区县均有一个文件夹，里面存放着此区县每个
 			乡镇的json文件，每个json内只含此乡镇。
 	
+	- /0/42.json*
+	  ----或----
+	  /0/42_level_1.json
+	  /0/42_level_2.json
+	  /0/42_level_3.json
+			可选只拆分到省级或市级，此级的内容会包含所
+			有的子级数据。
+	
 	- 当配置项勾选了“不要创建上级目录”时，所有子文件将放一个文件夹里面，不会出现本目录结构。
 	- 当配置勾选了“每条数据单独生成一个文件”时，才会将每个乡镇拆分到单独的一个文件，这些文件内只会有这个乡镇一条数据；省市区也会生成单独的一个默认用_single结尾的文件，只包这个城市一条数据；当同时勾选了“不要生成包含所有下一级数据的文件”时，不会生成不带_single结尾的那些上级文件。
+	- 当配置勾选了“只拆分到省级或市级”时，将只拆分到指定的级别，此级别的文件内会包含所有的子级数据；支持子级所有级别的数据放同一个文件，或子级每一级的数据分别放一个文件（此时带有level_*后缀）。
 	- 上面路径中的 0、42、4201、420106 均为pid，实际为每个省市区的不同id值，当配置项勾选了“文件或目录使用城市名称”时，数将会被城市名称代替。
 
 
@@ -105,6 +120,27 @@ Runtime.Ctrls([
 		</label>\
 	</div>\
 </div>\
+<div style="padding-top:8px">\
+	<label style="cursor: pointer">\
+		<input type="checkbox" class="splitLimitLevel" />只拆分到省级或市级，所有的子级数据均放到此级一个文件中\
+	</label>\
+</div>\
+<div class="splitLimitLevelMore" style="padding-left:50px;display:none">\
+	<div style="padding-top:8px">\
+		<label style="cursor: pointer;margin-right:15px">\
+			<input type="radio" class="limitLevel1" name="limitLevelN" checked />只拆分到省级\
+		</label>\
+		<label style="cursor: pointer">\
+			<input type="radio" class="limitLevel2" name="limitLevelN"/>只拆分到市级\
+		</label>\
+	</div>\
+	<div style="padding-top:8px">\
+		<label style="cursor: pointer">\
+			<input type="checkbox" class="limitLevelFile" />子级每一级的数据分别放一个文件\
+			，文件名后缀：<input style="width:60px" value="_level" class="limitLevelFileSuffix">_1到_3\
+		</label>\
+	</div>\
+</div>\
 </div>\
 	</div>'}
 	
@@ -114,7 +150,12 @@ Runtime.Ctrls([
 $(".splitToSingle").click(function(){
 	$(".splitToSingleMore")[this.checked?"show":"hide"]();
 });
-var childFolderDisable,pathUseName,splitToSingle,singleFileSuffix,singleFileOnly;
+$(".splitLimitLevel").click(function(){
+	$(".splitLimitLevelMore")[this.checked?"show":"hide"]();
+});
+var childFolderDisable,pathUseName;
+var splitToSingle,singleFileSuffix,singleFileOnly;
+var splitLimitLevel,limitLevelN,limitLevelFile,limitLevelFileSuffix;
 
 var runStartTime=0;
 var runTimeTips=function(){
@@ -139,12 +180,24 @@ window.runClick=function(){
 	splitToSingle=$(".splitToSingle")[0].checked;
 	singleFileSuffix=splitToSingle?$(".singleFileSuffix").val():"";
 	singleFileOnly=splitToSingle?$(".singleFileOnly")[0].checked:false;
+	
+	splitLimitLevel=$(".splitLimitLevel")[0].checked;
+	limitLevelN=splitLimitLevel?($(".limitLevel1")[0].checked?1:2):0;
+	limitLevelFile=splitLimitLevel?$(".limitLevelFile")[0].checked:false;
+	limitLevelFileSuffix=splitLimitLevel?$(".limitLevelFileSuffix").val():"";
+	
+	var errTips="";
 	if(childFolderDisable && pathUseName){
-		Runtime.Log("使用名称 和 不创建目录 选项不允许同时选择，否则可能导致同名冲突",1);
-		return;
+		errTips=errTips||"使用名称 和 不创建目录 选项不允许同时选择，否则可能导致同名冲突";
 	}
 	if(splitToSingle && !singleFileSuffix && !singleFileOnly){
-		Runtime.Log("文件名后缀为空时，必须勾选 不要生成包含所有下一级数据的文件，否则会文件名冲突",1);
+		errTips=errTips||"文件名后缀为空时，必须勾选 不要生成包含所有下一级数据的文件，否则会文件名冲突";
+	}
+	if(splitLimitLevel && splitToSingle){
+		errTips=errTips||"只拆分到省级或市级 和 每条数据单独生成一个文件 不能同时勾选";
+	}
+	if(errTips){
+		AppCmds.showTips(errTips,true);Runtime.Log(errTips,1);
 		return;
 	}
 	Runtime.Log("拆分配置："+JSON.stringify({
@@ -153,13 +206,18 @@ window.runClick=function(){
 		,splitToSingle:splitToSingle
 		,singleFileSuffix:singleFileSuffix
 		,singleFileOnly:singleFileOnly
+		,splitLimitLevel:splitLimitLevel
+		,limitLevelN:limitLevelN
+		,limitLevelFile:limitLevelFile
+		,limitLevelFileSuffix:limitLevelFileSuffix
 	}));
 	
 	//读取用户选择的文件路径
 	var config=JSON.parse(AppCmds.config());
 	var path=config.Input.input_webview_file;
 	if(!path){
-		Runtime.Log("请先点击顶部“通用-选择文件”按钮，选择待拆分的geojson文件",1);
+		var tips="请先点击顶部“通用-选择文件”按钮，选择待拆分的geojson文件"
+		AppCmds.showTips(tips,true);Runtime.Log(tips,1);
 		return;
 	}
 	
@@ -294,9 +352,13 @@ var analysisFile=function(path,Catch,OK){
 			}
 			if(!isStart){
 				//等待开始标志
-				if(line.indexOf('"features"')==0){
+				var fIdx=line.indexOf('"features"');
+				if(fIdx==0 || fIdx>0 && fIdx>=line.length-14){
 					if(!/\[$/.test(line)){
 						throw new Error("第"+lineNo+"行风格不对，不支持处理此文件");
+					}
+					if(fIdx!=0){//不是开头，加一个换行符
+						line=line.substr(0,fIdx)+"\n"+line.substr(fIdx);
 					}
 					isStart=true;
 				}
@@ -318,33 +380,50 @@ var analysisFile=function(path,Catch,OK){
 			var extPath=prop.ext_path.split(" ");//上级完整路径 下面会pop
 			var deep=extPath.length-1-1;//上级的深度 -1:0级 0:省 1:市 2:区
 			var name=extPath.pop();
+			
+			//固定的id格式，省去查找上级id麻烦，直接截取
+			var ids=[];
+			if(deep==-1 && pid.length==1){
+				ids=[];
+			}else if(deep==0 && pid.length==2){
+				ids=[pid];
+			}else if(deep==1 && pid.length==4){
+				ids=[pid.substr(0,2),pid];
+			}else if(deep==2 && pid.length==6){
+				ids=[pid.substr(0,2),pid.substr(0,4),pid];
+			}else{
+				if(pid.length==6 && /^\d\d90/.test(pid)){//省直辖县级市是6位
+					ids=[pid.substr(0,2),pid];
+				}else if(pid.length==9 && /^\d\d90\d\d000/.test(pid)){//省直辖县级市结尾000
+					ids=[pid.substr(0,2),pid.substr(0,6),pid];
+				}else{
+					throw new Error("第"+lineNo+"行数据未知的pid="+pid);
+				}
+			}
+			
+			//只拆分到省级或市级
+			if(splitLimitLevel){
+				if(limitLevelN==1&&deep>=0){
+					pid=ids[0];
+					if(limitLevelFile)pid=pid+"_LF"+(deep+1);//子级每级数据分别放一个文件
+					deep=0; extPath.length=1; ids.length=1;
+				}
+				if(limitLevelN==2&&deep>=1){
+					pid=ids[1];
+					if(limitLevelFile)pid=pid+"_LF"+(deep+1);
+					deep=1; extPath.length=2; ids.length=2;
+				}
+			}
+			
 			var obj=pids[pid]||{childCount:0,lines:[],deep:deep,names:extPath};
 			pids[pid]=obj;
+			obj.ids=ids;
+			if(obj.deep!=deep)throw new Error("第"+lineNo+"行数据的层级解析错误");
 			
 			var id=prop.id||prop.unique_id;
 			if(splitToSingle && id==null){
 				throw new Error("第"+lineNo+"行数据中无 id|unique_id 属性，不支持 每条数据单独生成一个文件");
 			};
-			
-			//固定的id格式，省去查找上级id麻烦，直接截取
-			if(deep==-1 && pid.length==1){
-				obj.ids=[];
-			}else if(deep==0 && pid.length==2){
-				obj.ids=[pid];
-			}else if(deep==1 && pid.length==4){
-				obj.ids=[pid.substr(0,2),pid];
-			}else if(deep==2 && pid.length==6){
-				obj.ids=[pid.substr(0,2),pid.substr(0,4),pid];
-			}else{
-				if(pid.length==6 && /^\d\d90/.test(pid)){//省直辖县级市是6位
-					obj.ids=[pid.substr(0,2),pid];
-				}else if(pid.length==9 && /^\d\d90\d\d000/.test(pid)){//省直辖县级市结尾000
-					obj.ids=[pid.substr(0,2),pid.substr(0,6),pid];
-				}else{
-					deep=999;//未知的id
-				}
-			}
-			if(obj.deep!=deep)throw new Error("第"+lineNo+"行数据的层级解析错误");
 			
 			obj.lines.push({id:id+"", name:name, txt:line});//写入内存，如果是超大文件，内存不够的话处理不了，另外：超大文件循环fileReadLine一遍非常耗时，没有缓存的话，性能非常低
 			obj.childCount++;
@@ -464,6 +543,14 @@ var saveSpiltFile=function(meta,savePath,Catch,OK){
 		}
 		//每条数据需单独拆分成一个文件，先生成文件夹
 		var singleFolder=folder;
+		//只拆分到省级或市级，子级每级数据分别放一个文件，增加文件名后缀
+		var fileSuffix="",filePid="";
+		if(limitLevelFile){
+			if(/(\d+)_LF(\d+)/.test(pid)){
+				filePid=RegExp.$1;
+				fileSuffix=limitLevelFileSuffix+"_"+RegExp.$2;
+			}
+		}
 		
 		var newFile=folder;
 		if(pathUseName){
@@ -471,11 +558,11 @@ var saveSpiltFile=function(meta,savePath,Catch,OK){
 				newFile+="/全国.json";
 				!childFolderDisable&&(singleFolder+="/全国");
 			}else{
-				newFile+="/"+pidObj.names[pidObj.deep]+".json";
+				newFile+="/"+pidObj.names[pidObj.deep]+fileSuffix+".json";
 				!childFolderDisable&&(singleFolder+="/"+pidObj.names[pidObj.deep]);
 			}
 		}else{
-			newFile+="/"+pid+".json";
+			newFile+="/"+(filePid||pid)+fileSuffix+".json";
 			!childFolderDisable&&(singleFolder+="/"+pid);
 		}
 		

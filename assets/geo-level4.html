@@ -148,7 +148,7 @@ img{
 		<p>
 			本数据为乡镇第4级的坐标边界数据，下载到的数据在购买数据密钥后可通过《<a href="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html" target="_blank">AreaCity Geo格式转换工具</a>》转成其他格式，比如：<i class="i">shp</i>、<i class="i">geojson</i>、<i class="i">sql</i>，
 			
-			或者直接导入数据库：<i class="i">SQL Server</i>、<i class="i">MySQL</i>。
+			或者直接导入数据库：<i class="i">SQL Server</i>、<i class="i">MySQL</i>、<i class="i">PostgreSQL</i>。
 		</p>
 		<p>
 			下载的压缩包内已带有省市区前三级坐标边界免费开源数据，和省市区镇四级行政区划免费开源数据，这两个数据无需购买，直接下载使用，请点开上面的转换工具链接查看详细介绍。
@@ -192,7 +192,7 @@ img{
 				<li style="color:green">本数据使用csv格式纯文本文件提供（ok_geo4_*.csv），一个文件内包含了全国所有乡镇级的矢量数据，此文件可以通过下文中的下载链接下载，并且提供了转换工具可以很方便的转换成
 				<i class="i">shp</i>、<i class="i">geojson</i>、<i class="i">sql</i>
 				格式、或者导入
-				<i class="i">SQL Server</i>、<i class="i">MySQL</i>
+				<i class="i">SQL Server</i>、<i class="i">MySQL</i>、<i class="i">PostgreSQL</i>
 				数据库，转换工具支持坐标系转换；另外：省市区前三级的坐标边界数据是免费开源的（ok_geo.csv）、省市区镇四级行政区划数据也是免费开源的（ok_data_level4.csv），下载的压缩包内也有提供。</li>
 				
 				<li style="color:green">本数据的易用性很高，一次性即可获得全部数据；假如你是将数据用在echarts map中显示，使用本数据+转换工具可以大幅缩短你的开发时间：前端可以参考在 <a href="geo-echarts.html" target="_blank">线预览中的源码</a> 快速实现echarts map下钻至乡镇级；后端可以使用转换工具几分钟即可将数据导入到数据库，然后根据在线预览中的后端开发建议快速实现边界拉取接口。采用本数据预计半天开发工期即可实现一个echarts map多级下钻功能；如果采用别家的方案，可能拉取全部数据需要1天+，导入数据库要自己解析和编写sql又要1天+，然后前端对接处理转换geojson又需要摸索1天+，综合起来3天+时间；因此选订使用本数据将是一个明智的选择。</li>

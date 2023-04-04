@@ -5,7 +5,7 @@
 代码运行先前启动拼音服务assets\pinyin-python-server
 
 加载数据
-	找个干净、小的页面，直接执行本代码 http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/ http的页面可行
+	找个干净、小的页面，直接执行本代码
 	先直接运行本代码，根据提示输入MergeAllSaveName对应的文件到文本框 (内容太大，控制台吃不消，文本框快很多)
 	或者使用本地网址更快：
 	var url="https://地址/";

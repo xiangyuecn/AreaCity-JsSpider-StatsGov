@@ -163,6 +163,22 @@ function saveCache(add){
 	$.extend(CacheDic,add);
 	localStorage["CacheDic"]=JSON.stringify(CacheDic);
 };
+//手动修改接口查询出来的错误拼音
+//fixCache("六合区","lu he qu")
+//fixCache("六安市","lu an shi")
+function fixCache(name,py){
+	CacheDic=null;
+	var cache=JSON.parse(localStorage["CacheDic"]);
+	var old=cache[name];
+	if(!old){
+		console.error("缓存中没有此名称",name,cache);
+		return;
+	}
+	cache[name]=py;
+	localStorage["CacheDic"]=JSON.stringify(cache);
+	console.log("已修改: "+name+" 成："+py+" 之前为："+old);
+};
+console.log("运行后，如果需要修改某些名字的拼音，请用fixCache(name,新拼音)来修改，再重新运行一遍即可");
 
 var proxyID=+localStorage["proxyID"]||0;
 var RunPinYin=function(){

@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-<link rel="shortcut icon" type="image/png" href="https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/assets/icon.png">
+<link rel="shortcut icon" type="image/png" href="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/icon.png">
 
 <meta http-equiv="X-UA-Compatible" content="edge" />
 <title>AreaCity Geo格式转换工具</title>
@@ -35,9 +35,20 @@ var AppCalls={
 		};
 		return null;
 	}
+	,customSQLConfig:function(){
+		var rtv={error:"",config:{}};
+		var fn=Runtime.AppCalls.customSQLConfig;
+		if(fn){
+			fn(rtv);
+		}else{
+			rtv.error="请先选择内置脚本《[插件] 通用自定义SQL配置》并配置完成后再进行自定义SQL操作";
+		}
+		return JSON.stringify(rtv);
+	}
 	,onTransformStart:function(execName){
 		AppCalls.scope={execName:execName,tgEnable:"",tgCount:0,tgpCount:0};
 		Runtime.UpdateStatus("");
+		Runtime.Log("[系统] 执行任务中:"+execName,"#bbb");
 		
 		var fn=Runtime.AppCalls.onTransformStart;
 		if(fn){
@@ -53,6 +64,7 @@ var AppCalls={
 		};
 	}
 	,onTransformEnd:function(){
+		Runtime.Log("[系统] 执行任务结束","#bbb");
 		var fn=Runtime.AppCalls.onTransformEnd;
 		if(fn){
 			fn();
@@ -61,7 +73,12 @@ var AppCalls={
 		};
 	}
 };
-var LM="2020-5-30 17:06:02";
+
+var appFixLineClick=function(){
+	alert("请先执行内置脚本 “"+$("option[value=fixline]").text()+"” 后，在来FixLine操作");
+};
+
+var LM="2023-04-02 13:36";
 </script>
 
 <style>
@@ -75,6 +92,7 @@ pre{
 }
 a{
 	text-decoration: none;
+	cursor: pointer;
 	color:#06c;
 }
 a:hover{
@@ -265,7 +283,7 @@ select,select option{
 				<button onclick='showCmds()'>显示可用命令</button>
 			</div>
 			<div>
-				<a href="https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/assets/AreaCity-Geo-Transform-Tools.html" target="_blank">详细教程、软件许可及服务协议、购买付费版>></a>
+				<a href="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html" target="_blank">详细教程、软件许可及服务协议、购买付费版>></a>
 			</div>
 		</div>
 		
@@ -278,21 +296,31 @@ select,select option{
 	<option value="">==== GCJ-02（高德）转其他坐标系 ====</option>
 	<option value="to_bd09">[插件] 转成 BD-09 百度地图 [误差约1米内]</option>
 	<option value="to_wgs84">[插件] 转成 WGS-84 GPS 谷歌地图 [误差约10米内]</option>
+	<option value="to_wgs84">[插件] 转成 CGCS2000 天地图 [误差约10米内] ≈GPS</option>
 	
 	<option value=""></option>
-	<option value="">==== 省市区镇转SQL、导入数据库 ====</option>
+	<option value="">==== 工具集 ====</option>
+	<option value="custom_sql_config">[插件] 通用自定义SQL配置（任意数据库适配）</option>
+	<option value="geojson_level_split">[拆分] GeoJSON 按省市区将下级拆分到多个文件</option>
+	<option value="geojson_merge">[合并] GeoJSON 多个文件合并成一个文件</option>
+	
+	<option value=""></option>
+	<option value="">==== 行政区划转SQL、导入数据库 ====</option>
 	<option value="exec/city_to_sql">[转换] ok_data_level*.csv 省市区镇转SQL</option>
 	<option value="exec/city_to_db">[导入] ok_data_level*.csv 省市区镇导入数据库</option>
 	
 	<option value=""></option>
 	<option value="">==== 其他代码 ====</option>
+	<option value="gps_to_gcj02">[Test] WGS-84 GPS/CGCS2000 转成 GCJ-02</option>
+	<option value="gps_to_bd09">[Test] WGS-84 GPS/CGCS2000 转成 BD-09</option>
+	<option value="fixline">[Test] FixLine 修复CSV文件内错误边界数据</option>
 	<option value="exec/appcmds_test">[Test] 浏览器接口测试用例</option>
 </select>
 </script>
 
 
-<script src="https://cdn.jsdelivr.net/gh/xiangyuecn/Recorder@latest/assets/ztest-jquery.min-1.9.1.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/xiangyuecn/Recorder@latest/assets/ztest-codemirror.min.5.48.4.js"></script>
+<script src="https://xiangyuecn.gitee.io/recorder/assets/ztest-jquery.min-1.9.1.js"></script>
+<script src="https://xiangyuecn.gitee.io/recorder/assets/ztest-codemirror.min.5.48.4.js"></script>
 
 <script>
 (function(){
@@ -338,6 +366,13 @@ window.Runtime={
 			var elem=doc.createElement("script");
 			elem.setAttribute("type","text/javascript");
 			elem.setAttribute("src",url+"?t="+Date.now());
+			if(!("onload" in elem)){//ie 8
+				elem.onreadystatechange=function(){
+					if(elem.readyState=="loaded"){
+						load(idx+1);
+					}
+				}
+			}
 			elem.onload=function(){
 				load(idx+1);
 			};
@@ -363,6 +398,11 @@ window.Runtime={
 	}
 	,LogClear:function(){
 		$(".mainLog").html("");
+	}
+	,ToPre:function(obj, attr){
+		var val=JSON.stringify(obj,null,'    ')||"";
+		val=val.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+		return '<pre '+attr+'>'+val+'</pre>';
 	}
 	
 	
@@ -399,14 +439,36 @@ window.Runtime={
 };
 
 
-$(window).bind("error",function(e){
-	Runtime.Log('【Error】:<pre>'+(e.error?e.error.stack:event.message)+'</pre>',1);
-});
+window.onerror=function(message, url, lineNo, columnNo, error){
+	//https://www.cnblogs.com/xianyulaodi/p/6201829.html
+	Runtime.Log('<span style="color:red">【Uncaught Error】'+message+'<pre>'+"at:"+lineNo+":"+columnNo+" url:"+url+"\n"+(error&&error.stack||"不能获得错误堆栈")+'</pre></span>',1);
+};
 })();
 </script>
 
 <script>
 $(function(){
+
+Runtime.VersionLess=function(ver,_cur){
+	var arr=(ver||"").split(".");
+	var cur=(_cur||InitReadConfig.AppVersion||"").split(".");
+	for(var i=0;;i++){
+		if(i>=arr.length){
+			return false;
+		};
+		if(i>=cur.length){
+			return true;
+		};
+		if(arr[i]!=cur[i]){
+			if((+arr[i]||0)>(+cur[i]||0)){
+				return true;
+			};
+			return false;
+		};
+	};
+	return false;
+};
+
 var codeRunCtrl;
 Runtime.CodeRunImport=function(){
 	if(codeRunCtrl==1){
@@ -501,6 +563,9 @@ Runtime.SetCode=function(val){
 	edit.refresh();
 	codeChange(val);
 };
+Runtime.GetCode=function(){
+	return elem.val();
+};
 
 var codeChange=function(val,reset){
 	if(reset || val!=prevCode){
@@ -519,6 +584,10 @@ Runtime.translateGeoDisable=function(){
 	Runtime.AppCalls.translateGeos=null;
 	Runtime.UpdateStatus();
 };
+Runtime.customSQLConfigDisable=function(){
+	Runtime.AppCalls.customSQLConfig=null;
+	Runtime.UpdateStatus();
+};
 
 
 var statusMsg="";
@@ -526,9 +595,13 @@ Runtime.UpdateStatus=function(msg){
 	statusMsg=msg==null?statusMsg:(msg||"");
 	var html=[];
 	if(codeIsChange){
-		html.push('<span style="color:red">代码已修改，应用后生效</span>');
+		html.push('<span style="color:red;font-weight:bold">代码已修改，点击“应用”后生效</span>');
 	};
 	
+	var cscEnable=Runtime.AppCalls.customSQLConfig;
+	if(cscEnable){
+		html.push('<span style="color:#0b1">通用自定义SQL配置插件已启用<button onclick="Runtime.customSQLConfigDisable()">禁用</button></span>');
+	};
 	var tgEnable=Runtime.AppCalls.translateGeoEnable;
 	if(tgEnable){
 		var tgVal=tgEnable();
@@ -562,25 +635,9 @@ Runtime.Mask=function(msg){
 try{
 	InitReadConfig=JSON.parse(AppCmds.config());
 }catch(e){
-	Runtime.Mask("非工具软件环境，不支持运行本网页!");
+	InitReadConfig.NotApp=true;
 	return;
 };
-
-var IsIE=false,IEVersion=99;
-(function(){
-	var ua=navigator.userAgent,m;
-	m=/MSIE.+?(\d+)|Trident.+?rv:(\d+)/i.exec(ua);
-	if(m){
-		IsIE=true;
-		IEVersion=+(m[1]||m[2]);
-	};
-})();
-if(IEVersion<11){
-	Runtime.Mask("当前使用的IE"+IEVersion+"太过老旧，请重启本软件再试");
-	return;
-};
-
-AppCmds.ready();
 
 })();
 </script>
@@ -598,6 +655,7 @@ AppCmds.ready();
 	Runtime.Ctrls(ctrls) 在控制区显示按钮，只能调用一次，ctrls:[{name:"按钮名称",click:"函数名称",cls:"class name"},{html:"html代码"},...]
 	
 	Runtime.Log(msgHtml,color) 在日志区显示日志html，color:0默认，1红色，2绿色，其他指定颜色
+	Runtime.ToPre(obj, attr) 将对象用JSON格式化，然后返回pre标签html，用于Log打印对象，attr为pre标签的属性
 	
 	Runtime.LogClear() 清除显示的日志
 	
@@ -605,9 +663,12 @@ AppCmds.ready();
 	
 	Runtime.Load(url|set,True,False) 调用AppCmds.load加载资源，True(val,data)，False(msg, data)
 	
+	Runtime.GetCode() 获取输入框内的代码
 	Runtime.SetCode(code) 输入框内显示代码
 	
 	Runtime.UpdateStatus(msg) 更新显示状态信息
+	
+	Runtime.VersionLess(ver) 当前版本是否低于此版本
 	
 	Runtime.AppCalls={***} 实现window.AppCalls相关方法给软件调用，如果不提供将使用默认方法
 </script>
@@ -615,10 +676,66 @@ AppCmds.ready();
 var showCmds=function(){
 	Runtime.Log('<pre>'+$(".tp_pageCmds").html()+'</pre>'+AppCmds.help());
 };
-Runtime.Log("当前环境：<pre>LM: "+LM+"\n\nURL: "+location.href+"\n\nUA:"+navigator.userAgent+"\n\nApp: "+InitReadConfig.AppName+"["+InitReadConfig.AppVersion+"]</pre>");
+var showConfig=function(){
+	var val=JSON.stringify(JSON.parse(AppCmds.config()),null,'    ');
+	val=val.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+	$(".showConfigBox").html('<pre style="padding:5px;border:1px solid #eee">>> AppCmds.config() '+new Date().toLocaleString()+'\n'+val+'</pre>');
+};
+Runtime.Log('当前环境：'
+	+"<pre>LM: "+LM+"\n\nURL: "+location.href+"\n\nUA: "+navigator.userAgent+"\n\nApp: "+InitReadConfig.AppName+"["+InitReadConfig.AppVersion+"]\n\nID: "+InitReadConfig.AppID+"</pre>"
+	+'<div class="Right"><a onclick="showConfig()" style="font-size:12px" title="点击查看AppCmds.config()信息">点击展开更多信息</a></div>'
+	+'<div class="showConfigBox"></div>');
 Runtime.Log("小提示：择一个内置插件并应用后，此插件可以作用到其他脚本，因此可以先后执行不同的脚本组成不同的数据处理结果。");
 Runtime.Log("脚本运行环境已准备好，每次修改脚本后需要点击应用才会生效哦。",2);
 </script>
+
+
+
+
+
+<script>
+(function(){
+
+if(!InitReadConfig.NotApp){
+	AppCmds.ready();
+}else{
+	for(var i=0;i<10;i++){
+		Runtime.Log("警告：非工具软件环境，不支持运行本网页!",1);
+	}
+};
+
+window.IsIE=false;
+window.IEVersion=99;
+var ua=navigator.userAgent,m;
+m=/MSIE.+?(\d+)|Trident.+?rv:(\d+)/i.exec(ua);
+if(m){
+	IsIE=true;
+	IEVersion=+(m[1]||m[2]);
+};
+
+})();
+
+
+if(IEVersion<11){
+	Runtime.Log("兼容问题提醒：当前网页使用的IE"+IEVersion+'太过老旧，本脚本页面可能无法正常工作，请到微软官网<a href="https://support.microsoft.com/zh-cn/help/17621" target="_blank">升级IE11</a>以获得最佳兼容。',"#f90");
+	
+	//老浏览器，给予一些基础兼容支持
+	if(!"".trim)String.prototype.trim=function(){return $.trim(this)};
+	if(!Date.now)Date.now=function(){return new Date().getTime()};
+	if(!Object.keys)Object.keys=function(o){var a=[];for(var k in o)if(o.hasOwnProperty(k))a.push(k);return a};
+	
+	if(!window.atob){//挂在window.下面IE8没有错误信息
+		atob=function(v){return Base64.atob(v)};
+		btoa=function(v){return Base64.btoa(v)};
+	};
+};
+
+var Base64=function(){function c(a){this.message=a}var a={},b="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";return c.prototype=new Error,c.prototype.name="InvalidCharacterError",a.btoa||(a.btoa=function(a){var e,f,g,h,i,d=String(a);for(g=0,h=b,i="";d.charAt(0|g)||(h="=",g%1);i+=h.charAt(63&e>>8-8*(g%1))){if(f=d.charCodeAt(g+=.75),f>255)throw new c("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");e=e<<8|f}return i}),a.atob||(a.atob=function(a){var f,g,e,h,i,d=String(a).replace(/[=]+$/,"");if(1==d.length%4)throw new c("'atob' failed: The string to be decoded is not correctly encoded.");for(e=0,h=0,i="";g=d.charAt(h++);~g&&(f=e%4?64*f+g:g,e++%4)?i+=String.fromCharCode(255&f>>(6&-2*e)):0)g=b.indexOf(g);return i}),a}();
+
+</script>
+
+
+
 <div style="width:0;height:0;overflow:hidden;">
 	<img src="https://ia.51.la/go1?id=20807127&pvFlag=1">
 </div>

@@ -3,6 +3,8 @@
 
 在以下页面执行
 https://lbs.qq.com/webservice_v1/guide-region.html
+
+2023-4-3 20230302和20230112差异对比，港澳台的编号全部变了，此次更新未让这些数据生效，将这部分新数据复制到 Step1_4_QQmap_20230302New.txt，然后替换成上版本数据
 */
 "use strict";
 (function(){

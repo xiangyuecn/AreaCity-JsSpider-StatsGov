@@ -2,7 +2,8 @@
 获取统计局所有城市名称原始数据
 
 在以下页面执行
-http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/
+http://www.stats.gov.cn/sj/tjbz/qhdm/
+
 
 采集中途失败了，直接刷新页面重新采集，浏览器有页面缓存，恢复速度极快
 【如果乱码】2021版页面已是 utf-8 无乱码
@@ -89,7 +90,7 @@ cityClass.prototype={
 
 function load_shen_all(True){
 	DATA=[];
-	var path="http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/"+Year;
+	var path="http://www.stats.gov.cn/sj/tjbz/tjyqhdmhcxhfdm/"+Year;
 	ajax(path+"/index.html",function(text){
 		var reg=/href='(.+?)'>(.+?)<br/ig,match;
 		var idx;

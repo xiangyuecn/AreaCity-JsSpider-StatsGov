@@ -24,6 +24,23 @@ https://lbs.amap.com/api/javascript-api/example/district-search/draw-district-bo
 	
 然后再次运行本代码，如果中途因错误停止，根据提示重复运行
 2022-9-7 此页面接口已出现滑动验证码，需要手动处理，似乎是500次弹一次验证码
+
+2023-4-3 温州龙港市数据似乎被误删，旁边苍南县平阳县未变，从老版本还原数据；先跑一遍，看有没有，没有就运行下面代码，再跑一遍即可
+	var url="https://地址/../Step1-2中间临时数据-老版本/";
+	var s=document.createElement("script");s.src=url+"data_geo.txt?t="+Date.now();document.body.appendChild(s)
+	
+	LoadFromOther=function(item,True,False){
+		if(item.id==330383 && item.name=="龙港市"){
+			console.warn("龙港市使用老版本数据");
+			for(var i=0;i<OldData.length;i++){
+				var o=OldData[i]; if(o.id==item.id){
+				True(o.geo,o.polygon);
+			}}
+			return true;
+		}
+	}
+	var OldData=window.DATA_GEO;window.DATA_GEO=null;
+	if(!OldData)throw new Error("需要输入老版本data-geo.txt");
 */
 "use strict";
 AMap.LngLat;
@@ -97,6 +114,16 @@ var arr={
 	};
 };
 var needReg={};
+
+//可选提供一个数据源LoadFromOther，比如从老版本文件中提取出无法抓取到的数据
+var load2=function(item,True,False){//True(geo,polygon)
+	var fn=window.LoadFromOther;
+	if(fn){
+		return LoadFromOther(item,True,False); //如果接管了就返回true
+	}
+	return false; //继续加载数据
+};
+
 
 //准备数据
 var idMP={};
@@ -187,6 +214,18 @@ function load(itm, next, _try){
 	};
 	
 	LogX(loadIdx+"/"+pinyinList.length+fullPath);
+	//先看看是否有别的数据源
+	var isLoad2=load2(itm,function(geo2,polygon2){
+		geo=geo2; polygon=polygon2;
+		end();
+	},function(err){
+		geo=""; polygon="";
+		console.error(itm.id+":"+fullPath+"：出错",err);
+		end();
+	});
+	if(isLoad2)return;
+	
+	//查询高德数据
 	new AMap.DistrictSearch({
 		level:itm.deep==0?"province":itm.deep==1?"city":"district"
 		,extensions:"all"

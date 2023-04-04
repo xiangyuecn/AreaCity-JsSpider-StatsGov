@@ -27,17 +27,25 @@ var log=function(msg,color){
 	$(".aqgToolsLogs").prepend('<div style="padding-left:25px;border-top: 1px solid #eee;color:'+(!color?"":color==1?"red":color==2?"#0b1":color)+'">'+msg+'</div>');
 };
 
-var extPathDesc='请在查询参数中填写：`[deep:]ext_path`；ext_path部分：会查询出和ext_path完全相同值的边界（如: "湖北省 武汉市"），首尾支持*通配符（如: *武汉*），或填*匹配所有；[deep:]部分可选，来限制只返回特定层级的数据，deep取值：0省1市2区县3乡镇，比如: 2:湖北* 查询湖北所有区级数据';
+var extPathDesc='请在查询参数中填写：<i class="i">[deep:]ext_path</i>；<i class="i">ext_path</i>部分：会查询出和ext_path完全相同值的边界（如: <i class="i">湖北省 武汉市</i>），首尾支持*通配符（如: <i class="i">*武汉*</i>），或填*匹配所有；<i class="i">[deep:]</i>部分可选，来限制只返回特定层级的数据，deep取值：0省1市2区县3乡镇，比如: <i class="i">2:湖北*</i>查询湖北所有区级数据';
 var actions=[
 	{
-		name:"【边界】查询城市或下级边界"
+		name:"【ReadWKT】查询城市或下级边界"
 		,desc:extPathDesc
 		,exec:function(url,args){extPathQuery(url+"readWKT",args)}
 	}
 	,{
-		name:"【坐标】查询坐标点所在的城市边界"
-		,desc:'请在查询参数中填写坐标，格式：`lng lat`（允许有逗号）；比如：114.044346 22.691963，为广东省 深圳市 龙华区；请注意：坐标系必须和边界数据的坐标系一致'
+		name:"【QueryPoint】查询坐标点所在的城市边界"
+		,desc:'请在查询参数中填写坐标，格式：<i class="i">lng lat</i>（允许有逗号）；比如：<i class="i">114.044346 22.691963</i>，为广东省 深圳市 龙华区；请注意：坐标系必须和边界数据的坐标系一致'
 		,exec:function(url,args){pointQuery(url+"queryPoint",args)}
+	}
+	,{
+		name:"【QueryGeometry】查询和图形相交的边界"
+		,desc:'请在查询参数中填写一个WKT文本（Well Known Text），请注意：坐标系必须和边界数据的坐标系一致；'
+			+'<br>比如：<i class="i">POINT(114.044346 22.691963)</i>，坐标点，为广东省 深圳市 龙华区'
+			+'<br>比如：<i class="i">LINESTRING(114.30115 30.57962, 117.254285 31.824198, 118.785633 32.064869)</i>，路径线段，武汉-合肥-南京 三个点连成的线段'
+			+'<br>比如：<i class="i">POLYGON((113.305514 30.564249, 113.305514 32.881526, 117.326510 32.881526, 117.326510 30.564249, 113.305514 30.564249))</i>，范围，湖北-河南-安徽 三省交界的一个超大矩形范围'
+		,exec:function(url,args){geometryQuery(url+"queryGeometry",args)}
 	}
 	,{
 		name:"【Debug】读取边界网格划分图形"
@@ -100,6 +108,42 @@ var pointQuery=function(url,args){
 	var t1=Date.now();
 	geoEChartsLib.Post(url,{},function(data){
 		mapPointAdd("查询坐标点",lng,lat);
+		addFeatures(Date.now()-t1,data);
+	},function(err){
+		log(err,1);
+	});
+};
+var geometryQuery=function(url,args){
+	var wkt=args;
+	url+="?wkt="+wkt+"&returnWKTKey=polygon";
+	var t1=Date.now();
+	geoEChartsLib.Post(url,{},function(data){
+		var pol="",polTag="";
+		if(/POINT\s*\(\s*([\d\.]+)\s*([\d\.]+)\s*\)/i.test(wkt)){
+			mapPointAdd("查询POINT",+RegExp.$1,+RegExp.$2);
+		}else if(/LINESTRING\s*\((.+)\)/i.test(wkt)){
+			polTag="查询LINESTRING";
+			var ps=RegExp.$1.split(",");
+			pol=ps.join(","); for(var i=ps.length-2;i>-1;i--)pol+=","+ps[i];
+			pol="POLYGON(("+pol+"))";
+			for(var i=0;i<ps.length;i++){
+				var s=ps[i].trim().split(/\s+/);
+				mapPointAdd("P"+i,+s[0],+s[1]);
+			}
+		}else if(/(\w*POLYGON)\s*\((.+)\)\s*$/i.test(wkt)){
+			polTag="查询"+RegExp.$1;
+			pol=RegExp.$2;
+			if(/\(([^\(]+)\)/.test(pol.trim())){//简单的polygon绕回去，变成一条线
+				var ps=RegExp.$1.split(",");
+				pol=ps.join(","); for(var i=ps.length-2;i>-1;i--)pol+=","+ps[i];
+				pol="POLYGON(("+pol+"))";
+			}else{
+				pol=wkt;
+			}
+		}
+		if(pol){
+			data.list.push({ ext_path:polTag,name:polTag,polygon:pol });
+		}
 		addFeatures(Date.now()-t1,data);
 	},function(err){
 		log(err,1);

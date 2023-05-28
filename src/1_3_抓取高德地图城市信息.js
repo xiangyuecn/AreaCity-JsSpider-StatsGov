@@ -69,8 +69,10 @@ function loadEnd(list){
 				,code:(o.adcode+"000000000000").substr(0,12)
 				,child:child
 			};
-			dist.push(itm);
-			add(level+1,itm,o.districts,child);
+			if(level<4){//丢弃4级数据 嫌弃，不要了
+				dist.push(itm);
+				add(level+1,itm,o.districts,child);
+			}
 		};
 		dist.sort(function(a,b){
 			return a.code.localeCompare(b.code);

@@ -1,0 +1,124 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<link rel="shortcut icon" type="image/png" href="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/icon.png">
+
+<title>AreaCity Geo格式转换工具 - 软件欢迎页</title>
+
+<style>
+body{
+	word-wrap: break-word;
+	background:#f5f5f5 center top no-repeat;
+	background-size: auto 680px;
+}
+pre{
+	white-space:pre-wrap;
+}
+a{
+	text-decoration: none;
+	color:#06c;
+}
+a:hover{
+	color:#f00;
+}
+p{
+	text-indent: 32px;
+}
+img{
+	max-width:90%;
+}
+
+.Center{
+	text-align: center;
+}
+
+.main{
+	max-width:900px;
+	margin:0 auto;
+	padding-bottom:80px
+}
+
+.mainBox{
+	margin-top:12px;
+	padding: 12px;
+	border-radius: 6px;
+	background: #fff;
+	--border: 1px solid #f60;
+	box-shadow: 2px 2px 3px #aaa;
+}
+
+
+.pd{
+	padding:0 0 6px 0;
+}
+.b{
+	font-weight: bold;
+	font-style: normal;
+}
+.i{
+	padding: 2px 4px;
+	background-color: #f6f6f6;
+	vertical-align: middle;
+	color: #c7254e;
+	font-size: 12px;
+	white-space: pre-wrap;
+	border-radius: 3px;
+	font-style: normal;
+}
+</style>
+</head>
+<body>
+
+<div class="main">
+	<div class="mainBox">
+		<span style="font-size:32px;color:#0B0;">欢迎使用AreaCity Geo格式转换工具</span>
+		<a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov">GitHub >></a>
+	</div>
+	
+	<div class="mainBox">
+		<div style="padding:120px 0">
+			<div style="text-align: center;">
+				<div style="font-size:28px">欢迎使用本工具🎉🎉✨，前往<a href="AreaCity-Geo-Transform-Tools.html">详细教程</a>✨，🚀正在带你飞🍺...</div>
+				<div id="timeView" style="font-size:80px;margin-top:80px;color:#fb0"></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div style="width:0;height:0;overflow:hidden;">
+	<img src="https://ia.51.la/go1?id=20807127&pvFlag=1">
+</div>
+
+<script>
+(function(){
+var nextPage=function(time){
+	var start=new Date().getTime();
+	var intf=function(){
+		var tv=time-(new Date().getTime()-start);
+		tv=Math.round(tv/1000);
+		timeView.innerHTML=tv>=0?tv:"Launch🚀";
+		
+		if(tv<0){
+			clearInterval(int);
+			setTimeout(function(){
+				location.href="AreaCity-Geo-Transform-Tools.html";
+			},600);
+		};
+	};
+	var int=setInterval(intf,100);
+	intf();
+};
+
+var isFirstStartup=/[?&]startup-first=/i.test(location.href);
+if(isFirstStartup){
+	nextPage(5000);
+}else{
+	nextPage(3000);
+};
+
+})();
+</script>
+</body>
+</head>

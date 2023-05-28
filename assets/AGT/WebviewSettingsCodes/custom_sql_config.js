@@ -63,6 +63,9 @@ $(".cscInText").each(function(k,v){
 		,lineWrapping:true
 	});
 	edit.setSize($(v).width()+"px","auto");
+	edit.on("change",function(a){
+		inputChange();
+	});
 });
 
 //配置被修改时，清理

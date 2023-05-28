@@ -14,10 +14,73 @@ var AllowAccessFiles=["ok_data_level3.csv(3级省市区)","ok_data_level4.csv(4�
 ** 具体格式化实现函数
 *****************************/
 function UserFormat(list,mapping){
-	//修改此方法实现自定义格式，可参考JsonArrayFormat的实现
-	//list为所有城市平铺列表，[{id,pid,deep,name,pinyin_prefix,pinyin,ext_id,ext_name,child:[]},...]
-	//mapping为id城市映射，0索引的是省级0:{child:[]}，其他为id：{id,pid,deep,name,pinyin_prefix,pinyin,ext_id,ext_name,child:[]}
-	return Result("自定义方法未实现，请修改UserFormat方法源码");
+/***********************
+	修改此方法实现自定义格式（剪切本代码到你的编辑器中修改），可参考JsonArrayFormat的实现
+	参数list：为所有城市平铺列表，[{id,pid,deep,name,pinyin_prefix,pinyin,ext_id,ext_name,child:[]},...]
+	参数mapping：为id城市映射，0索引的是省级0:{child:[]}，其他为id：{id,pid,deep,name,pinyin_prefix,pinyin,ext_id,ext_name,child:[]}
+*************************/
+
+/**导出的json key配置**/
+var Settings={
+	ID:"id"
+	,IDMinLen:2 //id最少要这么长，取值2，4，6，尽量不要超过2，因为部分城市没有下级，数据中添加了00结尾的ID作为下级，因此恢复6位时就会冲突。如过调整，生成的数据需要自行处理冲突ID
+	
+	//如果设为空，会将所有城市展开到数组内，不进行上下级嵌套
+	,Childs:"childs"
+	
+	//以下字段如果设为空，对应字段就不添加到结果中
+	,pid:"pid"
+	,deep:"deep"
+	,name:"name"
+	,pinyin:"pinyin"
+	,pinyin_prefix:"pinyin_prefix"
+	,ext_id:"ext_id"
+	,ext_name:"ext_name"
+};
+
+var exec=function(obj,dist){//写个函数，递归处理数据
+	if(!obj.childs.length){
+		return;
+	};
+	for(var i=0;i<obj.childs.length;i++){
+		var itm=obj.childs[i];
+		var o={};
+		dist.push(o);
+		
+		var id=(itm.id+"");
+		o[Settings.ID]=id.length<Settings.IDMinLen?(id+"000000000000").substr(0,Settings.IDMinLen):id;
+		
+		var add=function(key){
+			var setKey=Settings[key];
+			if(setKey){
+				o[setKey]=itm[key];
+			};
+		};
+		add("pid");
+		add("deep");
+		add("name");
+		add("pinyin");
+		add("pinyin_prefix");
+		add("ext_id");
+		add("ext_name");
+		
+		if(Settings.Childs){
+			var c=exec(itm,[]);
+			if(c){
+				o[Settings.Childs]=c;
+			};
+		}else{
+			exec(itm,dist);
+		};
+	};
+	return dist;
+};
+	var data=exec(mapping[0],[]);
+
+	var code=JSON.stringify(data,null,"\t");
+	var codeLen=new Blob([code],{"type":"text/plain"}).size+3;
+
+	return Result("",code,"area_format_user.json",codeLen+"字节");
 };
 
 
@@ -163,7 +226,12 @@ window.FormatClick=function(type){
 		return;
 	};
 	
-	var info=res.findMaxLevel+"级"+(res.findMaxLevel<res.maxLevel?"(数据源没有"+res.maxLevel+"级)":"")+"转换完成，共"+res.list.length+"条数据，"+res.i+" <span class='FormatDownA'></span>";
+	var info=res.findMaxLevel+"级"+(res.findMaxLevel<res.maxLevel?"(数据源没有"+res.maxLevel+"级)":"")+"转换完成，共"+res.list.length+"条数据，"+res.i+" <span class='FormatDownA'></span>"
+		+'<div style="padding-top:10px">'
+		+'<textarea style="width:570px;height:160px">'
+		+'//文件内容预览'+(res.v.length>1024*1024?"（内容过大已截断）":"（内容已全部显示）")+'：\n'
+		+res.v.substr(0,1024*1024).replace(/\t/g,"    ")
+		+'</textarea></div>';
 	log(info);
 	
 	var url=URL.createObjectURL(
@@ -437,6 +505,7 @@ window.BuildCitySelect=buildCitySelectFn();
 *****************************/
 function Format(type){
 	var maxLevel=+el(".AreaFormatLevel").value;
+	var fullName=+el("input[name=AreaFormatFullName]:checked").value;
 	var txt=el(".AreaFormatInput").value;
 	if(!txt){
 		return Result("请在数据源内粘贴csv数据");
@@ -470,6 +539,9 @@ function Format(type){
 				,level:-1
 				,childs:[]
 			};
+			if(fullName && type!="user"){
+				itm.name=itm.ext_name;
+			}
 			list.push(itm);
 			mapping[itm.id]=itm;
 		};
@@ -522,7 +594,17 @@ function Format(type){
 	//实际格式化
 	var rtv;
 	if(type=="user"){
-		rtv=UserFormat(list,mapping);
+		window.UserFormat=null;
+		try{
+			eval.call(window,el(".AreaFormatUserFormatIn").value);
+			if(!UserFormat){
+				throw new Error("需在代码内实现UserFormat方法");
+			}
+			rtv=UserFormat(list,mapping);
+		}catch(e){
+			console.error(e);
+			return Result("自定义UserFormat代码执行异常："+e.message);
+		}
 	}else if(type=="js"){
 		rtv=JsFormat(list,mapping);
 	}else if(type=="jsonObject"){
@@ -537,6 +619,10 @@ function Format(type){
 	rtv.findMaxLevel=findMaxLevel;
 	rtv.list=list;
 	rtv.mapping=mapping;
+	
+	window.FormatResult=rtv;
+	console.log("结果已存入变量 FormatResult ：", FormatResult);
+	console.log("可以 eval('('+FormatResult.v+')')");
 	return rtv;
 };
 
@@ -611,7 +697,7 @@ a{text-decoration: none;}
 	</div>
 	<div class="AreaFormatA" style="width:1030px;margin:0 auto;padding-bottom:30px">
 		小提示 : 
-		本工具是用来转换省市区镇四级行政区划数据为js支持的格式的，不支持导入数据库，也不支持处理坐标和城市边界范围书记，如果你要导入数据库、或转换坐标和城市边界范围数据（如shp、geojson、sql），<a href="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html" target="_blank">请点此处</a>下载《AreaCity-Geo格式转换工具软件》轻松处理。
+		本工具是用来转换省市区镇四级行政区划数据为js支持的格式的，不支持导入数据库，也不支持处理坐标和城市边界范围数据，如果你要导入数据库、或转换坐标和城市边界范围数据（如shp、geojson、sql），<a href="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html" target="_blank">请点此处</a>下载《AreaCity-Geo格式转换工具软件》轻松处理。
 	</div>
 	<div style="display: flex;">
 		<div style="flex: 1;"></div>
@@ -635,6 +721,8 @@ a{text-decoration: none;}
 				<option value="3">(3级)省市区</option>
 				<option value="4" selected>(4级)省市区镇</option>
 			</select>
+			<label><input type="radio" name="AreaFormatFullName" value="0" checked>使用精简名称(name)</label>
+			<label><input type="radio" name="AreaFormatFullName" value="1">使用完整名称(ext_name)</label>
 			
 			<hr>
 			<div>
@@ -664,10 +752,13 @@ a{text-decoration: none;}
 			</div>
 			
 			<hr/>
-			<input class="AreaFormat_Btn" type="button" value="导出为自定义" exec="FormatClick,user">
-			<div class="AreaFormatA">
-				自行修改源码实现UserFormat方法，导出自己想要的格式。<a href="https://xiangyuecn.gitee.io/recorder/assets/%E5%B7%A5%E5%85%B7-%E4%BB%A3%E7%A0%81%E8%BF%90%E8%A1%8C%E5%92%8C%E9%9D%99%E6%80%81%E5%88%86%E5%8F%91Runtime.html#sha1=6233F3820CD26E477DE2721DB0D2F31374D58645&shareCode=v1_LypAUnVudGltZSBNZXRhQCoqIOOAikFyZWFDaXR55a-85Ye65Li66Ieq5a6a5LmJ56S65L6L44CLCkDmupDnoIHmoIfpopgoVGl0bGUp77yaQXJlYUNpdHnlr7zlh7rkuLroh6rlrprkuYnnpLrkvosKQOS9nOiAhShBdXRob3Ip77ya6auY5Z2a5p6cCkDniYjmnKwoVmVyKe-8mjEuMQpA5pe26Ze077yaMjAyMC8xMC8xIOS4i-WNiDg6NDY6NTAKQOaPj-i_sChEZXNjKe-8mmBgYCLkvr_kuo7lv6vpgJ_kuIrmiYvlr7zlh7pBcmVhQ2l0eS1Kc1NwaWRlci1TdGF0c0dvduW6k-eahOaVsOaNruS4uuiHquW3semcgOimgeeahOagvOW8j--8jOi_meS4quekuuS-i-WvvOWHuuagvOW8j-S4uu-8mlt7aWQ6IiIsbmFtZToiIizmiYDmnInlrZfmrrUuLi4sY2hpbGRzOlsuLi5dfSwuLi5dImBgYAotLS0tLS0tLS0tLQpA5YWs6ZKl5oyH5pWwKFJTQV9QdWJsaWNfRXhwb25lbnQp77yaQVFBQgpA5qih5pWwKFJTQV9Nb2R1bHVzKe-8mnBpbXZER2JBZnhwUGZ4ZytOU0x3UjdVdnY5SEFCWkFBUU8rNDhqUWhhbS9DOXRHL0xvMnI0OHFGcnNhMGhDSXVrNVQ3MDJaRVM1di9OVFI0Rm5XKzhkaXIzZGd5WjJSQzNXSUhydEFmOU5PS1ZYMFlvdTFLb1JrcXZhZG5EaGZscUJRNVdQT1pZV1ltaDBYQURwMkp2UzliSDRpRVlja0xncUVaMHlsVlAwVT0KQOiupOivgeS_oeaBryhSU0FfVHJ1c3Qp77yaYGBgInsiVmVyIjoiMS4wIiwiVGltZSI6IjE1Njg0NjQxOTg2NTgiLCJSb290IjoiRzAxIiwiTmFtZSI6IumrmOWdmuaenCIsIlRydXN0IjoicUx6cVF5OS9EVEtsZWhPVldJdFFhZEFZRDlpRTBMU3NHcGM5N0d1SWg5WE1reHdSRTQvdTYraWVrUE1SSHAxclZIOExsNS9tb3ZOYjJWeWFPU2FUM0hCWldhNWFqQWw3UlV1c2tKRE9maXBDZGVVYTVjNUs0TGJzMjk0SWRSV0tzaVF2Mm01YXFxNzI3VTh0Z1BxQUIvY0pXN2l0djlLa2tqczVyaWhLckdzPSJ9ImBgYApA562-5ZCNKFJTQV9TaWduKe-8mk80Tmt2RlgrYndTZVpHdlM4V1FHYmRPRzlXOHRBQXNTYlBMaUcyaVNCUVhzZE5tTlhZTHFyekN5YmxVdEZwNWQ3bkJraUlkejNpRm9ySzVaUVdnT1dreTlaNnlNdGxOMVJGWFRHcituSEJ3ajNKdUh5WTJHbEkyUFBBSXVlTnJPWnkwZkk4SDh0c1VNSGp5L2JPTzA1YXhaOWJEZWg2a3BadDhkRUFlTnowVT0KKipAUnVudGltZUAqLwoKCi8qKioq5a-85Ye655qEanNvbiBrZXnphY3nva4qKioqLwp2YXIgU2V0dGluZ3M9ewoJSUQ6ImlkIgoJLElETWluTGVuOjIgLy9pZOacgOWwkeimgei_meS5iOmVv--8jOWPluWAvDLvvIw077yMNu-8jOWwvemHj-S4jeimgeiwg-aVtO-8jOWboOS4uumDqOWIhuWfjuW4guayoeacieS4i-e6p--8jOaVsOaNruS4rea3u-WKoOS6hjAw57uT5bC-55qESUTkvZzkuLrkuIvnuqfvvIzlm6DmraTmgaLlpI025L2N5pe25bCx5Lya5Yay56qB44CC5aaC6L-H6LCD5pW077yM55Sf5oiQ55qE5pWw5o2u6ZyA6KaB6Ieq6KGM5aSE55CG5Yay56qBSUQKCQoJLy_lpoLmnpzorr7kuLrnqbrvvIzkvJrlsIbmiYDmnInln47luILlsZXlvIDliLDmlbDnu4TlhoXvvIzkuI3ov5vooYzkuIrkuIvnuqfltYzlpZcKCSxDaGlsZHM6ImNoaWxkcyIKCQoJLy_ku6XkuIvlrZfmrrXlpoLmnpzorr7kuLrnqbrvvIzlr7nlupTlrZfmrrXlsLHkuI3mt7vliqDliLDnu5PmnpzkuK0KCSxwaWQ6InBpZCIKCSxkZWVwOiJkZWVwIgoJLG5hbWU6Im5hbWUiCgkscGlueWluOiJwaW55aW4iCgkscGlueWluX3ByZWZpeDoicGlueWluX3ByZWZpeCIKCSxleHRfaWQ6ImV4dF9pZCIKCSxleHRfbmFtZToiZXh0X25hbWUiCn07CgovKioqKioqVXNlckZvcm1hdOWHveaVsOWunueOsCoqKioqKi8KdmFyIHVzZXJGb3JtYXQ9ZnVuY3Rpb24obGlzdCxtYXBwaW5nKXsKCS8vbGlzdOS4uuaJgOacieWfjuW4guW5s-mTuuWIl-ihqO-8jFt7aWQscGlkLGRlZXAsbmFtZSxwaW55aW5fcHJlZml4LHBpbnlpbixleHRfaWQsZXh0X25hbWUsY2hpbGQ6W119LC4uLl0KCS8vbWFwcGluZ-S4umlk5Z-O5biC5pig5bCE77yMMOe0ouW8leeahOaYr-ecgee6pzA6e2NoaWxkOltdfe-8jOWFtuS7luS4umlk77yae2lkLHBpZCxkZWVwLG5hbWUscGlueWluX3ByZWZpeCxwaW55aW4sZXh0X2lkLGV4dF9uYW1lLGNoaWxkOltdfQoJCgl2YXIgZXhlYz1mdW5jdGlvbihvYmosZGlzdCl7CgkJaWYoIW9iai5jaGlsZHMubGVuZ3RoKXsKCQkJcmV0dXJuOwoJCX07CgkJZm9yKHZhciBpPTA7aTxvYmouY2hpbGRzLmxlbmd0aDtpKyspewoJCQl2YXIgaXRtPW9iai5jaGlsZHNbaV07CgkJCXZhciBvPXt9OwoJCQlkaXN0LnB1c2gobyk7CgkJCQoJCQl2YXIgaWQ9KGl0bS5pZCsiIikucmVwbGFjZSgvKDAwMHwwMDAwMDB8MDAwMDAwMDB8MDAwMDAwMDAwMCkkLywiIik7CgkJCW9bU2V0dGluZ3MuSURdPWlkLmxlbmd0aDxTZXR0aW5ncy5JRE1pbkxlbj8oaWQrIjAwMDAwMDAwMDAwMCIpLnN1YnN0cigwLFNldHRpbmdzLklETWluTGVuKTppZDsKCQkJCgkJCXZhciBhZGQ9ZnVuY3Rpb24oa2V5KXsKCQkJCXZhciBzZXRLZXk9U2V0dGluZ3Nba2V5XTsKCQkJCWlmKHNldEtleSl7CgkJCQkJb1tzZXRLZXldPWl0bVtrZXldOwoJCQkJfTsKCQkJfTsKCQkJYWRkKCJwaWQiKTsKCQkJYWRkKCJkZWVwIik7CgkJCWFkZCgibmFtZSIpOwoJCQlhZGQoInBpbnlpbiIpOwoJCQlhZGQoInBpbnlpbl9wcmVmaXgiKTsKCQkJYWRkKCJleHRfaWQiKTsKCQkJYWRkKCJleHRfbmFtZSIpOwoJCQkKCQkJaWYoU2V0dGluZ3MuQ2hpbGRzKXsKCQkJCXZhciBjPWV4ZWMoaXRtLFtdKTsKCQkJCWlmKGMpewoJCQkJCW9bU2V0dGluZ3MuQ2hpbGRzXT1jOwoJCQkJfTsKCQkJfWVsc2V7CgkJCQlleGVjKGl0bSxkaXN0KTsKCQkJfTsKCQl9OwoJCXJldHVybiBkaXN0OwoJfTsKCXZhciBkYXRhPWV4ZWMobWFwcGluZ1swXSxbXSk7CgkKCXZhciBjb2RlPUpTT04uc3RyaW5naWZ5KGRhdGEsbnVsbCwiXHQiKTsKCXZhciBjb2RlTGVuPW5ldyBCbG9iKFtjb2RlXSx7InR5cGUiOiJ0ZXh0L3BsYWluIn0pLnNpemUrMzsKCQoJcmV0dXJuIHNjb3BlV2luLlJlc3VsdCgiIixjb2RlLCJhcmVhX2Zvcm1hdF91c2VyLmpzb24iLGAke2NvZGVMZW595a2X6IqCYCk7Cn07CgoKLyoqKioqKueVjOmdouazqOWFpSoqKioqKi8KJCgiLmFyZWFDaXR5IikucmVtb3ZlKCk7ClJ1bnRpbWUuTG9nKCc8aWZyYW1lIGNsYXNzPSJhcmVhQ2l0eSIgc3R5bGU9IndpZHRoOjEwMDBweDtoZWlnaHQ6NTAwcHgiIHNyYz0iaHR0cHM6Ly94aWFuZ3l1ZWNuLmdpdGVlLmlvL2FyZWFjaXR5LWpzc3BpZGVyLXN0YXRzZ292LyI-PC9pZnJhbWU-Jyk7CnZhciBzY29wZVdpbjsKJCgiLmFyZWFDaXR5IikuYmluZCgibG9hZCIsZnVuY3Rpb24oKXsKCXNjb3BlV2luPSQoIi5hcmVhQ2l0eSIpWzBdLmNvbnRlbnRXaW5kb3c7CglzY29wZVdpbi5Vc2VyRm9ybWF0PXVzZXJGb3JtYXQ7CglSdW50aW1lLkxvZygiVXNlckZvcm1hdOW3suazqOWFpe-8jOWPr-S7peeCueWHu-WvvOWHuuS4uuiHquWumuS5ieaMiemSruS6hiIsMik7Cn0pOw.." target="_blank">在线编辑UserFormat源码>></a>
+			<div>
+				<textarea class="AreaFormatUserFormatIn" style="width:390px;height:160px"
+				placeholder="">${UserFormat.toString().replace(/\t/g,'    ')}</textarea>
 			</div>
+			<input class="AreaFormat_Btn" type="button" value="导出为自定义" exec="FormatClick,user">
+			<div>自行修改源码实现UserFormat方法，导出自己想要的格式</div>
+			<div>代码框内默认已实现的导出格式为：[{id:123,name:"省名",所有字段...,childs:[ 所有子级... ]}]</div>
 		</div>
 		<div style="flex: 1;"></div>
 	</div>
@@ -696,5 +787,28 @@ elem.addEventListener("click",function(e){
 		window[arr[0]](arr[1]);
 	};
 });
+
+el(".AreaFormatLevel").onchange=function(){
+	TestReView("已切换数据级别");
+};
+var arr=document.querySelectorAll("input[name=AreaFormatFullName]");
+for(var i=0;i<arr.length;i++){
+	arr[i].onclick=function(){ TestReView("已切精简/完整名称"); }
+};
+window.TestReView=function(topHtml){
+	var input=el(".AreaFormatInput");
+	FormatLog((topHtml||"")+`
+		<hr><div>输入框中本来的提示信息：</div>
+		<pre>${input.placeholder}</pre>
+		
+		<hr><div class='initTest1'></div>
+		<hr><div class='initTest2'></div>
+		<hr><div class='initTest3'></div>
+	`);
+	
+	TestClick("js",".initTest1");
+	TestClick("jsonObject",".initTest2",460204);//选中 三亚 天涯
+	TestClick("jsonArray",".initTest3",11);//选中 北京
+};
 
 })();

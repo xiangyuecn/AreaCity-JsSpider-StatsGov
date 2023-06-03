@@ -20,7 +20,7 @@ $(".dropChoiceBox").html(`
 	</div>
 	<div style="padding:0 0 0 10px">
 		<div style="font-size:12px">
-			保留已绘制的：<input class="dropChoiceAppend" type="checkbox" checked>
+			保留已绘制的：<input class="dropChoiceAppend" type="checkbox">
 			文件编码：<input class="dropChoiceEncode" style="width:80px" value="utf-8">
 		</div>
 		<div style="margin-top:3px">坐标系：
@@ -724,7 +724,7 @@ $(function(){
 			,lineNumbers:true
 			,lineWrapping:true
 		});
-	window.CodeEditJs=edit;
+	window.CodeEditCs=edit;
 	edit.setSize(w+"px","auto");
 
 	var CS_Code=`

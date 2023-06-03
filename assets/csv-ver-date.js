@@ -19,7 +19,7 @@ var GeoTips='使用'+Url("转换工具软件",UrlTool)+'可以导入数据库、
 var CsvPubDate=window.CsvPubDate={
 	Level4:{
 		name:"省市区镇四级行政区划数据"
-		,desc:'['+Url("下载",UrlRoot+"assets/download.html")+']['+Url("在线预览",UrlRoot,"#tools")+'][<span style="color:#0a0">免费开源</span>] 文件大小：3MB+，ok_data_level3.csv 200KB+；包含字段：城市id、城市name、上级pid、拼音；支持'+Url("在线转换",UrlRoot,"#tools")+'成三级、四级联动JavaScript代码，使用'+Url("转换工具软件",UrlTool)+'可以导入数据库、转换成sql。本数据源自： 统计局、民政部、腾讯地图行政区划、高德地图行政区划，从这四大平台整合。'
+		,desc:'['+Url("下载",UrlRoot+"assets/download.html")+']['+Url("在线预览",UrlRoot,"#tools")+'][<span style="color:#0a0">免费开源</span>] 文件大小：3MB+，ok_data_level3.csv 200KB+；包含字段：城市id、城市name、上级pid、拼音；支持'+Url("在线转换",UrlRoot,"#tools")+'成JSON、多级联动JavaScript代码，使用'+Url("转换工具软件",UrlTool)+'可以导入数据库、转换成sql。本数据源自： 统计局、民政部、腾讯地图行政区划、高德地图行政区划，从这四大平台整合。'
 		,file:"ok_data_level4.csv"
 		,version:OpenVer
 		,date:OpenDate
@@ -192,7 +192,7 @@ if(set.geo4){
 
 
 window.QQGroupList={
-	List:[{name:"①群",qq:"484560085"},{name:"②群",qq:"626141661"}]
+	List:[{name:"①群",qq:"484560085"},{name:"②群",qq:"626141661"},{name:"③群",qq:"346847528"}]
 	,HTML_i:function(cls){
 		var html=[];
 		for(var i=0;i<this.List.length;i++){

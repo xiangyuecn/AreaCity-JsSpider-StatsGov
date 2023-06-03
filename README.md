@@ -10,19 +10,18 @@
 
 ## 数据下载
 
-当前最新版本：**2022.230302.230403版**，数据在 **src/采集到的数据** 文件夹内，此数据更新于2023-04-03，整合了 `统计局2022-12-29`、`民政部2022-03-21`、`腾讯地图行政区划2023-03-02`、`高德地图行政区划采集当天` 数据。
+当前最新版本：**2022.230302.230403版**，更新于2023-04-03，整合了 `统计局2022-12-29`、`民政部2022-03-21`、`腾讯地图行政区划2023-03-02`、`高德地图行政区划采集当天` 数据。
 
 文件名|大小|描述|下载地址
 :--:|:--:|--|:-:
-**ok_data_level3.csv**|230KB|【**区划三级**】省市区 三级行政区划 数据 <br> <sub>- 支持在线预览、生成多级联动js代码，可用转换工具导入数据库、转成sql</sub>|[线路一](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases/download/2022.230302.230403/ok_data_level3-4.csv.7z) / [线路二](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_data_level3-4.csv.7z)
-**ok_data_level4.csv**|3MB|【**区划四级**】省市区乡镇 四级行政区划 数据 <br> <sub>- 支持在线预览、生成多级联动js代码，可用转换工具导入数据库、转成sql</sub>|[线路一](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases/download/2022.230302.230403/ok_data_level3-4.csv.7z) / [线路二](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_data_level3-4.csv.7z)
-**ok_geo.csv.7z**|13MB|【**边界三级**】省市区 坐标和边界 数据，解压后130M+ <br> <sub>- 支持在线预览，可用转换工具转成shp、geojson、sql格式、转换坐标系</sub> <br> <sub>- 使用本库开源的高性能查询工具，1秒可查1万个以上坐标对应的城市信息</sub>|[线路一](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases/download/2022.230302.230403/ok_geo.csv.7z) / [线路二](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_geo.csv.7z)
+**ok_data_level3.csv** <br> **ok_data_level4.csv** <br> <sub>（在一个7z压缩包内）</sub> <br>​ |230KB <br> 3MB <br>​ <br>​ |【**区划三级**】省市区 三级行政区划 数据 <br> 【**区划四级**】省市区乡镇 四级行政区划 数据 <br> <sub>- 支持在线预览，在线生成JSON、多级联动js代码</sub> <br> <sub>- 可用转换工具导入数据库、转成sql</sub>|[线路一](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases/download/2022.230302.230403/ok_data_level3-4.csv.7z) / [线路二](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases/download/2022.230302.230403/ok_data_level3-4.csv.7z)
+**ok_geo.csv.7z**|13MB|【**边界三级**】省市区 坐标和边界 数据，解压后130M+ <br> <sub>- 支持在线预览，可用转换工具转成shp、geojson、sql格式、转换坐标系</sub> <br> <sub>- 使用本库开源的高性能查询工具，1秒可查1万个以上坐标对应的城市信息</sub>|[线路一](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases/download/2022.230302.230403/ok_geo.csv.7z) / [线路二](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases/download/2022.230302.230403/ok_geo.csv.7z)
 **ok_geo4_*.csv** [AD]|109MB|【**边界四级**】乡镇级 坐标和边界 数据，导出后300M+ <br> <sub>- 付费数据、广告、闭源，支持在线预览，提供了部分免费数据供测试</sub>|[点此下载](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-level4.html#xz)
 
 
 
 
-> 如果上面线路一和线路二都无法下载：可以到 [Gitee Releases](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases) 下载，或到 [GitHub Releases](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases) 下载最新发布数据文件；也可直接打开 `src/采集到的数据` 文件夹内的文件来使用。
+> 如果上面线路一和线路二都无法下载：可以到 [Gitee Releases](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases) 下载，或到 [GitHub Releases](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases) 下载最新发布数据文件。
 
 > csv纯文本文件可以非常方便解析成其他格式；如果在使用csv文件过程中出现乱码、错乱等情况，需自行调对utf-8（带BOM）编码，文本限定符为`"`。
 > 
@@ -63,8 +62,8 @@
 [​](?)
 
 
-## 如何clone: Gitee镜像库加速
-由于仓库内的历史记录数据很大，所以直接clone会很慢的，加上`--depth 1`提取最新版的数据即可。
+## Git仓库和存档
+由于仓库内的历史记录数据可能会很大，可以加上`--depth 1`提取最新版的数据即可。
 ``` java
 //Gitee镜像仓库: 速度快
 git clone --depth 1 https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov.git
@@ -73,10 +72,14 @@ git clone --depth 1 https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov.git
 git clone --depth 1 https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov.git
 ```
 
+每当仓库增长到一定大小后，本仓库将会进行存档处理，同时将历史记录中的大文件进行清理，这将导致一些文件之前的历史丢失，请到存档仓库查阅更早的历史记录；
+2023年05月28日前历史存档：[GitHub](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov-bak-20230528) | [Gitee](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov-bak-20230528) 。
+
+
 
 ## 【QQ群】交流与支持
 
-欢迎加QQ群：①群 484560085、②群 626141661，纯小写口令：`areacity`
+欢迎加QQ群：①群 484560085、②群 626141661、③群 346847528，纯小写口令：`areacity`
 
 <img src="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/qq_group_484560085.png" width="220px">
 

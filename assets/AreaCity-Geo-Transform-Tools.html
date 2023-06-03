@@ -240,22 +240,22 @@ img{
 				<div style="margin-top:20px">
 					<i class="b"><span style="color:#0b1">[免费]【GEO三级】</span>省市区 坐标+边界范围</i>
 					(ok_geo.csv，13MB+压缩包 解压后130M+)：
-						<a class="giteeOKGeo" href="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_geo.csv.7z" target="_blank">下载线路一</a>
-						| <a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_geo.csv.7z" target="_blank">线路二</a> 。
+						<a class="downOKGeo" href="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases" target="_blank">下载线路一</a>
+						| <a class="downOKGeo" href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases" target="_blank">线路二</a> 。
 				</div>
 				
 				<div style="margin-top:20px">
 					<i class="b"><span style="color:#0b1">[免费]【四级】</span>省市区镇  4级行政区划数据</i>
 					(ok_data_level4.csv，3MB+)：
-						<a class="giteeOKData" href="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_data_level3-4.csv.7z" target="_blank">下载线路一</a>
-						| <a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_data_level3-4.csv.7z" target="_blank">线路二</a> 。
+						<a class="downOKData" href="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases" target="_blank">下载线路一</a>
+						| <a class="downOKData" href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases" target="_blank">线路二</a> 。
 				</div>
 				
 				<div style="margin-top:20px">
 					<i class="b"><span style="color:#0b1">[免费]【三级】</span>省市区 3级行政区划数据</i>
 					(ok_data_level3.csv，200KB+)：
-						<a class="giteeOKData" href="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_data_level3-4.csv.7z" target="_blank">下载线路一</a>
-						| <a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/src/采集到的数据/ok_data_level3-4.csv.7z" target="_blank">线路二</a> 。
+						<a class="downOKData" href="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases" target="_blank">下载线路一</a>
+						| <a class="downOKData" href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases" target="_blank">线路二</a> 。
 				</div>
 				
 			</div>
@@ -872,10 +872,10 @@ select id,ext_path,polygon from 【此处改成你的表名】 where ST_Intersec
 (function(){
 var setX=function(cls,url){
 	var els=document.querySelectorAll(cls);
-	for(var i=0;i<els.length;i++)els[i].setAttribute("href",url);
+	for(var i=0;i<els.length;i++)els[i].setAttribute("href",els[i].href+url);
 };
-setX(".giteeOKData","https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases/download/"+CsvPubDate.Level4.version+"/ok_data_level3-4.csv.7z");
-setX(".giteeOKGeo","https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases/download/"+CsvPubDate.Level4.version+"/ok_geo.csv.7z");
+setX(".downOKData",/*https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases/*/"/download/"+CsvPubDate.Level4.version+"/ok_data_level3-4.csv.7z");
+setX(".downOKGeo",/*https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases/*/"/download/"+CsvPubDate.Level4.version+"/ok_geo.csv.7z");
 })();
 </script>
 

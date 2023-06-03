@@ -453,7 +453,7 @@ var geoECharts=geoEChartsLib.Create({
 		if(isChoiceFile){
 			html.push('自定义数据源');
 		};
-		var tips="单击地图进入下一级"+(IsWidget?"":"，点击下载按钮保存png图片")+"，当前路径："+html.join(" > ");
+		var tips="单击地图进入下一级"+(IsWidget?"":'，点击下载按钮保存<span class="downImgType"></span>图片')+"，当前路径："+html.join(" > ");
 		
 		if(cur.level==3 && !/^(8|4420|4403)/.test(cur.id)){
 			var msg='当前是乡镇级别边界，为付费数据，购买后才可显示正常完整的数据。演示版只有最后一个乡镇【'+mapDatas[mapDatas.length-1].name+'】是最高80个采样数的粗略边界，其他的乡镇均限制为边界的外接矩形（4个坐标点）；可进入免费测试数据：深圳、中山、香港、澳门，无此限制。';
@@ -547,6 +547,7 @@ var geoECharts=geoEChartsLib.Create({
 		}
 	}
 	,onDraw:function(){
+		$(".downImgType").text(geoECharts.set.imgMode);
 		window.mapPointReview&&mapPointReview();
 	}
 });

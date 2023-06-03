@@ -52,6 +52,7 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 			,zoom:1 //显示缩放
 			,showLog:function(msg,color){console.log(msg)} //显示日志提示 color:1错误 2成功 其他普通
 			,showConfigEdit:true //是否显示配置编辑功能 下载、调色等
+			,imgMode:"png" //导出图片模式：png、svg，使用svg时echarts将使用svg模式渲染，默认png使用canvas模式渲染
 			
 			,onLoadBefore:NOOP /*边界数据加载开始前回调 fn(args,cacheData,loadProcess)
 					args: { 加载请求的参数
@@ -322,6 +323,16 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 				if(set.showConfigEdit)elem.appendChild(view);
 				
 				view.innerHTML=(
+'<div class="@c_imgMode" style="position:absolute;right:5px;top:5px;font-size:0">\
+<style>\
+.@c_imgModeChoice{ display:inline-block; width:45px; padding:2px 0; font-size:12px; text-align:center; cursor:pointer; color:#666; background:#f0f0f0;opacity:0.6; }\
+.@c_imgModeChoice:hover{ color:#06c; opacity:1; }\
+.@c_imgModeChoice.slc{ color:#fff; background:#06c; }\
+</style>\
+	<div class="@c_imgModeChoice @c_imgMode_png" style="border-radius:5px 0 0 5px;" title="ECharts使用canvas模式渲染，可保存png格式图片">PNG</div>\
+	<div class="@c_imgModeChoice @c_imgMode_svg" style="border-radius:0 5px 5px 0;" title="ECharts使用svg模式渲染，可保存svg格式图片">SVG</div>\
+</div>'+
+
 '<div class="@c" style="position:absolute;left:50px;bottom:4px;padding:5px 10px;border-radius:6px;font-size:12px;color:#06c;background:rgba(255,255,255,.6)">\
 <style>\
 .@c *{vertical-align: middle;}\
@@ -455,6 +466,17 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 				view.querySelector("."+cls+"More").style.display=more.checked?"block":"none";
 			};
 			more.onclick();
+			
+			var viewImgMode=function(key){
+				var mode=view.querySelector("."+cls+"_imgMode_"+key);
+				mode.onclick=function(){
+					set.imgMode=key;
+					viewImgMode("png"); viewImgMode("svg");
+					review("imgMode");
+				};
+				mode.className=mode.className.replace(/\s+slc\b/g,"")+(key==set.imgMode?" slc":"");
+			};
+			viewImgMode("png"); viewImgMode("svg");
 		}
 		
 		
@@ -522,7 +544,7 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 			if(chartView){
 				chartView.dispose();
 			}
-			chartView=echarts.init(boxView);
+			chartView=echarts.init(boxView,null,{renderer:set.imgMode=="svg"?"svg":"canvas"});
 			elem.chartView=chartView;
 			chartView.on("click",function(e){
 				console.log("map click",e);
@@ -567,13 +589,14 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 							color: config.txtColor
 							,fontSize: +config.txtSize
 							,textShadowColor: config.txtShadow
-							,textShadowBlur: Math.max(3,~~(+config.txtSize/6))
+							,textShadowBlur: config.txtShadow?Math.max(3,~~(+config.txtSize/6)):0
 						}
 					}
 					,emphasis:{//高亮样式
 						label: {
 							color: config.rndAreaColor?"#fff":"#fa0"
 							,textShadowColor: "#000"
+							,textShadowBlur: Math.max(3,~~(+config.txtSize/6))
 						}
 						,itemStyle: {
 							areaColor: "#184cff",

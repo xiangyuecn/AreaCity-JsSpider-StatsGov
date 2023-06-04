@@ -113,6 +113,7 @@ var amapDifference={
 	
 	//标记QQ里确实不存在的，如果需要添加到qq中需lostAdd=true
 	//,632825:{lostName:"海西蒙古族藏族自治州直辖"}//qq统计局为632857大柴旦行政委员会
+	,440499:{lostName:"澳门大学横琴校区(由澳门实施管辖)"}
 	,460301:{lostName:"西沙区",lostAdd:true}//新设区
 	,460302:{lostName:"南沙区",lostAdd:true}//新设区
 	

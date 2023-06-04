@@ -2,7 +2,7 @@
 获取民政部信息辅助补全
 
 在以下页面执行
-http://www.mca.gov.cn/article/sj/xzqh/中打开最新行政区划代码链接
+https://www.mca.gov.cn/n156/n186/index.html 中打开最新行政区划代码链接
 
 先加载jQuery
 var s=document.createElement("script");
@@ -19,7 +19,7 @@ document.body.append(s);
 jQuery;
 
 //如果民政部的数据比统计局的旧，就设为true，忽略民政部的数据，只生成结果文件
-var MCA_IsOld=true;
+var MCA_IsOld=false;
 
 var SaveName="Step1_2_Merge_MCA"
 var PrevSaveName="Step1_1_StatsGov";
@@ -78,7 +78,7 @@ var fixParent={
 };
 //mca原始数据处理
 var fixRawMCA={
-	350403:{name:"三元区", replaceAs:{code:"350404",name:"三元区"}}
+	//350403:{name:"三元区", replaceAs:{code:"350404",name:"三元区"}}
 };
 //人工修正数据，移除统计局的数据，mca新数据已撤销的市，统计局滞后
 var fixRemove={

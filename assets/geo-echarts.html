@@ -312,6 +312,9 @@ var Toast=function(msg,color){
 	$(".PageToast").css("background",color==1?"red":color==2?"#0b1":"#888")
 	.css("boxShadow","2px 2px 10px "+(color==1?"red":color==2?"#0b1":"#888"))
 };
+var Confirm=function(title,True,False){
+	PageModule.confirm(title,True,False)
+};
 </script>
 
 
@@ -508,10 +511,15 @@ var geoECharts=geoEChartsLib.Create({
 			for(var k in texts){(function(){
 				var o=texts[k];
 				o.pols.sort(function(a,b){return b.size-a.size});
+				var center=o.pols[0].pos,dCP=o.data.cp;//指定了名字显示坐标
+				if(dCP&&dCP.splice&&+dCP[0]&&+dCP[1]){
+					center=new AMap.LngLat(+dCP[0],+dCP[1]);
+				}
 				var txt=new AMap.Text({
 					map:map
+					,bubble:true//事件冒泡
 					,text:o.name
-					,position:o.pols[0].pos
+					,position:center
 					,style:{
 						color:"#06c"
 						,border:"none"
@@ -521,15 +529,19 @@ var geoECharts=geoEChartsLib.Create({
 					,extData:o.data
 				});
 				txt.on("click",function(e){
+					if(window.mapDistanceIsOpen)return;
 					var o=e.target.getExtData();
 					console.log("amap click",o);
-					if(o.isTemp){
+					if(o.clickFn){
+						window[o.clickFn](o);
+					}else if(o.isTemp){
 						Toast("临时数据，不支持进入下级");
 					}else{
 						geoECharts.load(o);
 					}
 				});
 				txt.on('mouseover',function(){
+					if(window.mapDistanceIsOpen)return;
 					txt.setStyle({color:"#fa0"});
 					for(var i=0;i<o.pols.length&&i<10;i++){//只高亮前面最大的几个图形 其他小的忽略 提高性能
 						o.pols[i].pol.setOptions({fillColor:"#0091ea",fillOpacity: 1});

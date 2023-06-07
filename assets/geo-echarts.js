@@ -550,7 +550,9 @@ geoECharts.load(); //开始加载数据，加载成功后会显示图形
 				console.log("map click",e);
 				var o=e.data;
 				if(e.seriesIndex==0){//只处理map图层的点击，或e.componentType=="geo"
-					if(o.isTemp){
+					if(o.clickFn){
+						window[o.clickFn](o);
+					}else if(o.isTemp){
 						set.showLog("临时数据，不支持进入下级");
 					}else{
 						This.load({id:o.id, level:o.level, name:o.name});

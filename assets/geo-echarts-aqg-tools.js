@@ -36,7 +36,8 @@ var actions=[
 	}
 	,{
 		name:"【QueryPoint】查询坐标点所在的城市边界"
-		,desc:'请在查询参数中填写坐标，格式：<i class="i">lng lat</i>（允许有逗号）；比如：<i class="i">114.044346 22.691963</i>，为广东省 深圳市 龙华区；请注意：坐标系必须和边界数据的坐标系一致'
+		,desc:'请在查询参数中填写坐标，格式：<i class="i">lng lat</i>（允许有逗号）；比如：<i class="i">114.044346 22.691963</i>，为广东省 深圳市 龙华区；请注意：坐标系必须和边界数据的坐标系一致；'
+			+'<br>坐标后面可以加一个<i class="i">tolerance</i>设置，比如：<i class="i">121.993491 29.524288 tolerance=2500</i>，为浙江省 宁波市 象山县，但坐标点位于海岸线外侧，不在任何边界内，需加tolerance才能查出；tolerance设置距离范围容差值，单位米，比如2500相当于一个以此坐标为中心点、半径为2.5km的圆形范围；默认0不设置，-1不限制距离；当坐标位于界线外侧（如海岸线、境界线）时QueryPoint方法将不会有边界图形能够匹配包含此坐标（就算距离只相差1cm），设置tolerance后，会查询出在这个范围内和此坐标点距离最近的边界数据'
 		,exec:function(url,args){pointQuery(url+"queryPoint",args)}
 	}
 	,{
@@ -95,16 +96,13 @@ window.aqgToolsQueryClick=function(){
 
 
 var pointQuery=function(url,args){
-	var arr=args.split(/[,\s]+/);
-	var lng=NaN,lat=NaN;
-	if(arr.length==2){
-		lng=+arr[0];lat=+arr[1];
-	}
+	var m=/^\s*([\d\.]+)[\s,]+([\d\.]+)(?:[\s,]+tolerance=([+-]?\d+))?\s*$/i.exec(args)||[];
+	var lng=+m[1],lat=+m[2],tolerance=+m[3]||0;
 	if(isNaN(lng) || isNaN(lat)){
 		log("坐标参数格式不正确",1);
 		return;
 	}
-	url+="?lng="+lng+"&lat="+lat+"&returnWKTKey=polygon";
+	url+="?lng="+lng+"&lat="+lat+"&tolerance="+tolerance+"&returnWKTKey=polygon";
 	var t1=Date.now();
 	geoEChartsLib.Post(url,{},function(data){
 		mapPointAdd("查询坐标点",lng,lat);

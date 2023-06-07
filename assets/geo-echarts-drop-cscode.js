@@ -117,6 +117,7 @@ var drawMap=function(){
 			id:id
 			,name:name
 			,isTemp:true
+			,clickFn:prop.clickFn
 		};
 		prop.name=name;
 		
@@ -285,6 +286,32 @@ var readChoiceWKT=function(txt){
 	
 	drawMap();
 };
+window.dropChoiceWKT_drawOne=function(name,wkt){
+	choiceID++; nameKey="name";
+	var raw={
+		id:(choiceID*-1e8)+choiceFeatures.length
+	};raw[nameKey]=name;
+	var prop={
+		isTemp:true
+		,clickFn:"dropChoiceWKT_drawOneClick"
+		,id:raw.id
+		,raw:raw
+	};
+	
+	var feature=geoEChartsLib.WKT2Feature(prop,wkt);
+	choiceFeatures.push(feature);
+	drawMap();
+};
+window.dropChoiceWKT_drawOneClick=function(prop){
+	Confirm("确定要删除这个图形吗？",function(){
+		for(var i=0;i<choiceFeatures.length;i++){
+			if(choiceFeatures[i].properties.id==prop.id){
+				choiceFeatures.splice(i,1); break;
+			}
+		}
+		drawMap();
+	});
+};
 
 
 
@@ -305,7 +332,7 @@ var readChoiceFile=function(files){
 			var msg="已处理完所有文件，共"+choiceFeatures.length+"个边界、"+mapPointList.length+"个点"
 				+(errCount?"，有"+errCount+"个文件处理出错":"")
 				+"。";
-			log(msg,errCount?1:2);
+			log(msg+'<span style="color:#999">小提示：可通过修改json文件内边界数据属性的cp字段来指定名字显示坐标位置，例如："cp":[114.321, 30.567]。</span>',errCount?1:2);
 			Toast(msg,errCount?1:2);
 			
 			drawMap();
@@ -343,6 +370,12 @@ var readChoiceFile=function(files){
 							,id:(fileID*-1e8)+choiceFeatures.length
 							,raw:prop
 						};
+						var dCP=prop.cp;//指定了名字显示坐标
+						if(dCP&&dCP.splice&&+dCP[0]&&+dCP[1]){
+							dCP=[+dCP[0],+dCP[1]];
+							translateGCS(dCP);
+							o.properties.cp=dCP;
+						}
 					}else if(geom.type=="Point"){
 						pointCount++;
 						translateGCSFeature(o);
@@ -395,6 +428,10 @@ $(".mapPointView").html(`
 		<input class="mapPointTxt" placeholder="单击高德地图|填：经度 纬度" style="width:170px;font-size:13px;height:16px;">
 		<span class="Btn BtnMin" onclick="mapMarkerShowClick()">标注</span>
 		<span class="Btn BtnMin mapPointClearBtn" onclick="mapPointClearClick()" style="display:none">清空</span>
+		
+		<span style="margin-left:20px"></span>
+		<span class="Btn BtnMin" onclick="mapDrawCircleClick()">画圆</span>
+		<span class="Btn BtnMin mapDistanceBtn" onclick="mapDistanceClick()">测距</span>
 	</div>
 	<div class=""></div>
 	<div class="FlexItem"></div>
@@ -408,20 +445,80 @@ window.map&&map.on("click",function(e){
 var log=function(msg,color){
 	$(".mapPointLogs").prepend('<div style="padding-left:25px;border-top: 1px solid #eee;color:'+(!color?"":color==1?"red":color==2?"#0b1":color)+'">'+msg+'</div>');
 };
-window.mapMarkerShowClick=function(){
-	var val=$(".mapPointTxt").val().trim();
-	if(!val){
-		return Toast("请填写坐标",1);
+window.mapDistanceClick=function(){
+	if(!window.map){  Toast("地图未准备好"); return; }
+	var pEnd=function(){
+		var obj=window.mapDistanceObj;
+		if(!obj){
+			window.mapDistanceIsOpen=false;
+			obj=window.mapDistanceObj=new AMap.RangingTool(map);
+			obj.on("end",function(){ mapDistanceIsOpen=true; pEnd(); });
+		}
+		var isOpen=mapDistanceIsOpen; mapDistanceIsOpen=!isOpen;
+		mapDistanceObj[isOpen?'turnOff':'turnOn']();
+		update();
+	};
+	var update=function(){
+		var isOpen=mapDistanceIsOpen;
+		$(".mapDistanceBtn").html(isOpen?'结束':'测距')
+			.removeClass("Btn_Red").addClass(isOpen?'Btn_Red':'');
+	};
+	if(!AMap.RangingTool){
+		Toast("测距插件加载中");
+		map.plugin(["AMap.RangingTool"],function(){
+			Toast("测距插件已加载，请点击地图进行测距",2);
+			pEnd();
+		});
+	}else{ pEnd(); }
+};
+window.mapDrawCircleClick=function(){
+	if(!window.map){  Toast("地图未准备好"); return; }
+	var o=getInPoint(); if(!o)return;
+	var lng=o.lng,lat=o.lat;
+	var txt=prompt("请输入圆的半径，和构成圆的坐标点数量","1000米 24点");
+	var m=/^\s*(\d+)米\s*(\d+)点\s*$/.exec(txt);
+	if(!m){ Toast("输入格式错误",1); return }
+	var radius=Math.max(1,+m[1]),pointCount=Math.max(3,+m[2]);
+	var Distance=function(lng1,lat1,lng2,lat2){
+		return new AMap.LngLat(lng1,lat1).distance(new AMap.LngLat(lng2,lat2));
 	}
+	
+	//球面坐标不会算，转换成三角坐标简单点，经度代表值大约：0.01≈1km 0.1≈10km 1≈100km 10≈1000km
+	var km=radius/1000;
+	var a=km<5?0.01 :km<50?0.1 :km<500?1 :10;
+	var b=Distance(lng, lat, lng+a, lat);
+	var c=Distance(lng, lat, lng, lat+a);
+	var rb=radius/b*a;
+	var rc=radius/c*a;
+	var arr=[];
+	var n=0,step=360.0/pointCount,N=360-step/2; //注意浮点数±0.000000001的差异
+	for(var i=0;n<N;i++,n+=step){
+		var x=lng+rb*Math.cos(n*Math.PI/180);
+		var y=lat+rc*Math.sin(n*Math.PI/180);
+		arr[i]=x+" "+y;
+	}
+	arr.push(arr[0]);
+	var wkt="POLYGON(("+arr.join(",")+"))";
+	console.log("已构造一个圆形："+lng+" "+lat,radius+"米 "+pointCount+"点",arr,wkt);
+	
+	dropChoiceWKT_drawOne((radius>5000?+(radius/1000).toFixed(0)+"千":radius)+"米",wkt);
+	Toast("已绘制，点击这个圆可删除",2);
+};
+var getInPoint=function(){
+	var val=$(".mapPointTxt").val().trim();
+	if(!val){ Toast("请填写坐标",1); return }
 	var m=/^([\d\.]+)[^\d]+([\d\.]+)$/.exec(val)||[];
 	var lng=+m[1]||0,lat=+m[2]||0;
-	if(!lng || !lat){
-		return Toast("请正确填写坐标",1);
-	}
+	if(!lng || !lat){ Toast("请正确填写坐标",1); return }
 	if(lat>lng){
 		var v=lng;lng=lat;lat=v;
 		log("已交换经纬度顺序","#fa0");
 	};
+	return {lng:lng,lat:lat};
+};
+window.mapMarkerShowClick=function(){
+	var o=getInPoint(); if(!o)return;
+	var lng=o.lng,lat=o.lat;
 	var gpsObj=PointConvert.gcj_encrypt(lat,lng);
 	var bd09Obj=PointConvert.bd_decrypt(lat,lng);
 	
@@ -456,7 +553,7 @@ var markerList=[],tagIdx=0;
 var addMarker=function(arr, pos, name, color){
 	var m={};
 	if(window.map){
-		m=new AMap.Marker({ position: pos,
+		m=new AMap.Marker({ position: pos, bubble:true,//事件冒泡
 			label:name?{
 				offset: new AMap.Pixel(2, -5), direction: "right",
 				content: '<div style="padding:3px 5px;border-radius:4px;color:#fff;background:'+color+'">'+name+'</div>'

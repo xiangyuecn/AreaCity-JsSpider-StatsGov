@@ -8,8 +8,7 @@ var getPathFn=function(fpath,b64){
 	var savePath="";
 	return function(){
 		if(savePath)return savePath;
-		var config=ParseObject(AppCmds.config());
-		var path=config.AppRoot+fpath;
+		var path="C:/Windows/TEMP/AreaCity-Geo-Transform/vfc/"+fpath; //路径中不能有中文，放到系统临时目录内
 		
 		var write=AppCmds.openFileWriteRes("AutoDir:"+path);
 		AppCmds.fileWrite(write,b64,"BASE64");

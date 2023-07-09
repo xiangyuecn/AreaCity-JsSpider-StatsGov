@@ -301,6 +301,7 @@ select,select option{
 	<option value=""></option>
 	<option value="">==== 工具集 ====</option>
 	<option value="custom_sql_config">[插件] 通用自定义SQL配置（任意数据库适配）</option>
+	<option value="vector_file_format_convert">[转换] 文件格式批量互转 SHP|JSON|KML|GML|……</option>
 	<option value="geojson_level_split">[拆分] GeoJSON 按省市区将下级拆分到多个文件</option>
 	<option value="geojson_merge">[合并] GeoJSON 多个文件合并成一个文件</option>
 	
@@ -442,6 +443,7 @@ window.Runtime={
 window.onerror=function(message, url, lineNo, columnNo, error){
 	//https://www.cnblogs.com/xianyulaodi/p/6201829.html
 	Runtime.Log('<span style="color:red">【Uncaught Error】'+message+'<pre>'+"at:"+lineNo+":"+columnNo+" url:"+url+"\n"+(error&&error.stack||"不能获得错误堆栈")+'</pre></span>',1);
+	AppCmds.showTips('【脚本错误】'+message+'\r\nat:'+lineNo+":"+columnNo+" url:"+url+"\r\n"+(error&&error.stack||"不能获得错误堆栈").replace(/\r?\n/g,"\r\n"),true);
 };
 })();
 </script>
@@ -692,6 +694,109 @@ Runtime.Log("脚本运行环境已准备好，每次修改脚本后需要点击�
 
 
 
+
+<script>
+function RandomKey(len){
+	var s=[];
+	for(var i=0;i<len;i++){
+		s.push(String.fromCharCode(Math.floor(Math.random()*26)+97));
+	};
+	return s.join("");
+};
+function ParseObject(str){
+	var val,err;
+	if(str && typeof(str)=="string"){
+		try{
+			val=JSON.parse(str);
+		}catch(e){
+			err=e;
+		};
+	};
+	ParseObject.e=err;
+	return val||{};
+};
+function ParseArray(str){
+	var val,err;
+	if(str && typeof(str)=="string"){
+		try{
+			val=JSON.parse(str);
+		}catch(e){
+			err=e;
+		};
+	};
+	ParseArray.e=err;
+	return val||[];
+};
+
+function FormatDate(date,type,sp){
+	if(typeof(type)=="string"){
+		type=FormatDate[type];
+	}
+	if(sp==null){
+		sp="-";
+	}
+	date=date==null?new Date():ParseDateObject(date)||new Date(Date1800);
+	var Y=date.getFullYear()
+		,mM=date.getMonth()+1
+		,M=("0"+mM).slice(-2)
+		,mD=date.getDate()
+		,D=("0"+mD).slice(-2)
+		,th=date.getHours()
+		,h=("0"+th).slice(-2)
+		,tm=date.getMinutes()
+		,m=("0"+tm).slice(-2)
+		,ts=date.getSeconds()
+		,s=("0"+ts).slice(-2)
+		,tS=date.getMilliseconds()
+		,S=("00"+tS).slice(-3)
+		,o=FormatDate;
+	switch(type){
+	case o.YMD:return Y+sp+M+sp+D;
+	case o.HM:return h+":"+m;
+	case o.YMDHMS:return Y+sp+M+sp+D+" "+h+":"+m+":"+s;
+	case o.YMDHM:return Y+sp+M+sp+D+" "+h+":"+m;
+	case o.NUM:return date.getTime();
+	default:return Y+sp+M+sp+D+" "+h+":"+m+":"+s+"."+S;
+	}
+}
+FormatDate.YMD=1;
+FormatDate.HM=5;
+FormatDate.YMDHMS=6;
+FormatDate.YMDHM=7;
+FormatDate.NUM=9;
+FormatDate.DEF=0;
+
+var Date1800=new Date(1800,6-1,1).getTime();
+function ParseDateObject(date){
+	if(typeof(date)=="number"){
+		return new Date(date);
+	}
+	if(!date){
+		return null;
+	}
+	if(!date.getFullYear){
+		if(/^(\d{4})[^\d]*(\d\d?)[^\d]*(\d\d?)[^\d]*(?:(\d\d?)[^\d]*(\d\d?)[^\d]*(?:(\d\d?)[^\d]*(\d{1,3})?)?)?$/.test(date+"")){//xx xx:12.456 火狐 IE更加不支持
+			date=new Date(
+				+RegExp.$1
+				,+RegExp.$2-1
+				,+RegExp.$3
+				
+				,+RegExp.$4||0
+				,+RegExp.$5||0
+				,+RegExp.$6||0
+				,+RegExp.$7||0
+			);
+		}else{
+			date=new Date(date+"");
+		}
+	}
+	try{
+		return date&&date.getFullYear()?date:null;
+	}catch(e){
+		return null;
+	}
+}
+</script>
 
 <script>
 (function(){

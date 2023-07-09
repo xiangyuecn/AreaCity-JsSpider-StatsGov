@@ -99,6 +99,9 @@ window.setTempl=function(type,isInit){
 		createV.push("通用WKT纯文本格式，绝大部分数据库都支持导入此SQL文件，包括SQLite");
 	}else if(type==2){
 		createV.push("Oracle数据库格式，请在Oracle中导入此SQL文件");
+		createV.push("	- 注意：Oracle的SDO_GEOMETRY必须提供一个SRID，不然会导致空间计算不准确甚至无法调用（包括SRID=0时），当前导出数据的SRID=4326（WGS84）；Oracle不支持任何EMPTY，只能用NULL代替");
+		createV.push("	- 查询一个坐标对应的城市SQL语句示例：");
+		createV.push("		select ${Field_ID},${Field_ExtPath},SDO_GEOMETRY.GET_WKT(polygon) as polygon from ${TableName} where SDO_ANYINTERACT(polygon,SDO_GEOMETRY('POINT (114.044346 22.691963)',4326))='TRUE';");
 	}else if(type==3){
 		createV.push("ST_GeomFromText兼容格式，适用于支持ST_GeomFromText函数的数据库，比如MySQL8+、PostgreSQL");
 	}else if(type==4){
@@ -119,6 +122,7 @@ window.setTempl=function(type,isInit){
 		createV.push("    select count(1) into num from user_tables where table_name = upper('${TableName}');");
 		createV.push("    if num > 0 then execute immediate 'drop table ${TableName}'; end if;");
 		createV.push('end;');
+		createV.push('/');
 	}else if(type==4){
 		//NOOP
 	}else{ return fail(); }
@@ -130,8 +134,8 @@ window.setTempl=function(type,isInit){
 		createV.push('    ${Field_Geo} text NOT NULL, //@ text为长文本类型，应当使用此数据库支持的最长的类型，比如mysql为longtext');
 		createV.push('    ${Field_Polygon} text NOT NULL');
 	}else if(type==2){
-		createV.push('    ${Field_Geo} SDO_GEOMETRY NOT NULL,');
-		createV.push('    ${Field_Polygon} SDO_GEOMETRY NOT NULL');
+		createV.push('    ${Field_Geo} SDO_GEOMETRY NULL,');
+		createV.push('    ${Field_Polygon} SDO_GEOMETRY NULL');
 	}else if(type==3){
 		createV.push('    ${Field_Geo} geometry NOT NULL,');
 		createV.push('    ${Field_Polygon} geometry NOT NULL');
@@ -150,8 +154,8 @@ window.setTempl=function(type,isInit){
 		insertV.push("'${Value_Geo|POINT EMPTY}',");
 		insertV.push("'${Value_Polygon|POLYGON EMPTY}'");
 	}else if(type==2){
-		insertV.push("SDO_GEOMETRY('${Value_Geo|POINT EMPTY}',0),");
-		insertV.push("SDO_GEOMETRY('${Value_Polygon|POLYGON EMPTY}',0)");
+		insertV.push("${Value_Geo|SDO_GEOMETRY('?',4326)|NULL},");
+		insertV.push("${Value_Polygon|SDO_GEOMETRY('?',4326)|NULL}");
 	}else if(type==3){
 		insertV.push("ST_GeomFromText('${Value_Geo|POINT EMPTY}',0),");
 		insertV.push("ST_GeomFromText('${Value_Polygon|POLYGON EMPTY}',0)");
@@ -160,8 +164,6 @@ window.setTempl=function(type,isInit){
 	}else{ return fail(); }
 	insertV.push(");");
 	insertV.push("\n\n//@ 这些字段值的顺序必须和创建表的字段顺序一致");
-	insertV.push("\n//@ OtherValues变量为：csv内更多要导出的非预定义字段值，数字和字符串两种类型，后面两个参数为对应字段的值格式，?为值的占位符");
-	insertV.push("\n//@ Value_Geo和Value_Polygon后面的参数为图形为空时的WKT字符串，比如mysql只有GEOMETRYCOLLECTION EMPTY");
 	
 	//csv格式单独重新弄一份
 	if(type==4){
@@ -178,9 +180,10 @@ window.setTempl=function(type,isInit){
 		
 		insertV.push('${Value_ID},${OtherValues|?|"?"},"${Value_ExtPath}","${Value_Geo|POINT EMPTY}","${Value_Polygon|POLYGON EMPTY}"');
 		insertV.push("\n\n//@ 这些字段值的顺序必须和表头的字段顺序一致");
-		insertV.push("\n//@ OtherValues变量为：更多要导出的非预定义字段值，数字和字符串两种类型，后面两个参数为对应字段的值格式，?为值的占位符");
-		insertV.push("\n//@ Value_Geo和Value_Polygon后面的参数为图形为空时的WKT字符串");
 	}
+	
+	insertV.push("\n//@ OtherValues变量为：更多要导出的非预定义字段值，数字和字符串两种类型，后面两个参数为对应字段的值格式，?为值的占位符");
+	insertV.push("\n//@ Value_Geo和Value_Polygon后面接一个参数时为图形为空时的WKT字符串，比如mysql只有GEOMETRYCOLLECTION EMPTY；接两个参数时为有值的格式和为空的格式，?为WKT字符串占位符");
 	
 	
 	
@@ -197,7 +200,7 @@ setTempl(1,1);
 
 //完成配置
 window.runClick=function(){
-	if(Runtime.VersionLess("1.3.230403")){
+	if(Runtime.VersionLess("1.3.230709")){
 		var tips="软件版本过低，请重新下载升级后再操作";
 		AppCmds.showTips(tips,true);Runtime.Log(tips,1);
 		return;

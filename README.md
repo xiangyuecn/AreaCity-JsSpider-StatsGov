@@ -10,12 +10,12 @@
 
 ## 数据下载
 
-当前最新版本：**2022.230423.230604版**，更新于2023-06-04，整合了 `统计局2022-12-29`、`民政部2023-04-23`、`腾讯地图行政区划2023-03-02`、`高德地图行政区划采集当天` 数据。
+当前最新版本：**2022.230704.230813版**，更新于2023-08-13，整合了 `统计局2022-12-29`、`民政部2023-04-23`、`腾讯地图行政区划2023-07-04`、`高德地图行政区划采集当天` 数据。
 
 文件名|大小|描述|下载地址
 :--:|:--:|--|:-:
-**ok_data_level3.csv** <br> **ok_data_level4.csv** <br> <sub>（在一个7z压缩包内）</sub> <br>​ |230KB <br> 3MB <br>​ <br>​ |【**区划三级**】省市区 三级行政区划 数据 <br> 【**区划四级**】省市区乡镇 四级行政区划 数据 <br> <sub>- 支持在线预览，在线生成JSON、多级联动js代码</sub> <br> <sub>- 可用转换工具导入数据库、转成sql</sub>|[线路一](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases/download/2022.230423.230604/ok_data_level3-4.csv.7z) / [线路二](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases/download/2022.230423.230604/ok_data_level3-4.csv.7z)
-**ok_geo.csv.7z**|13MB|【**边界三级**】省市区 坐标和边界 数据，解压后130M+ <br> <sub>- 支持在线预览，可用转换工具转成shp、geojson、sql格式、转换坐标系</sub> <br> <sub>- 使用本库开源的高性能查询工具，1秒可查1万个以上坐标对应的城市信息</sub>|[线路一](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases/download/2022.230423.230604/ok_geo.csv.7z) / [线路二](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases/download/2022.230423.230604/ok_geo.csv.7z)
+**ok_data_level3.csv** <br> **ok_data_level4.csv** <br> <sub>（在一个7z压缩包内）</sub> <br>​ |230KB <br> 3MB <br>​ <br>​ |【**区划三级**】省市区 三级行政区划 数据 <br> 【**区划四级**】省市区乡镇 四级行政区划 数据 <br> <sub>- 支持在线预览，在线生成JSON、多级联动js代码</sub> <br> <sub>- 可用转换工具导入数据库、转成sql</sub>|[线路一](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases/download/2022.230704.230813/ok_data_level3-4.csv.7z) / [线路二](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases/download/2022.230704.230813/ok_data_level3-4.csv.7z)
+**ok_geo.csv.7z**|13MB|【**边界三级**】省市区 坐标和边界 数据，解压后130M+ <br> <sub>- 支持在线预览，可用转换工具转成shp、geojson、sql格式、转换坐标系</sub> <br> <sub>- 使用本库开源的高性能查询工具，1秒可查1万个以上坐标对应的城市信息</sub>|[线路一](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases/download/2022.230704.230813/ok_geo.csv.7z) / [线路二](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases/download/2022.230704.230813/ok_geo.csv.7z)
 **ok_geo4_*.csv** [AD]|109MB|【**边界四级**】乡镇级 坐标和边界 数据，导出后300M+ <br> <sub>- 付费数据、广告、闭源，支持在线预览，提供了部分免费数据供测试</sub>|[点此下载](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-level4.html#xz)
 
 
@@ -94,7 +94,7 @@ git clone --depth 1 https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov.git
 
 - [国家统计局](http://www.stats.gov.cn/sj/tjbz/qhdm/) ：统计用区划和城乡划分代码，此数据比较齐全但是比较杂，并且数据是一年一更可能会存在滞后，需额外移除和处理开发区、经济区、高新区、国家级新区等区域；此数据源为省市区三级数据的主要数据源，乡镇级辅助数据源。
 
-- [民政部](http://www.mca.gov.cn/article/sj/xzqh/) ：行政区划代码，提供省市区三级数据，以前一月一更，2022年大半年没更新；为辅助数据源。
+- [民政部](https://www.mca.gov.cn/n156/n186/index.html) ：行政区划代码，提供省市区三级数据，以前一月一更，2022年大半年没更新；为辅助数据源。
 
 - [腾讯地图行政区划](https://lbs.qq.com/webservice_v1/guide-region.html)：提供省市区镇四级数据，更新比较频繁；为乡镇级主要数据源，省市区三级辅助数据源。
 
@@ -158,7 +158,7 @@ polygon|string|行政区域边界，高德地图`GCJ-02`火星坐标系。格式
 
 ## 数据更新日志
 
-- 2022.230423.230604版(更新时间: 2023-06-04)采集了4层，省、市、区、镇，来源：[统计局2022版数据](http://www.stats.gov.cn/sj/tjbz/tjyqhdmhcxhfdm/2022/index.html)；省市区3级合并了[民政部2023-04-23数据](https://www.mca.gov.cn/n156/n186/c110744/content.html)、[高德地图行政区域](https://lbs.amap.com/api/webservice/guide/api/district)、[腾讯地图行政区划v20230302](https://lbs.qq.com/webservice_v1/guide-region.html)数据；乡镇级采用腾讯地图行政区划作为主要数据，综合高德和统计局的乡镇级。采集高德省市区三级坐标和行政区域边界范围。
+- 2022.230704.230813版(更新时间: 2023-08-13)采集了4层，省、市、区、镇，来源：[统计局2022版数据](http://www.stats.gov.cn/sj/tjbz/tjyqhdmhcxhfdm/2022/index.html)；省市区3级合并了[民政部2023-04-23数据](https://www.mca.gov.cn/n156/n186/index.html)、[高德地图行政区域](https://lbs.amap.com/api/webservice/guide/api/district)、[腾讯地图行政区划v20230302](https://lbs.qq.com/webservice_v1/guide-region.html)数据；乡镇级采用腾讯地图行政区划作为主要数据，综合高德和统计局的乡镇级。采集高德省市区三级坐标和行政区域边界范围。
 - 2021.221019.221128版(更新时间: 2022-11-28)采集了4层，省、市、区、镇，来源：[统计局2021版数据](http://www.stats.gov.cn/sj/tjbz/tjyqhdmhcxhfdm/2021/index.html)；省市区3级合并了[民政部2022-03-21数据](http://www.mca.gov.cn/article/sj/xzqh/1980/202203/20220300040708.shtml)、[高德地图行政区域](https://lbs.amap.com/api/webservice/guide/api/district)、[腾讯地图行政区划v20221019](https://lbs.qq.com/webservice_v1/guide-region.html)数据；乡镇级采用腾讯地图行政区划作为主要数据，综合高德和统计局的乡镇级。采集高德省市区三级坐标和行政区域边界范围。
 - 2020.210510.1103版(2021)采集了4层，省、市、区、镇，来源：[统计局2020版数据](http://www.stats.gov.cn/sj/tjbz/tjyqhdmhcxhfdm/2020/index.html)；省市区3级合并了[民政部2021-05-10数据](http://www.mca.gov.cn/article/sj/xzqh/1980/202105/20210500033655.shtml)、[高德地图行政区域](https://lbs.amap.com/api/webservice/guide/api/district)、[腾讯地图行政区划v20211103](https://lbs.qq.com/webservice_v1/guide-region.html)数据；乡镇级采用腾讯地图行政区划作为主要数据，综合高德和统计局的乡镇级。采集高德省市区三级坐标和行政区域边界范围。
 - 2020.201120.0814版(2020)采集了4层，省、市、区、镇，来源：[统计局2020版数据](http://www.stats.gov.cn/sj/tjbz/tjyqhdmhcxhfdm/2020/index.html)；省市区3级合并了[民政部2020-11-20数据](http://www.mca.gov.cn/article/sj/xzqh/2020/202011/20201100030582.shtml)、[高德地图行政区域](https://lbs.amap.com/api/webservice/guide/api/district)、[腾讯地图行政区划v20200814](https://lbs.qq.com/webservice_v1/guide-region.html)数据；乡镇级采用腾讯地图行政区划作为主要数据，综合高德和统计局的乡镇级。采集高德省市区三级坐标和行政区域边界范围。
@@ -325,7 +325,7 @@ ECharts + 高德地图四级下钻：
 
 10. 数据中不包含大部分[行政管理区](https://baike.baidu.com/item/%E8%A1%8C%E6%94%BF%E7%AE%A1%E7%90%86%E5%8C%BA/17184852)，比如：雄安新区、天府新区、苏州工业园区等。
 
-11. 参考链接：[行政区划](https://baike.baidu.com/item/%E8%A1%8C%E6%94%BF%E5%8C%BA%E5%88%92/4655526)，[统计用区划代码和城乡划分代码编制规则](http://www.stats.gov.cn/xxgk/tjbz/gjtjbz/201310/t20131031_1758902.html)，[民政部发布的行政区划代码](http://www.mca.gov.cn/article/sj/xzqh/)。
+11. 参考链接：[行政区划](https://baike.baidu.com/item/%E8%A1%8C%E6%94%BF%E5%8C%BA%E5%88%92/4655526)，[统计用区划代码和城乡划分代码编制规则](http://www.stats.gov.cn/xxgk/tjbz/gjtjbz/201310/t20131031_1758902.html)，[民政部发布的行政区划代码](https://www.mca.gov.cn/n156/n186/index.html)。
 
 
 ## 为什么不直接用统计局的数据

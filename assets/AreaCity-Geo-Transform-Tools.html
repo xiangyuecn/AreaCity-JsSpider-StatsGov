@@ -435,7 +435,7 @@ img{
 					
 					<div style="padding-left:30px">
 						<div style="margin-top:20px">
-							<textarea style="width:90%;height:470px"
+							<textarea style="width:90%;height:480px"
 >-- 计算上下级之间差异超过1平方公里的数据
 drop table #tb2;select polygon.STArea()*10000 as a1,(select sum(t2.polygon.STArea()) from 【此处改成你的表名】 as t2 where t2.deep=t1.deep+1 and CHARINDEX(t1.ext_path, t2.ext_path)=1)*10000 as a2,* into #tb2 from 【此处改成你的表名】 as t1; select Round((a1-a2)/a1*100,2) as '%',a1-a2 as loss,* from #tb2 where deep<2 and a1-a2>1 order by [%] desc
 
@@ -456,7 +456,7 @@ select id,ext_path,polygon.STAsText() as polygon from 【此处改成你的表�
 select id,ext_path,ST_AsText(polygon) as polygon from 【此处改成你的表名】 where ST_Intersects(polygon,ST_GeomFromText('POINT(114.044346 22.691963)',0)) -- =1 可写可不写
 
 -- 查询一个坐标对应的城市 Oracle版
-select id,ext_path,SDO_GEOMETRY.GET_WKT(polygon) as polygon from 【此处改成你的表名】 where SDO_ANYINTERACT(polygon,SDO_GEOMETRY('POINT (114.044346 22.691963)',4326))='TRUE' -- Oracle需要提供一个SRID，工具导出Oracle版数据的SRID=4326（WGS84）
+select id,ext_path,polygon from 【此处改成你的表名】 where SDO_ANYINTERACT(polygon,SDO_GEOMETRY('POINT (114.044346 22.691963)'))='TRUE' -- Oracle似乎不要提供任何SRID，否则加不加索引查询结果都不准，工具导出Oracle版数据的SRID=NULL，导出的SQL文件结尾会进行索引创建，查询速度快100倍
 </textarea>
 						</div>
 					</div>
@@ -481,7 +481,7 @@ select id,ext_path,SDO_GEOMETRY.GET_WKT(polygon) as polygon from 【此处改成
 						用SQL查询空间类型字段时，需要用 ST_AsText() 方法转换成 WKT(Well Known Text) 文本，否则数据库可能会返回二进制数据不方便处理使用。
 						<div>[MySQL PgSQL] <i class="i">select id,ext_path,ST_AsText(polygon) as polygon from AreaCity_Geo where id=11</i></div>
 						<div>[MS SQL] <i class="i">select id,ext_path,polygon.STAsText() as polygon from AreaCity_Geo where id=11</i></div>
-						<div>[Oracle] <i class="i">select id,ext_path,SDO_GEOMETRY.GET_WKT(polygon) as polygon from AreaCity_Geo where id=11</i></div>
+						<div>[Oracle] <i class="i">select id,ext_path,SDO_GEOMETRY.GET_WKT(polygon) as polygon from AreaCity_Geo where id=11 --长文本支持太差，会报错</i></div>
 					</div>
 				</div>
 				
@@ -837,7 +837,9 @@ select id,ext_path,SDO_GEOMETRY.GET_WKT(polygon) as polygon from 【此处改成
 				；比如Intersects函数，表现为Polygon的最大外接矩形有包含就会作为匹配结果，这样就会无端多出很多不在边界内结果
 				，所以应当使用ST_Intersects来计算空间位置（5.6+开始支持），5.5及以下版本无解（只能升级？），ST_打头的都是精确计算，结果符合预期
 				<a href="https://dev.mysql.com/doc/refman/5.6/en/spatial-relation-functions-object-shapes.html" target="_blank">MySQL Doc</a>。</p>
-				<p style="word-break: break-all;">另外：MySQL的空间索引很难生效 <a href="https://dev.mysql.com/doc/refman/8.0/en/spatial-index-optimization.html" target="_blank">官方文档</a>，从而导致空间查询异常缓慢，可通过增加一个geometry类型的字段 polygon_envelope 来自建索引: <i class="i">update xxx set polygon_envelope=ST_Envelope(polygon)</i>，查询的时候先查 polygon_envelope ，然后再查 polygon 字段，速度就会快很多(10倍+) : <i class="i" style="white-space: normal;">select id,ext_path from xxx where 
+				<p>另外：当前Geometry采用SRID=0，不建议指定SRID，因为MySQL8.0+指定了SRID后坐标的经纬度顺序将完全不可控，比如SRID=4326（WGS84）会变成纬度在前经度在后，必须额外添加 <i class="i">options='axis-order=long-lat'</i> 参数纠正: <i class="i">ST_GeomFromText('POINT(114.044346 22.691963)',4326,'axis-order=long-lat')</i>  （包括ST_AsText也一样要加），难于理解和使用；</p>
+				<p>MySQL自带的空间索引限制太多 <a href="https://dev.mysql.com/doc/refman/8.0/en/spatial-index-optimization.html" target="_blank">官方文档</a>，必须非NULL字段、字段和数据必须显式的提供SRID（引入更多问题），目前测试结果并不理想，查询速度反而比不加索引还要慢；</p>
+				<p style="word-break: break-all;">鉴于MySQL的空间索引很难生效，从而导致空间查询异常缓慢，可通过增加一个geometry类型的字段 polygon_envelope 来自建索引: <i class="i">update xxx set polygon_envelope=ST_Envelope(polygon)</i>，查询的时候先查 polygon_envelope ，然后再查 polygon 字段，速度就会快很多(10倍+) : <i class="i" style="white-space: normal;">select id,ext_path from xxx where 
 		ST_Intersects(polygon_envelope,ST_GeomFromText('POINT(114.044346 22.691963)',0))=1
 		and ST_Intersects(polygon,ST_GeomFromText('POINT(114.044346 22.691963)',0))=1</i>；也可同时切换成MyISAM引擎，会比InnoDB引擎的空间查询快很多。</p>
 			</div>

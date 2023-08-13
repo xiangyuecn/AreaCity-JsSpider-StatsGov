@@ -225,12 +225,15 @@ function load(itm, next, _try){
 	});
 	if(isLoad2)return;
 	
-	//查询高德数据
+	//查询高德数据，卡住了就新打开页面处理验证码，再回来手动调用 ReloadItem() 重试
+	var reloadItemOK=false;
+	window.ReloadItem=function(){
 	new AMap.DistrictSearch({
 		level:itm.deep==0?"province":itm.deep==1?"city":"district"
 		,extensions:"all"
 		,subdistrict:0
 	}).search(paths,function(status,result){
+		if(reloadItemOK){ console.warn("重复进入ReloadItem"); return;} reloadItemOK=true;
 		var match=null;
 		var isNameNotMatch=false;
 		
@@ -302,6 +305,8 @@ function load(itm, next, _try){
 		
 		end();
 	});
+	};
+	ReloadItem();
 };
 
 var threadCount=0;

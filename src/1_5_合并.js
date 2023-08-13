@@ -90,6 +90,8 @@ var fixQQmapReplaceFill={
 	//同名保持住，mca是老的，配置上会打标识
 	//,350681:{name:"龙海市",newName:"龙海区"}
 	//,410381:{name:"偃师市",newName:"偃师区"}
+	,540422:{name:"米林县",newName:"米林市"}
+	,540530:{name:"错那县",newName:"错那市"}
 	
 	//移除已废弃的
 	,460321:{name:"西沙群岛",remove:true}

@@ -78,7 +78,7 @@ var appFixLineClick=function(){
 	alert("请先执行内置脚本 “"+$("option[value=fixline]").text()+"” 后，在来FixLine操作");
 };
 
-var LM="2023-04-02 13:36";
+var LM="2023-08-11 21:07";
 </script>
 
 <style>
@@ -401,7 +401,10 @@ window.Runtime={
 		$(".mainLog").html("");
 	}
 	,ToPre:function(obj, attr){
-		var val=JSON.stringify(obj,null,'    ')||"";
+		var val=obj;
+		if(typeof(obj)!="string"){
+			val=JSON.stringify(obj,null,'    ')||"";
+		}
 		val=val.replace(/&/g,"&amp;").replace(/</g,"&lt;");
 		return '<pre '+attr+'>'+val+'</pre>';
 	}
@@ -529,7 +532,14 @@ Runtime.LoadCode=function(key){
 			var rn=(/《(.+?)》/.exec(data)||[])[1]||"";
 			Runtime.Log("已加载《"+(rn||path)+"》脚本源码，点击应用后才会生效",2);
 			
-			document.documentElement.scrollTop=$(".yingyongBtn").offset().top-200;
+			var sTop=function(){
+				document.documentElement.scrollTop=$(".yingyongBtn").offset().top-200;
+			};
+			sTop();
+			setTimeout(function(){
+				edit.refresh();//强制再刷新一次，不然内容变短了底下可能会出现很高的空白
+				sTop();
+			});
 		}
 		,error:function(){
 			Runtime.Mask(false);

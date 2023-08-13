@@ -4,7 +4,7 @@
 更新ok_data_level*.csv、ok_geo*.csv后，需要同时更新这里的数据时间
 **************/
 (function(){
-var OpenVer="2022.230423.230604",OpenDate="2023-06-04";
+var OpenVer="2022.230704.230813",OpenDate="2023-08-13";
 
 var UrlRoot="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/";
 var UrlTool=UrlRoot+"assets/AreaCity-Geo-Transform-Tools.html";

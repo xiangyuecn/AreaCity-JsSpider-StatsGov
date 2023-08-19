@@ -456,7 +456,7 @@ select id,ext_path,polygon.STAsText() as polygon from 【此处改成你的表�
 select id,ext_path,ST_AsText(polygon) as polygon from 【此处改成你的表名】 where ST_Intersects(polygon,ST_GeomFromText('POINT(114.044346 22.691963)',0)) -- =1 可写可不写
 
 -- 查询一个坐标对应的城市 Oracle版
-select id,ext_path,polygon from 【此处改成你的表名】 where SDO_ANYINTERACT(polygon,SDO_GEOMETRY('POINT (114.044346 22.691963)'))='TRUE' -- Oracle似乎不要提供任何SRID，否则加不加索引查询结果都不准，工具导出Oracle版数据的SRID=NULL，导出的SQL文件结尾会进行索引创建，查询速度快100倍
+select id,ext_path,polygon from 【此处改成你的表名】 where SDO_ANYINTERACT(polygon,SDO_GEOMETRY('POINT (114.044346 22.691963)'))='TRUE' -- 工具导出Oracle版数据的SRID=NULL，不用填SRID（Oracle不可使用0作为SRID），导出的SQL文件结尾会进行索引创建，查询速度快100倍
 </textarea>
 						</div>
 					</div>

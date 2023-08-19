@@ -105,11 +105,15 @@ window.setTempl=function(type,isInit){
 		createV.push('		> set autocommit on; --打开自动提交，如果不打开，导入完成后可能需手动commit');
 		createV.push("		> @'${FilePath}'; --将sql文件数据导入数据库，文件似乎必须放到文件夹里面，似乎不允许放磁盘根目录");
 		createV.push("	- 如果导入乱码，请尝试到转换工具中重新导出SQL文件，导出时配置SQL文件编码为UTF-8或GBK等其他编码");
-		createV.push("	- 注意：目前测试发现Oracle的空间查询不大好用，SDO_GEOMETRY似乎不要提供任何SRID（当前采用SRID=NULL），不然会空间计算结果很令人费解；SRID=0时无法创建索引；SRID=4326（WGS84）时不管有无索引计算结果都是错误的；SRID=NULL时且没有建索引时查询结果正确，但建了索引且配置了特定Metadata又可能导致查询出和SRID=4326类似错误的结果；根据文档：https://docs.oracle.com/en/database/oracle/oracle-database/21/spatl/indexing-querying-spatial-data.html，SDO_RELATE（SDO_ANYINTERACT、SDO_CONTAINS）一系列方法必须建索引才能进行查询调用，没建索引时不会报错并且直接返回错误的结果（只要外接矩形MBR匹配就返回，压根不进行精确计算），SRID=NULL时测试并没有此问题");
+		createV.push("	- 注意：目前测试发现Oracle的空间数据查询使用相对其他数据库更难上手，SDO_GEOMETRY的SRID必须是NULL或提供一个有效的值（不可以使用0），当前采用SRID=NULL不需要传SRID；构造出来的SDO_GEOMETRY必须有效，如果无效，空间计算结果可能会是错误的，比如多边形的环的坐标顺序方向不正确会导致多边形无效（其他数据库没有这种问题）");
+		createV.push("		* 组成SDO_GEOMETRY的多边形的环的坐标顺序方向必须符合：外环逆时针（counterclockwise ），内环顺时针（clockwise），不然这个多边形是无效的，会对查询结果的准确性产生影响（结果错误但不会报错）；通过 SDO_MIGRATE.TO_CURRENT 方法可纠正数据最终符合此顺序要求，相关文档：https://docs.oracle.com/en/database/oracle/oracle-database/21/spatl/spatial-datatypes-metadata.html#GUID-270AE39D-7B83-46D0-9DD6-E5D99C045021");
+		createV.push("		* 判断一个SDO_GEOMETRY是否有效，需使用 SDO_GEOM.VALIDATE_GEOMETRY_WITH_CONTEXT(polygon,0.0000001)='TRUE' 进行判断，不可使用容差为0.001的 SDO_GEOMETRY.ST_IsValid(polygon)=1");
 		createV.push("	- 注意：Oracle不支持任何EMPTY，只能用NULL代替；不支持查询出WKT超长文本，SDO_GEOMETRY.GET_WKT(polygon)大概率抛异常；Oracle支持的SQL语句中，不同终端支持的单个字符串长度混乱，3k-32k不等，因此长字符串采取2k长度分段拼接进行支持，导致SQL文件行数剧增");
 		createV.push("	- 本SQL文件尾部会给polygon列创建索引，查询速度快100倍");
 		createV.push("	- 查询一个坐标对应的城市SQL语句示例：");
-		createV.push("		select ${Field_ID},${Field_ExtPath},polygon from ${TableName} where SDO_ANYINTERACT(polygon,SDO_GEOMETRY('POINT (114.044346 22.691963)'))='TRUE';  -- 通过 select SDO_GEOMETRY.GET_WKT(polygon) as polygon 可以查询WKT文本，但文本过长直接会抛异常");
+		createV.push("		select ${Field_ID},${Field_ExtPath},polygon from ${TableName} where SDO_ANYINTERACT(polygon,SDO_GEOMETRY('POINT (114.044346 22.691963)'))='TRUE';");
+		createV.push("			-- 通过 select SDO_GEOMETRY.GET_WKT(polygon) as polygon 可以查询WKT文本，但文本过长直接会抛异常");
+		createV.push("			-- 如果导出的数据提供了SRID，查询也需要加上SRID，比如：where SDO_ANYINTERACT(polygon,SDO_GEOMETRY('POINT (114.044346 22.691963)',4326))='TRUE'");
 	}else if(type==3){
 		createV.push("ST_GeomFromText兼容格式，适用于支持ST_GeomFromText函数的数据库，比如MySQL8+、PostgreSQL");
 	}else if(type==4 || type==5){
@@ -300,6 +304,9 @@ window.Oracle_OnInit=function(){
 };
 /***程序会将每条数据分别调用一次函数进行数据的格式化处理，返回插入语句***/
 window.Oracle_InsertFormat=function(args){
+	Data.geomSRID=args.GeomSRID&&args.GeomSRID.V!="0"?args.GeomSRID.V:"NULL";
+	//Data.geomSRID=4326; //可以指定一个SRID 4326=WGS84 4490=CGCS2000，查询所有支持的SIRD：select * from MDSYS.CS_SRS order by srid
+	var sridD=Data.geomSRID=="NULL"?"":","+Data.geomSRID;
 	Data.tableName=args.TableName.V;
 	var sql=["declare P clob:='';begin\n"];
 		//polygon字符串太长，Oracle不同终端支持的单个字符串长度混乱，3k-32k不等，按2k一个字符串拼接
@@ -319,12 +326,14 @@ window.Oracle_InsertFormat=function(args){
 		}
 		sql.push("'"+args.Value_ExtPath.V+"',");
 		if(args.Value_Geo.V){
-			sql.push("SDO_GEOMETRY('"+args.Value_Geo.V+"'),");
+			sql.push("SDO_GEOMETRY('"+args.Value_Geo.V+"'"+sridD+"),");
 		}else{
 			sql.push("NULL,");
 		}
 		if(args.Value_Polygon.V){
-			sql.push("SDO_GEOMETRY(P)");
+			sql.push("SDO_MIGRATE.TO_CURRENT("
+				+"SDO_GEOMETRY(P"+sridD+")"
+				+",SDO_DIM_ARRAY(SDO_DIM_ELEMENT('X', -180, 180, 0.0000001),SDO_DIM_ELEMENT('Y', -90, 90, 0.0000001)))");
 		}else{
 			sql.push("NULL");
 		}
@@ -340,7 +349,7 @@ window.Oracle_SuccessAppendCall=function(){
 		sql.push('');sql.push('');
 		sql.push("-- 创建索引（查询速度快100倍）");
 		sql.push("delete from user_sdo_geom_metadata where lower(TABLE_NAME)=lower('${TableName}') and lower(COLUMN_NAME)='polygon';");
-		sql.push("insert into user_sdo_geom_metadata(TABLE_NAME,COLUMN_NAME,DIMINFO,SRID)VALUES (upper('${TableName}'),upper('polygon'),SDO_DIM_ARRAY(SDO_DIM_ELEMENT('X', -180, 180, 0.0000001),SDO_DIM_ELEMENT('Y', -90, 90, 0.0000001)),NULL);");
+		sql.push("insert into user_sdo_geom_metadata(TABLE_NAME,COLUMN_NAME,DIMINFO,SRID)VALUES (upper('${TableName}'),upper('polygon'),SDO_DIM_ARRAY(SDO_DIM_ELEMENT('X', -180, 180, 0.0000001),SDO_DIM_ELEMENT('Y', -90, 90, 0.0000001)),"+Data.geomSRID+");");
 		sql.push('');
 		sql.push("declare num number; begin");
 		sql.push("	select count(1) into num from user_indexes where index_name = upper('${TableName}_polygon');");

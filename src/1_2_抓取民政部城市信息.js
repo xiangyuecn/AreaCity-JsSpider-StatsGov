@@ -3,6 +3,7 @@
 
 在以下页面执行
 https://www.mca.gov.cn/n156/n186/index.html 中打开最新行政区划代码链接
+[2023-12-11] 到2021-05-10的页面执行，2022-03-21的没有完整页面，目前只生成结果文件，忽略民政部的数据
 
 先加载jQuery
 var s=document.createElement("script");
@@ -19,7 +20,7 @@ document.body.append(s);
 jQuery;
 
 //如果民政部的数据比统计局的旧，就设为true，忽略民政部的数据，只生成结果文件
-var MCA_IsOld=false;
+var MCA_IsOld=true; //2022-03-21 比统计局2023-09-11的老
 
 var SaveName="Step1_2_Merge_MCA"
 var PrevSaveName="Step1_1_StatsGov";

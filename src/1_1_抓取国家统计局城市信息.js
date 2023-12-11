@@ -2,7 +2,7 @@
 获取统计局所有城市名称原始数据
 
 在以下页面执行
-http://www.stats.gov.cn/sj/tjbz/qhdm/
+https://www.stats.gov.cn/sj/tjbz/qhdm/
 
 
 采集中途失败了，直接刷新页面重新采集，浏览器有页面缓存，恢复速度极快
@@ -17,7 +17,7 @@ if (oSession.HostnameIs("www.stats.gov.cn")){
 ```
 */
 (function(){
-var Year=2022;
+var Year=2023;
 var LoadMaxLevel=4;//采集几层
 var SaveName="Step1_1_StatsGov";
 var Level={
@@ -90,7 +90,7 @@ cityClass.prototype={
 
 function load_shen_all(True){
 	DATA=[];
-	var path="http://www.stats.gov.cn/sj/tjbz/tjyqhdmhcxhfdm/"+Year;
+	var path="https://www.stats.gov.cn/sj/tjbz/tjyqhdmhcxhfdm/"+Year;
 	ajax(path+"/index.html",function(text){
 		var reg=/href='(.+?)'>(.+?)<br/ig,match;
 		var idx;
@@ -167,16 +167,16 @@ function load_x_childs(itm, next){
 			};
 			
 			//villagetr直接非法
-			var reg2=/class='(citytr|countytr|towntr)'.+?<td>(?:<a href='(.+?)'>)?(.+?)<.+?>([^<>]+)(?:<\/a>)?<\/td>\s*<\/tr>/ig;
+			var reg2=/class='(citytr|countytr|towntr)'.+?<td>(?:<a *(?:href='(.+?)')?>)?(.+?)<.+?>([^<>]+)(?:<\/a>)?<\/td>\s*<\/tr>/ig;
 			var match2;
 			if(match2=reg2.exec(match[0])){
 				var url=match2[2]||"";
 				if(url && url.indexOf("//")==-1 && url.indexOf("/")!=0){
 					url=city.url.substring(0,city.url.lastIndexOf("/"))+"/"+url;
 				}
-				var code=(match2[3]||match2[5]).trim();
-				var name=(match2[4]||match2[6]).trim();
-				if(!code||!name){
+				var code=match2[3].trim();
+				var name=match2[4].trim();
+				if(!code||!name ||!/^\d+$/.test(code) ){
 					console.log(match2[0]);
 					err("未提取到name或code");
 					return;

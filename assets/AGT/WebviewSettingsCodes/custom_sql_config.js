@@ -305,7 +305,7 @@ window.Oracle_OnInit=function(){
 /***程序会将每条数据分别调用一次函数进行数据的格式化处理，返回插入语句***/
 window.Oracle_InsertFormat=function(args){
 	Data.geomSRID=args.GeomSRID&&args.GeomSRID.V!="0"?args.GeomSRID.V:"NULL";
-	//Data.geomSRID=4326; //可以指定一个SRID 4326=WGS84 4490=CGCS2000，查询所有支持的SIRD：select * from MDSYS.CS_SRS order by srid
+	//Data.geomSRID=4326; //可以指定一个SRID 4326=WGS84 4490=CGCS2000，查询所有支持的SRID：select * from MDSYS.CS_SRS order by srid
 	var sridD=Data.geomSRID=="NULL"?"":","+Data.geomSRID;
 	Data.tableName=args.TableName.V;
 	var sql=["declare P clob:='';begin\n"];

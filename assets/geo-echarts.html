@@ -505,7 +505,8 @@ var geoECharts=geoEChartsLib.Create({
 					return pol;
 				}
 			});
-			mapGeo.setMap(map);
+			mapGeo.setMap(map); //1.4 sdk用这个
+			//map.add(mapGeo); //2.0 sdk用这个
 			
 			//显示名称
 			for(var k in texts){(function(){

@@ -195,6 +195,13 @@ for(var k=0;k<DATA_GEO.length;k++){
 				console.error(o);
 				throw new Error("polygon无效");
 			};
+			//删除重复的点，包括首尾闭合的点
+			for(var i=0;i<arr.length;i++){
+				var p=arr[i],p2=arr[i+1]||arr[0];
+				if(p[0]==p2[0] && p[1]==p2[1]){
+					arr.splice(i,1); i--;
+				}
+			}
 			while(arr[0].join(" ")==arr[arr.length-1].join(" ")){
 				arr.pop();
 			};
@@ -219,6 +226,9 @@ for(var k=0;k<DATA_GEO.length;k++){
 			
 			polygon[j]=arr;
 		};
+		
+		//把坐标点最多的环排前面，免得每次采集结果不一样导致差异
+		polygon.sort(function(a,b){ return b.length-a.length; });
 		
 		polygon=checkAndBuildPolygon(polygon,o);
 		break;

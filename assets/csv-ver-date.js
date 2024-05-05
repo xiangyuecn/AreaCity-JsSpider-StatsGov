@@ -6,7 +6,10 @@
 (function(){
 var OpenVer="2023.231212.240303",OpenDate="2024-03-03";
 
-var UrlRoot="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/";
+var UrlRoot="https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/";
+if(/gitee\.io/.test(location.host)){ //2024-05-01 pages无通知下线
+	UrlRoot="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/";
+};
 var UrlTool=UrlRoot+"assets/AreaCity-Geo-Transform-Tools.html";
 var UrlEcharts=UrlRoot+"assets/geo-echarts.html";
 var Url=function(txt,url,index){

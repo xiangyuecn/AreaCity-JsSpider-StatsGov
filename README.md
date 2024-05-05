@@ -1,11 +1,11 @@
-**【[源GitHub仓库](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov)】 | 【[Gitee镜像库](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov)】如果本文档图片没有显示，请手动切换到Gitee镜像库阅读文档。**
+**【[源GitHub仓库](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov)】 | 【[Gitee镜像库](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov)】本文档中默认使用[github.io部署的链接](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/)，如果无法访问，你可替换链接开头部分成[gitee.io部署的链接](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/)访问更快。**
 
 # :open_book:省市区数据采集并标注拼音、坐标和边界范围
 
-- [【在线测试和预览】省市区乡镇四级行政区划数据](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/)：支持在线生成JSON、多级联动js；
-- [【在线测试和预览】ECharts Map四级下钻在线测试和预览+代码生成](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-echarts.html)：坐标边界范围在线测试和预览；
-- [【转换工具】AreaCity-Geo格式转换工具软件](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html)：csv文件导入数据库，坐标、边界范围转换（支持转成`sql`、`shp`、`geojson`）；
-- [【查询工具】AreaCity-Query-Geometry](https://github.com/xiangyuecn/AreaCity-Query-Geometry)（[Gitee镜像库](https://gitee.com/xiangyuecn/AreaCity-Query-Geometry)）：高性能的坐标数据、边界数据查询工具，Java开源程序、带http查询接口，内存占用低（1秒可查1万个以上坐标对应的城市信息）。
+- [【在线测试和预览】省市区乡镇四级行政区划数据](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/) <sub>([gitee镜像](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/))</sub>：支持在线生成JSON、多级联动js；
+- [【在线测试和预览】ECharts Map四级下钻在线测试和预览+代码生成](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/assets/geo-echarts.html) <sub>([gitee镜像](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-echarts.html))</sub>：坐标边界范围在线测试和预览；
+- [【转换工具】AreaCity-Geo格式转换工具软件](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/assets/AreaCity-Geo-Transform-Tools.html) <sub>([gitee镜像](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html))</sub>：csv文件导入数据库，坐标、边界范围转换（支持转成`sql`、`shp`、`geojson`）；
+- [【查询工具】AreaCity-Query-Geometry](https://github.com/xiangyuecn/AreaCity-Query-Geometry) <sub>([gitee镜像](https://gitee.com/xiangyuecn/AreaCity-Query-Geometry))</sub>：高性能的坐标数据、边界数据查询工具，Java开源程序、带http查询接口，内存占用低（1秒可查1万个以上坐标对应的城市信息）。
 
 
 ## 数据下载
@@ -16,7 +16,7 @@
 :--:|:--:|--|:-:
 **ok_data_level3.csv** <br> **ok_data_level4.csv** <br> <sub>（在一个7z压缩包内）</sub> <br>​ |230KB <br> 3MB <br>​ <br>​ |【**区划三级**】省市区 三级行政区划 数据 <br> 【**区划四级**】省市区乡镇 四级行政区划 数据 <br> <sub>- 支持在线预览，在线生成JSON、多级联动js代码</sub> <br> <sub>- 可用转换工具导入数据库、转成sql</sub>|[线路一](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases/download/2023.231212.240303/ok_data_level3-4.csv.7z) / [线路二](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases/download/2023.231212.240303/ok_data_level3-4.csv.7z)
 **ok_geo.csv.7z**|13MB|【**边界三级**】省市区 坐标和边界 数据，解压后130M+ <br> <sub>- 支持在线预览，可用转换工具转成shp、geojson、sql格式、转换坐标系</sub> <br> <sub>- 使用本库开源的高性能查询工具，1秒可查1万个以上坐标对应的城市信息</sub>|[线路一](https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases/download/2023.231212.240303/ok_geo.csv.7z) / [线路二](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/releases/download/2023.231212.240303/ok_geo.csv.7z)
-**ok_geo4_*.csv** [AD]|109MB|【**边界四级**】乡镇级 坐标和边界 数据，导出后300M+ <br> <sub>- 付费数据、广告、闭源，支持在线预览，提供了部分免费数据供测试</sub>|[点此下载](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-level4.html#xz)
+**ok_geo4_*.csv** [AD]|109MB|【**边界四级**】乡镇级 坐标和边界 数据，导出后300M+ <br> <sub>- 付费数据、广告、闭源，支持在线预览，提供了部分免费数据供测试</sub>|[线路一](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-level4.html#xz) / [线路二](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/assets/geo-level4.html#xz)
 
 
 
@@ -25,7 +25,7 @@
 
 > csv纯文本文件可以非常方便解析成其他格式；如果在使用csv文件过程中出现乱码、错乱等情况，需自行调对utf-8（带BOM）编码，文本限定符为`"`。
 > 
-> 通过本库提供的 [AreaCity-Geo格式转换工具](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html) 可快速方便的将行政区划、坐标、边界范围csv文件导入数据库，并且提供格式转换功能（shp、geojson、sql），欢迎下载使用。边界导出成geojson后可通过 [AreaCity-Query-Geometry](https://github.com/xiangyuecn/AreaCity-Query-Geometry) Java开源程序进行高性能的坐标数据、边界数据查询。
+> 通过本库提供的 [AreaCity-Geo格式转换工具](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/assets/AreaCity-Geo-Transform-Tools.html) 可快速方便的将行政区划、坐标、边界范围csv文件导入数据库，并且提供格式转换功能（shp、geojson、sql），欢迎下载使用。边界导出成geojson后可通过 [AreaCity-Query-Geometry](https://github.com/xiangyuecn/AreaCity-Query-Geometry) Java开源程序进行高性能的坐标数据、边界数据查询。
 
 
 [​](?)
@@ -46,7 +46,7 @@
 [​](?)
 
 
-<p align="center"><a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov"><img width="100" src="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/icon.png" alt="AreaCity logo"></a></p>
+<p align="center"><a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov"><img width="100" src="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/assets/icon.png" alt="AreaCity logo"></a></p>
 
 <p align="center">
   <a title="Stars" href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov"><img src="https://img.shields.io/github/stars/xiangyuecn/AreaCity-JsSpider-StatsGov?color=15822e&logo=github" alt="Stars"></a>
@@ -81,7 +81,7 @@ git clone --depth 1 https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov.git
 
 欢迎加QQ群：①群 484560085、②群 626141661、③群 346847528，纯小写口令：`areacity`
 
-<img src="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/qq_group_484560085.png" width="220px">
+<img src="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov/raw/master/assets/qq_group_484560085.png" width="220px">
 
 
 
@@ -106,7 +106,7 @@ git clone --depth 1 https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov.git
 
 
 ## 【字段】ok_data_level*.csv - 行政区划数据表
-此表为省市区镇三级、四级行政区划数据表，可[在线测试预览](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/)（支持转成json、生成多级联动js代码），可使用 [AreaCity-Geo格式转换工具软件](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html) 直接导入数据库。
+此表为省市区镇三级、四级行政区划数据表，可[在线测试预览](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/)（支持转成json、生成多级联动js代码），可使用 [AreaCity-Geo格式转换工具软件](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/assets/AreaCity-Geo-Transform-Tools.html) 直接导入数据库。
 
 字段|类型|描述
 :--:|:--:|--
@@ -120,9 +120,9 @@ ext_id|long|数据源原始的编号；如果是添加的数据，此编号为0�
 ext_name|string|`如：武汉市`，为数据源原始的完整名称，name字段值就是本字段删掉省市等后缀精简来的，如需完整名称请使用本字段
 
 ## 【字段】ok_geo.csv - 坐标边界表
-此表为坐标和行政区域边界范围数据表，可[在线测试预览](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-echarts.html)；此表含省市区三级不含第四级，如需乡镇级坐标边界数据[请到此下载](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/geo-level4.html)；因为数据文件过大（130M+），所以分开存储。
+此表为坐标和行政区域边界范围数据表，可[在线测试预览](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/assets/geo-echarts.html)；此表含省市区三级不含第四级，如需乡镇级坐标边界数据[请到此下载](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/assets/geo-level4.html)；因为数据文件过大（130M+），所以分开存储。
 
-由于边界数据的解析比较复杂，请参考[src/map_geo_格式化.js](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/src/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)内的SQL Server的解析语句，或者使用 [AreaCity-Geo格式转换工具软件](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html) 直接导入数据库，或者转换成`shp`、`geojson`、`sql`格式。
+由于边界数据的解析比较复杂，请参考[src/map_geo_格式化.js](https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/blob/master/src/%E5%9D%90%E6%A0%87%E5%92%8C%E8%BE%B9%E7%95%8C/map_geo_%E6%A0%BC%E5%BC%8F%E5%8C%96.js)内的SQL Server的解析语句，或者使用 [AreaCity-Geo格式转换工具软件](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/assets/AreaCity-Geo-Transform-Tools.html) 直接导入数据库，或者转换成`shp`、`geojson`、`sql`格式。
 
 如果需要查询坐标对应的城市、查询城市或下级的边界数据，可下载 [AreaCity-Query-Geometry](https://github.com/xiangyuecn/AreaCity-Query-Geometry) Java开源程序进行高性能的查询，内存占用低（1秒可查1万个以上坐标对应的城市信息）。
 
@@ -183,7 +183,7 @@ polygon|string|行政区域边界，高德地图`GCJ-02`火星坐标系。格式
 
 # :open_book:在线测试工具
 
-在线测试工具地址：[https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/)
+在线测试工具地址：[https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/) / [Gitee镜像地址](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/)
 
 此工具主要用于将`ok_data_level*.csv`四级行政区划数据文件转换成别的格式，另外提供省市区多级联动测试，并且可生成js源码（含数据）下载，3级联动生成的文件紧凑版68kb，4级联动紧凑版1mb大小。
 
@@ -219,7 +219,7 @@ ECharts + 高德地图四级下钻：
 
 # :open_book:格式转换工具-PC版软件
 
-[AreaCity-Geo格式转换工具软件](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html)用于将采集到的 `ok_geo.csv` 省市区乡镇坐标和边界范围文件转成其他格式，也支持将 `ok_data_level*.csv` 省市区镇行政区划数据导入数据库。
+[AreaCity-Geo格式转换工具软件](https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/assets/AreaCity-Geo-Transform-Tools.html)（[gitee镜像](https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html)）用于将采集到的 `ok_geo.csv` 省市区乡镇坐标和边界范围文件转成其他格式，也支持将 `ok_data_level*.csv` 省市区镇行政区划数据导入数据库。
 
 此软件可免费使用，但有些功能会受到限制，比如省市区边界数据：每次转换操作最多导出全国所有省级、或一个城市和它的下一级数据，可付费升级为完整版。
 
@@ -432,4 +432,4 @@ chrome 控制台，当前数据采集使用的chrome版本：`Chrome 97` + `Chro
 
 您也可以使用支付宝或微信打赏作者：
 
-![](https://xiangyuecn.gitee.io/recorder/assets/donate-alipay.png)  ![](https://xiangyuecn.gitee.io/recorder/assets/donate-weixin.png)
+![](https://gitee.com/xiangyuecn/Recorder/raw/master/assets/donate-alipay.png)  ![](https://gitee.com/xiangyuecn/Recorder/raw/master/assets/donate-weixin.png)

@@ -127,7 +127,6 @@ img{
 	<div class="mainBox DonateLogs"></div>
 </div>
 
-<script src="https://xiangyuecn.gitee.io/buildhtml/buildhtml.js"></script>
 <script>
 function el(cls){
 	return document.querySelector(cls);
@@ -136,12 +135,12 @@ function el(cls){
 if(/^file:/.test(location.href)){
 	FormatLog("浏览器直接打开的html文件，不加载演示数据，请手动操作",1);
 }else{
-	el(".AreaFormatFrom").innerHTML=BuildHTML(`
-<select class="AreaFormatFromSelect" onchange="swapFrom()">
-{{::
-	;BuildHTMLArray('<option value="{fn:BuildHTMLArray.index+1}">{fn::AllowAccessFolder}/{fn::o}</option>',AllowAccessFiles)
-}}
-<\/select>`);
+	var html=['<select class="AreaFormatFromSelect" onchange="swapFrom()">'];
+	for(var i=0;i<AllowAccessFiles.length;i++){
+		html.push('<option value="'+(i+1)+'">'+AllowAccessFolder+'/'+AllowAccessFiles[i]+'</option>');
+	}
+	html.push('<\/select>');
+	el(".AreaFormatFrom").innerHTML=html.join("\n");
 	var swapFrom=function(){
 		var from=+el(".AreaFormatFromSelect").value-1;
 		var path=AllowAccessFolder+"/"+AllowAccessFiles[from];
@@ -182,12 +181,23 @@ GeoECharts.CreateWidget({
 
 <!-- 加载打赏挂件 -->
 <div class="DonateView"></div>
-<script src="https://xiangyuecn.gitee.io/recorder/assets/zdemo.widget.donate.js"></script>
 <script>
-DonateWidget({
-	log:function(msg){var div=document.createElement("div");div.innerHTML=msg;document.querySelector(".DonateLogs").appendChild(div)}
-	,mobElem:document.querySelector(".DonateView")
-});
+(function(){
+var BaseUrl="https://xiangyuecn.github.io/Recorder/";
+if(/gitee\.io/.test(location.host)){ //2024-05-01 pages无通知下线
+	BaseUrl="https://xiangyuecn.gitee.io/recorder/";
+};
+var elem=document.createElement("script");
+elem.setAttribute("type","text/javascript");
+elem.setAttribute("src",BaseUrl+"assets/zdemo.widget.donate.js");
+document.body.appendChild(elem);
+elem.onload=function(){
+	DonateWidget({
+		log:function(msg){var div=document.createElement("div");div.innerHTML=msg;document.querySelector(".DonateLogs").appendChild(div)}
+		,mobElem:document.querySelector(".DonateView")
+	});
+};
+})();
 </script>
 
 </body>

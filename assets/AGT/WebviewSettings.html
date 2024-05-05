@@ -3,7 +3,15 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-<link rel="shortcut icon" type="image/png" href="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/icon.png">
+
+<script>
+var LM="2024-05-05 10:03";
+var GitPageBase="https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov";
+if(/gitee\.io/.test(location.host)){ //2024-05-01 pages无通知下线
+	GitPageBase="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov";
+};
+document.write('<link rel="shortcut icon" type="image/png" href="'+GitPageBase+'/assets/icon.png">');
+</script>
 
 <meta http-equiv="X-UA-Compatible" content="edge" />
 <title>AreaCity Geo格式转换工具</title>
@@ -77,8 +85,6 @@ var AppCalls={
 var appFixLineClick=function(){
 	alert("请先执行内置脚本 “"+$("option[value=fixline]").text()+"” 后，在来FixLine操作");
 };
-
-var LM="2023-08-11 21:07";
 </script>
 
 <style>
@@ -283,7 +289,8 @@ select,select option{
 				<button onclick='showCmds()'>显示可用命令</button>
 			</div>
 			<div>
-				<a href="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html" target="_blank">详细教程、软件许可及服务协议、购买付费版>></a>
+				<a id="id_m8xz" target="_blank">详细教程、软件许可及服务协议、购买付费版>></a>
+				<script>id_m8xz.href=GitPageBase+"/assets/AreaCity-Geo-Transform-Tools.html";</script>
 			</div>
 		</div>
 		
@@ -320,8 +327,8 @@ select,select option{
 </script>
 
 
-<script src="https://xiangyuecn.gitee.io/recorder/assets/ztest-jquery.min-1.9.1.js"></script>
-<script src="https://xiangyuecn.gitee.io/recorder/assets/ztest-codemirror.min.5.48.4.js"></script>
+<script src="libs/ztest-jquery.min-1.9.1.js"></script>
+<script src="libs/ztest-codemirror.min.5.48.4.js"></script>
 
 <script>
 (function(){
@@ -516,35 +523,59 @@ Runtime.CodeRunClick=function(isImport){
 Runtime.LoadCode=function(key){
 	var path="WebviewSettingsCodes/"+key+".js";
 	Runtime.Mask("正在加载"+path+"...");
+	var okCall=function(data){
+		Runtime.Mask(false);
+		var idx=0;
+		data=data.replace(/(AppCmds.exec\(\s*)"([^"]+?)"(\s*\))/g,function(z,a,b,c){
+			var id="<此处已删除过长源码，复制无效-"+key+"-"+(++idx)+">";
+			Runtime.ExecData[id]=b;
+			return a+'Runtime.ExecData["'+id+'"]'+c;
+		});
+		Runtime.SetCode(data);
+		
+		var rn=(/《(.+?)》/.exec(data)||[])[1]||"";
+		Runtime.Log("已加载《"+(rn||path)+"》脚本源码，点击应用后才会生效",2);
+		
+		var sTop=function(){
+			document.documentElement.scrollTop=$(".yingyongBtn").offset().top-200;
+		};
+		sTop();
+		setTimeout(function(){
+			edit.refresh();//强制再刷新一次，不然内容变短了底下可能会出现很高的空白
+			sTop();
+		});
+	};
+	var failCall=function(){
+		Runtime.Mask(false);
+		Runtime.Log("加载指定的"+path+'失败，请到<a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/tree/master/assets/AGT/WebviewSettingsCodes" target="_blank">WebviewSettingsCodes</a>目录内手动复制源码',1);
+	};
+	
+	if(/file:\/\/\/([^\?#]+)/i.test(location.href)){
+		var fpath=decodeURIComponent(RegExp.$1);
+		if(typeof(AppCmds.file_read)=="undefined"){
+			var tips="软件版本过低，请重新下载升级后再操作";
+			AppCmds.showTips(tips,true);Runtime.Log(tips,1);
+			failCall();
+			return;
+		};
+		setTimeout(function(){
+			try{
+				fpath=/(.+)\/[^\/]+$/.exec(fpath)[1]+"/"+path;
+				var txt=AppCmds.file_read(fpath);
+			}catch(e){
+				Runtime.Log("读取文件"+fpath+"出错："+e.message,1);
+				failCall();
+				return;
+			}
+			setTimeout(function(){ okCall(txt) }, 100);
+		},100);
+		return;
+	};
 	$.ajax({
 		url:path+"?t="+Date.now()
 		,dataType:"text"
-		,success:function(data){
-			Runtime.Mask(false);
-			var idx=0;
-			data=data.replace(/(AppCmds.exec\(\s*)"([^"]+?)"(\s*\))/g,function(z,a,b,c){
-				var id="<此处已删除过长源码，复制无效-"+key+"-"+(++idx)+">";
-				Runtime.ExecData[id]=b;
-				return a+'Runtime.ExecData["'+id+'"]'+c;
-			});
-			Runtime.SetCode(data);
-			
-			var rn=(/《(.+?)》/.exec(data)||[])[1]||"";
-			Runtime.Log("已加载《"+(rn||path)+"》脚本源码，点击应用后才会生效",2);
-			
-			var sTop=function(){
-				document.documentElement.scrollTop=$(".yingyongBtn").offset().top-200;
-			};
-			sTop();
-			setTimeout(function(){
-				edit.refresh();//强制再刷新一次，不然内容变短了底下可能会出现很高的空白
-				sTop();
-			});
-		}
-		,error:function(){
-			Runtime.Mask(false);
-			Runtime.Log("加载指定的"+path+'失败，请到<a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov/tree/master/assets/AGT/WebviewSettingsCodes" target="_blank">WebviewSettingsCodes</a>目录内手动复制源码',1);
-		}
+		,success:okCall
+		,error:failCall
 	});
 };
 

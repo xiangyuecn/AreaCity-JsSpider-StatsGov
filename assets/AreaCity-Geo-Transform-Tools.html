@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-<link rel="shortcut icon" type="image/png" href="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/icon.png">
+<link rel="shortcut icon" type="image/png" href="icon.png">
 
 <title>AreaCity Geo格式转换工具</title>
 
@@ -162,6 +162,7 @@ img{
 					<li style="margin-top:8px">
 						<a href="#sy-vector-file-format-convert">文件格式批量互转（支持多种矢量格式文件 SHP、JSON、KML、KMZ、GML、GPKG 等互转）</a></li>
 					<li><a href="#sy-user-var">用户自定义控制参数</a></li>
+					<li><a href="#sy-offline">完全离线使用（高级自定义脚本离线版网页）</a></li>
 				</ul>
 			</li>
 			<li><a href="#ff">升级付费</a></li>
@@ -217,7 +218,7 @@ img{
 			<div class="h3">本工具软件下载</div>
 			<div class="desc">
 				<div>
-					<i class="b">已带GDAL组件</i> (15MB+)：
+					<i class="b">已带GDAL组件</i> (10MB+)：
 						[ <a href="#xzqq">QQ群内下载</a> ]
 						、[ <a href="https://pan.baidu.com/s/14LsvF_PuPOEiOXgGAWI20w?pwd=b6ct" target="_blank">百度网盘下载</a> 提取码: b6ct]
 				</div>
@@ -686,7 +687,7 @@ select id,ext_path,polygon from 【此处改成你的表名】 where SDO_ANYINTE
 				<p>用户自定义控制参数用来改变软件的某些运行行为，可通过修改storage.json（需重启软件）、高级自定义脚本中的AppCmds.setConfig(key,value)（大部分设置立即生效）两个手段来定义参数，可用参数参考以下列表。</p>
 				
 				<ul class="c_ul" style="list-style-type: square;">
-					<li><i class="b">User_WebviewSettingsUrl</i>：更换“高级自定义脚本”启动时打开的页面地址，需重启软件生效，默认地址为github.io|gitee.io地址，如果你的网络访问github|gitee缓慢，可以切换到其他可用源（如：github clone后的本地文件路径：<i class="i">file:///你路径/assets/AGT/WebviewSettings.html</i>）。</li>
+					<li><i class="b">User_WebviewSettingsUrl</i>：更换“高级自定义脚本”启动时打开的页面地址，需重启软件生效，默认地址为github.io|gitee.io地址，如果你的网络访问github|gitee缓慢，可以切换到其他可用源（如：github clone后的本地文件路径：<i class="i">file:///你路径/assets/AGT/WebviewSettings.html</i>），或直接参考下面“完全离线使用”。</li>
 					
 					<li><i class="b">User_SQL_File_Charset</i>：导出SQL文件时的文件编码，默认为空会根据不同数据库类型使用不同文件编码。</li>
 					
@@ -695,6 +696,24 @@ select id,ext_path,polygon from 【此处改成你的表名】 where SDO_ANYINTE
 					<li><i class="b">User_Spatial_GeogCS_WKT</i>：设置shp、geojson文件内的坐标系信息wkt格式，默认值为WGS84坐标系：<i class="i">GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433],AUTHORITY["EPSG",4326]]</i>，比如你要shp文件内的坐标系为CGCS2000，可以设置为此值：<i class="i">GEOGCS["GCS_China_Geodetic_Coordinate_System_2000",DATUM["D_China_2000",SPHEROID["CGCS2000",6378137.0,298.257222101]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433],AUTHORITY["EPSG",4490]]</i>；
 					更多坐标系的wkt值可自行搜索，或用ArcMap中的 Layers右键属性 -> Coordinate System点开后查看列表，找到需要的坐标系然后右键另存为即可得到wkt文本，或用SQL Server查询<i class="i">select * from sys.spatial_reference_systems</i>的well_known_text字段；注意：修改此值并不会转换ok_geo.csv的GCJ-02坐标到指定的坐标系，需要自行通过高级自定义脚本转换坐标的坐标系。</li>
 				</ul>
+			</div>
+			
+			
+			<div class="h3">完全离线使用<a name="sy-offline"></a></div>
+			<div class="desc">
+				<p>本软件中的“高级自定义脚本”功能会访问网页，默认访问地址为github.io|gitee.io地址，因此会依赖网络，如果在使用高级功能时无法访问这些地址，或需要完全离线使用，请按以下步骤下载离线版网页：</p>
+				<div>
+					<i class="b">步骤一、</i>
+					到 <a href="https://github.com/xiangyuecn/AreaCity-JsSpider-StatsGov" target="_blank">GitHub</a> 或 <a href="https://gitee.com/xiangyuecn/AreaCity-JsSpider-StatsGov" target="_blank">Gitee</a> 下载得到最新源码。
+				</div>
+				<div style="margin-top:20px">
+					<i class="b">步骤二、</i>
+					复制源码中 <i class="i">/assets/AGT/</i> 文件夹到本程序根目录，例如复制后存在文件路径：<i class="i">D:/Download/AreaCity-Geo格式转换工具/AGT/WebviewSettings.html</i>。
+				</div>
+				<div style="margin-top:20px">
+					<i class="b">步骤三、</i>
+					重新打开本软件，然后“高级自定义脚本”功能会使用离线版网页。
+				</div>
 			</div>
 			
 		</div>

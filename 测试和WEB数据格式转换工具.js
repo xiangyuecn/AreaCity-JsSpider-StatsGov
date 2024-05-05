@@ -697,7 +697,7 @@ a{text-decoration: none;}
 	</div>
 	<div class="AreaFormatA" style="width:1030px;margin:0 auto;padding-bottom:30px">
 		小提示 : 
-		本工具是用来转换省市区镇四级行政区划数据为js支持的格式的，不支持导入数据库，也不支持处理坐标和城市边界范围数据，如果你要导入数据库、或转换坐标和城市边界范围数据（如shp、geojson、sql），<a href="https://xiangyuecn.gitee.io/areacity-jsspider-statsgov/assets/AreaCity-Geo-Transform-Tools.html" target="_blank">请点此处</a>下载《AreaCity-Geo格式转换工具软件》轻松处理。
+		本工具是用来转换省市区镇四级行政区划数据为js支持的格式的，不支持导入数据库，也不支持处理坐标和城市边界范围数据，如果你要导入数据库、或转换坐标和城市边界范围数据（如shp、geojson、sql），<a href="${isIndex?'':'https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/'}assets/AreaCity-Geo-Transform-Tools.html" target="_blank">请点此处</a>下载《AreaCity-Geo格式转换工具软件》轻松处理。
 	</div>
 	<div style="display: flex;">
 		<div style="flex: 1;"></div>

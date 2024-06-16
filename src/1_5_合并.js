@@ -96,6 +96,12 @@ var fixQQmapReplaceFill={
 	,460322:{name:"南沙群岛",remove:true}
 	,460323:{name:"中沙群岛",remove:true}
 	//,460324:{name:"东沙群岛",remove:true}
+	
+	//QQ第三级多出来的 20240319
+	,110100:{name:"北京市",remove:true}
+	,120100:{name:"天津市",remove:true}
+	,310100:{name:"上海市",remove:true}
+	,500100:{name:"重庆市",remove:true}
 };
 
 //qq地图数据和高德地图前三级数据有效的差异
@@ -105,7 +111,7 @@ var amapDifference={
 		,childCompareName:true}
 	,82:{name:"澳门特别行政区",level:1,xAomenChild:true}//特殊的，高德和qq的完全不同，采用高德的全面些，但code规则按qq的来
 	
-	//,232761:{name:"加格达奇区",compareName:true}//id不同，qq的是对的，通过名称可以匹配
+	,232761:{name:"加格达奇区",compareName:true}//id不同，qq的是对的，通过名称可以匹配
 	
 	//声明名称不同但code相同的项，这种是qq未fix的，并且最终采用qq的名称
 	,632825:{name:"大柴旦行政委员会",amapName:"海西蒙古族藏族自治州直辖"}
@@ -152,7 +158,7 @@ var gov3Difference={
 	
 	//MCA和qq名称称相同但id不同的，但qq和高德相同，暂采用qq和高德的便于数据处理
 	//,0:{name:"",asID:00}
-	,232718:{name:"加格达奇区",asID:"232761"}
+	//,232718:{name:"加格达奇区",asID:"232761"}
 	,632825:{name:"大柴旦行政委员会",asID:"632857"}
 	,540422:{name:"米林市",asID:"540481"}
 	,540530:{name:"错那市",asID:"540581"}

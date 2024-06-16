@@ -668,6 +668,11 @@ Runtime.UpdateStatus();
 <script>
 var InitReadConfig={};
 (function(){
+if(!window.jQuery || !window.CodeMirror){
+	document.body.innerHTML='<div class="Center" style="padding:180px 0;color:#f00">页面js加载失败，请刷新页面重试</div>';
+	InitReadConfig.NotApp=true;
+};
+
 Runtime.Mask=function(msg){
 	$(".maskView").remove();
 	if(msg!==false){

@@ -185,6 +185,20 @@ for(var i=0;i<pinyinList.length;i++){
 		o.P&&(o.P=o.P.replace(/leng/g,"ling"));
 		o.P2&&(o.P2=o.P2.replace(/leng/g,"ling"));
 	};
+	//fix QQ 1258339370 2024-05-20
+	if(o.id==522626001 && o.name=="_水街道"){
+		o.name=o.ext_name="舞水街道"; //㵲水街道
+		o.P=o.P.replace(/F_/g,"wu");
+	};
+	//fix 拼音结果中查找 F 字母
+	if(o.id==320282125 && o.name=="湖??镇"){
+		o.name=o.ext_name="湖父镇"; //湖㳇镇
+		o.P="hu||fu||zhen";
+	};
+	if(/F[^０（）]/.test(o.P)){
+		console.log(o);
+		throw new Error("可能存在未知的乱码");
+	};
 	
 	
 	if(/lve/.test(o.P)){

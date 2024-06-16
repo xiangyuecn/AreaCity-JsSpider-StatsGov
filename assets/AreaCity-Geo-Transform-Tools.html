@@ -158,6 +158,7 @@ img{
 						<a href="#sy-geojson-split">GeoJSON 按省市区将下级拆分到多个文件</a></li>
 					<li><a href="#sy-geojson-merge">GeoJSON 多个文件合并成一个文件</a></li>
 					<li><a href="#sy-geojson-simplify">GeoJSON 文件简化(Simplify) 20MB变成200KB</a></li>
+					<li><a href="#sy-geojson-svg">GeoJSON 转成 SVG 矢量图 或 PNG图片</a></li>
 					
 					<li style="margin-top:8px">
 						<a href="#sy-vector-file-format-convert">文件格式批量互转（支持多种矢量格式文件 SHP、JSON、KML、KMZ、GML、GPKG 等互转）</a></li>
@@ -650,6 +651,29 @@ select id,ext_path,polygon from 【此处改成你的表名】 where SDO_ANYINTE
 				<div style="margin-top:20px">
 					<i class="b">步骤五、</i>
 					点击MapShaper页面右上角的Export按钮，弹出的对话框保持默认设置，点击“Export”即可得到简化后的GeoJSON文件，约为200KB大小，边界非常粗略，放大后会明显感受到不够精细。
+				</div>
+			</div>
+			
+			
+			<div class="h3">GeoJSON 转成 SVG 矢量图 或 PNG图片<a name="sy-geojson-svg"></a></div>
+			<div class="desc">
+				<p>在线预览页面中的ECharts支持渲染显示GeoJSON文件，然后导出成 PNG/SVG 图片。</p>
+				
+				<div>
+					<i class="b">步骤一、</i>
+					使用本工具将ok_geo.csv导出成GeoJSON文件。
+				</div>
+				<div style="margin-top:20px">
+					<i class="b">步骤二、</i>
+					打开<a href="geo-echarts.html" target="_blank">在线预览页面</a>，把上一步导出的Polygon打头的json文件拖入此页面。
+				</div>
+				<div style="margin-top:20px">
+					<i class="b">步骤三、</i>
+					点击ECharts地图右上角的 PNG/SVG 切换按钮，将渲染模式切换成你需要的格式；地图底部有颜色风格配置功能，可自行调整地图显示风格。
+				</div>
+				<div style="margin-top:20px">
+					<i class="b">步骤四、</i>
+					点击ECharts地图左下角的下载按钮，下载得到PNG图片 或 SVG矢量图文件。
 				</div>
 			</div>
 			

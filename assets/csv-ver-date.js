@@ -4,7 +4,7 @@
 更新ok_data_level*.csv、ok_geo*.csv后，需要同时更新这里的数据时间
 **************/
 (function(){
-var OpenVer="2023.231212.240303",OpenDate="2024-03-03";
+var OpenVer="2023.240319.240616",OpenDate="2024-06-16";
 
 var UrlRoot="https://xiangyuecn.github.io/AreaCity-JsSpider-StatsGov/";
 if(/gitee\.io/.test(location.host)){ //2024-05-01 pages无通知下线

@@ -12,9 +12,18 @@ if(/gitee\.io/.test(location.host)){ //2024-05-01 pages无通知下线
 };
 var UrlTool=UrlRoot+"assets/AreaCity-Geo-Transform-Tools.html";
 var UrlEcharts=UrlRoot+"assets/geo-echarts.html";
+var isIndex=window.PageIsRootIndex;
+var isFile=/^file:/i.test(location.href);
+var isAssets=/\/assets\/[^\/\?#]+($|\?|#)/i.test(location.href);
 var Url=function(txt,url,index){
-	if(url==UrlRoot && window.PageIsRootIndex){
+	if(url==UrlRoot && isIndex){
 		return '<a href="'+index+'">'+txt+'</a>';
+	}
+	if((isIndex||isAssets) && url.indexOf(UrlRoot)==0){
+		url=url.replace(UrlRoot,isIndex?"./":"../");
+	}
+	if(isFile && /^(.+\/)($|\?|#)/.test(url)){
+		url=url.replace(RegExp.$1,RegExp.$1+"index.html");
 	}
 	return '<a href="'+url+'" target="_blank">'+txt+'</a>'
 };
@@ -22,7 +31,7 @@ var GeoTips='使用'+Url("转换工具软件",UrlTool)+'可以导入数据库、
 var CsvPubDate=window.CsvPubDate={
 	Level4:{
 		name:"省市区镇四级行政区划数据"
-		,desc:'['+Url("下载",UrlRoot+"assets/download.html")+']['+Url("在线预览",UrlRoot,"#tools")+'][<span style="color:#0a0">免费开源</span>] 文件大小：3MB+，ok_data_level3.csv 200KB+；包含字段：城市id、城市name、上级pid、拼音；支持'+Url("在线转换",UrlRoot,"#tools")+'成JSON、多级联动JavaScript代码，使用'+Url("转换工具软件",UrlTool)+'可以导入数据库、转换成sql。本数据源自： 统计局、民政部、腾讯地图行政区划、高德地图行政区划，从这四大平台整合。'
+		,desc:'['+Url("下载",UrlRoot+"assets/download.html")+']['+Url("在线预览",UrlRoot+"#tools","#tools")+'][<span style="color:#0a0">免费开源</span>] 文件大小：3MB+，ok_data_level3.csv 200KB+；包含字段：城市id、城市name、上级pid、拼音；支持'+Url("在线转换",UrlRoot+"#tools","#tools")+'成JSON、多级联动JavaScript代码，使用'+Url("转换工具软件",UrlTool)+'可以导入数据库、转换成sql。本数据源自： 统计局、民政部、腾讯地图行政区划、高德地图行政区划，从这四大平台整合。'
 		,file:"ok_data_level4.csv"
 		,version:OpenVer
 		,date:OpenDate
@@ -43,7 +52,7 @@ var CsvPubDate=window.CsvPubDate={
 		,dates:{//年-月 A排序年.月
   北京:"2022-11",					  天津:"2018",
   河北:"2018",						  山西:"2018",
-内蒙古:"2018",						  辽宁:"2021-12 A2021-11",
+内蒙古:"2018",						  辽宁:"2019-01",
   吉林:"2015-11 A2018-02",			  黑龙江:"2020-01",
   上海:"2018 A2018-01",		 		  江苏:"2018-06",
   浙江:"2022-11",					  安徽:"2018",
@@ -195,12 +204,14 @@ if(set.geo4){
 
 
 window.QQGroupList={
-	List:[{name:"①群",qq:"484560085"},{name:"②群",qq:"626141661"},{name:"③群",qq:"346847528"}]
+	List:[{name:"①群",qq:"484560085",full:1},{name:"②群",qq:"626141661",full:1},{name:"③群",qq:"346847528",full:1},{name:"④群",qq:"514420754",full:0}]
 	,HTML_i:function(cls){
 		var html=[];
 		for(var i=0;i<this.List.length;i++){
 			var o=this.List[i];
-			html.push(o.name+' <i class="i">'+o.qq+'</i>');
+			html.push(o.name+' <i class="i">'+o.qq
+				+(o.full?'<span style="margin-left:3px;color:#888;font-weight:normal;">已满</span>':'')
+				+'</i>');
 		}
 		html=html.join("、")+'，口令<i class="i">areacity</i>';
 		if(cls){

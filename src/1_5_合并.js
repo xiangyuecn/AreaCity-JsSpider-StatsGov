@@ -63,6 +63,8 @@ var fixQQmapReplaceFill={
 	,620299:{name:"嘉峪关市",childReplace:true} //统计局嘉峪关还有一个市辖区，上面三个没有
 	
 	//qq编号名称有问题的，直接替换掉当前级和下级编号，一般新的为高德的
+	,540422:{name:"米林市",level:3,replaceAs:{codePrefix:"540481",name:"米林市"}}
+	,540530:{name:"错那市",level:3,replaceAs:{codePrefix:"540581",name:"错那市"}}
 	//,350403:{name:"三元区",level:3,replaceAs:{codePrefix:"350404",name:"三元区"}}
 	//,350402:{name:"梅列区",remove:true} //已撤销的，删除qq的
 	
@@ -117,11 +119,19 @@ var amapDifference={
 	,632825:{name:"大柴旦行政委员会",amapName:"海西蒙古族藏族自治州直辖"}
 	//,632857:{name:"大柴旦行政委员会",useQQ:true}
 	
-	//标记QQ里确实不存在的，如果需要添加到qq中需lostAdd=true
+	//标记QQ里确实不存在的，如果需要添加到qq中需lostAdd=true 可选 lostAddChild:[]
 	//,632825:{lostName:"海西蒙古族藏族自治州直辖"}//qq统计局为632857大柴旦行政委员会
 	,440499:{lostName:"澳门大学横琴校区(由澳门实施管辖)"}
 	,460301:{lostName:"西沙区",lostAdd:true}//新设区
 	,460302:{lostName:"南沙区",lostAdd:true}//新设区
+	,659012:{lostName:"白杨市",lostAdd:true,lostAddChild:[
+		{code:"659012000000",name:"白杨市",child:[
+			{code:"659012400000", name:"一六一团分部",child:[]}
+			,{code:"659012503000", name:"一六三团",child:[]}
+			,{code:"659012504000", name:"一六四团",child:[]}
+			,{code:"659012505000", name:"一六五团",child:[]}
+		]}
+	]} //2023年4月28日，白杨市挂牌成立，qq的20240814版的也未更新， 临时手写，未调整塔城市数据
 	
 	//高德的id错误，使用qq的id
 	//,431121:{name:"祁阳市",useQQCode:"431181000000"}
@@ -146,7 +156,6 @@ var gov3Difference={
 	,232762:{lostName:"松岭区"}//这三个qq确实没有，高德地图上这3地方边界属于鄂伦春，鄂伦春里面抠掉了加格达奇区
 	,232763:{lostName:"新林区"}
 	,232764:{lostName:"呼中区"}
-	,659012:{lostName:"白杨市"} //2023年4月28日，白杨市挂牌成立，qq、高德均未更新，暂不处理
 	
 	,152571:{lostName:"乌拉盖管理区管委会"} //前三级中唯一的一个管委会，目测是开发区管理区之类的
 	,411471:{lostName:"豫东综合物流产业聚集区"}//目测是开发区管理区之类的
@@ -160,8 +169,6 @@ var gov3Difference={
 	//,0:{name:"",asID:00}
 	//,232718:{name:"加格达奇区",asID:"232761"}
 	,632825:{name:"大柴旦行政委员会",asID:"632857"}
-	,540422:{name:"米林市",asID:"540481"}
-	,540530:{name:"错那市",asID:"540581"}
 	
 	,620200:{name:"市辖区",asID:"620201"} //嘉峪关市 使用00结尾 统计局是01
 	
@@ -739,7 +746,7 @@ var compareAmap=function(parent,qqmapArr,amapArrSrc,level){
 				throw new Error();
 			};
 			if(diffSet.lostAdd){
-				var addItm={name:itm.name,code:itm.code,child:[],keepName:true};
+				var addItm={name:itm.name,code:itm.code,child:diffSet.lostAddChild||[],keepName:true};
 				qqmapArr.push(addItm);
 				console.log(addItm.code+":"+addItm.name+", 添加QQ没有的",addItm);
 			};
